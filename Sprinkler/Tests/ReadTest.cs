@@ -1,4 +1,11 @@
-﻿using System;
+﻿/* 
+ * Copyright (c) 2014, Furore (info@furore.com) and contributors
+ * See the file CONTRIBUTORS for details.
+ * 
+ * This file is licensed under the BSD 3-Clause license
+ * available at https://raw.github.com/furore-fhir/sprinkler/master/LICENSE
+ */
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -31,7 +38,13 @@ namespace Sprinkler.Tests
         {
             Patient p = NewPatient("Emerald", "Caro");
             ResourceEntry<Patient> entry = client.Create(p, null, false);
-            string id = entry.GetBasicId();
+/* 
+ * Copyright (c) 2014, Furore (info@furore.com) and contributors
+ * See the file CONTRIBUTORS for details.
+ * 
+ * This file is licensed under the BSD 3-Clause license
+ * available at https://raw.github.com/furore-fhir/sprinkler/master/LICENSE
+ */            string id = entry.GetBasicId();
 
             var pat = client.Read<Patient>(id);
 
