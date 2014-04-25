@@ -29,10 +29,21 @@ namespace Sprinkler.Tests
             return p;
         }
 
-        public static string GetBasicId(this ResourceEntry entry)
+        public static string GetBasicId(this BundleEntry entry)
         {
             return new ResourceIdentity(entry.Id).OperationPath.ToString();
         }
+
+        public static IEnumerable<string>GetBasicIds(this Bundle bundle)
+        {
+            return bundle.Entries.Select(be => be.GetBasicId()).ToArray();
+        }
+
+        public static bool Has(this Bundle bundle, string id)
+        {
+            return bundle.Entries.FirstOrDefault(e => e.GetBasicId() == id) != null;
+        }
+    
 
     }
 

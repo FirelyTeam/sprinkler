@@ -32,24 +32,32 @@ namespace Sprinkler.Framework
                                 as SprinklerTestAttribute;
             return attribute;
         }
-        
-        public static bool IsProperTestMethod(MethodInfo method)
+
+        private static bool match(IEnumerable<string> tests, string test)
+        {
+            return (tests != null) ? tests.Contains(test) : true;
+        }
+
+        public static bool IsProperTestMethod(MethodInfo method, IEnumerable<string> codes)
         {
             if (method.GetParameters().Length == 0)
             {
-                if (AttributeOf(method) != null) 
+                SprinklerTestAttribute attribute = AttributeOf(method);
+                if (attribute != null && match(codes, attribute.Code))
+                {
                     return true;
+                }
             }
             return false;
 
         }
 
-        public static IEnumerable<MethodInfo> TestMethodsOf(object instance)
+        public static IEnumerable<MethodInfo> TestMethodsOf(object instance, IEnumerable<string> codes = null)
         {
             MethodInfo[] methods = instance.GetType().GetMethods();
-            return methods.Where(m => IsProperTestMethod(m));
+            return methods.Where(m => IsProperTestMethod(m, codes));
         }
-
+       
         public static TestResult RunTestMethod(string category, object instance, MethodInfo method)
         {
             TestResult test = new TestResult(); 
@@ -100,6 +108,20 @@ namespace Sprinkler.Framework
                 this.log(test);
             }
         }
+
+        
+        public void Run(SprinklerTestClass Instance, IEnumerable<string> codes = null)
+        {
+            Instance.SetClient(client);
+            string category = this.category(Instance);
+            foreach (var method in TestMethodsOf(Instance, codes))
+            {
+                TestResult test = RunTestMethod(category, Instance, method);
+                this.log(test);
+            }
+        }
+
+
         public T Run<T>() where T : SprinklerTestClass
         {
             T instance = Activator.CreateInstance<T>();
@@ -134,6 +156,14 @@ namespace Sprinkler.Framework
             foreach(SprinklerTestClass stc in InstanciateAll())
             {
                 Run(stc);
+            }
+        }
+
+        public void Run(params string[] codes)
+        {
+            foreach (SprinklerTestClass stc in InstanciateAll())
+            {
+                Run(stc, codes);
             }
         }
     }
