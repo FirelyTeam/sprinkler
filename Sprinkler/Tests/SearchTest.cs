@@ -144,6 +144,31 @@ namespace Sprinkler.Tests
             
 
         }
+
+        private string CreateObservation(decimal value)
+        {
+            Observation observation = new Observation();
+            observation.Name = new CodeableConcept("http://loinc.org", "2164-2");
+            observation.Value = new Quantity() { System = new Uri("http://unitofmeasure.org"), Value = value, Units = "mmol" };
+            observation.BodySite = new CodeableConcept("http://snomed.info/sct", "182756003");
+
+            ResourceEntry<Observation> entry = client.Create<Observation>(observation, null, true);
+            return entry.GetBasicId();
+        }
+
+        [SprinklerTest("SE21", "Search for quantity (in observation)")]
+        public void SearchQuantity()
+        {
+            string id0 = CreateObservation(4.12345M);
+            string id1 = CreateObservation(4.12346M);
+            string id2 = CreateObservation(4.12349M);
+
+            Bundle bundle = client.Search("Observation", new string[] { "value-quantity=4.1234||mmol" });
+
+            TestResult.Assert(bundle.Has(id0), "Search on quantity value 4.1234 should return 4.12345");
+            TestResult.Assert(!bundle.Has(id1), "Search on quantity value 4.1234 should not return 4.12346");
+            TestResult.Assert(!bundle.Has(id2), "Search on quantity value 4.1234 should not return 4.12349");
+        }
     }
 
 }
