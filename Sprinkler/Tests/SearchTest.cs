@@ -156,7 +156,7 @@ namespace Sprinkler.Tests
             return entry.GetBasicId();
         }
 
-        [SprinklerTest("SE21", "Search for quantity (in observation)")]
+        [SprinklerTest("SE21", "Search for quantity (in observation) - precision tests")]
         public void SearchQuantity()
         {
             string id0 = CreateObservation(4.12345M);
@@ -168,6 +168,21 @@ namespace Sprinkler.Tests
             TestResult.Assert(bundle.Has(id0), "Search on quantity value 4.1234 should return 4.12345");
             TestResult.Assert(!bundle.Has(id1), "Search on quantity value 4.1234 should not return 4.12346");
             TestResult.Assert(!bundle.Has(id2), "Search on quantity value 4.1234 should not return 4.12349");
+        }
+
+        [SprinklerTest("SE22", "Search for quantity (in observation) - operators")]
+        public void SearchQuantityGreater()
+        {
+            string id0 = CreateObservation(4.12M);
+            string id1 = CreateObservation(5.12M);
+            string id2 = CreateObservation(6.12M);
+
+            Bundle bundle = client.Search("Observation", new string[] { "value-quantity=>5||mmol" });
+
+            TestResult.Assert(!bundle.Has(id0), "Search greater than quantity should not return lesser value.");
+            TestResult.Assert(bundle.Has(id1), "Search greater than quantity should return greater value");
+            TestResult.Assert(bundle.Has(id2), "Search greater than quantity should return greater value");
+            
         }
     }
 
