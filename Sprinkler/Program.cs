@@ -43,62 +43,12 @@ namespace Sprinkler
 
             if (args.Count() == 1) FHIR_URL = args[0];
 
-            Console.WriteLine("Sprinkler v0.5 - Conformance test suite for FHIR 0.8 (DSTU1)");
-            Console.WriteLine("Testing at server endpoint " + FHIR_URL);
+            Console.WriteLine("Sprinkler v0.6 - Conformance test suite for FHIR 0.8 (DSTU1)");
 
-            if (!FHIR_URL.StartsWith("http:") && !FHIR_URL.StartsWith("https:")) 
-                FHIR_URL = "http://" + FHIR_URL;
-
-            var fhirUri = new Uri(FHIR_URL, UriKind.Absolute);
-            FhirClient client = new FhirClient(fhirUri);
-
-            TestRunner tester = new TestRunner(client, LogTest);
-            
-            //tester.Run<TestTransactions>();
-            tester.RunAll();
-
+            ConsoleApplication.Connectathon6(FHIR_URL);
             Console.WriteLine();
             Console.WriteLine("Ready (press any key to continue)");
             Console.ReadKey();
         }
-
-        public static void registerTestException(Exception exception)
-        {
-            string indent = "    - ";
-
-            while (exception != null)
-            {
-                if (!String.IsNullOrEmpty(exception.Message))
-                    Console.WriteLine("{0}{1}", indent, exception.Message);
-
-                if (exception is FhirOperationException)
-                {
-                    var foe = exception as FhirOperationException;
-                    if (foe.Outcome != null && foe.Outcome.Issue != null)
-                    {
-                        int isuenr = 1;
-                        foreach (var issue in foe.Outcome.Issue)
-                        {
-                            if (!issue.Details.StartsWith("Stack"))
-                                Console.WriteLine(String.Format("{0}OperationOutcome.Issue({1}): {2}", indent, isuenr, issue.Details));
-                            isuenr++;
-                        }
-                    }
-                }
-
-                exception = exception.InnerException;
-            }
-        }
-
-        static void LogTest(TestResult test)
-        {
-            string title = string.Format("{0}: {1}", test.Code, test.Title);
-            string outcome = test.Outcome.ToString().ToUpper();
-            Console.WriteLine(string.Format("{0,-60} : {1}", title, outcome));
-
-            if (test.Exception != null)
-                registerTestException(test.Exception);
-        }
-    
     }
 }

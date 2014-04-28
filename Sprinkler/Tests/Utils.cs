@@ -29,6 +29,33 @@ namespace Sprinkler.Tests
             return p;
         }
 
+        public static void AddContact(this Patient patient, HumanName name, Address address)
+        {
+            patient.Contact = new List<Patient.ContactComponent>();
+            Patient.ContactComponent contact = new Patient.ContactComponent();
+            contact.Name = name;
+            contact.Address = address;
+            patient.Contact.Add(contact);
+        }
+
+        public static void AddAddress(this Patient patient, string family, string given, string country, string state, string city, params string[] lines)
+        {
+            HumanName name = new HumanName
+            {
+                Family = new List<string> { family },
+                Given = new List<string> { given }
+            };
+            Address address = new Address
+            {
+                Country = country,
+                State = state,
+                City = city,
+                Line = (lines == null) ? null : lines.ToList()
+            };
+            patient.AddContact(name, address);
+        }
+        
+
         public static string GetBasicId(this BundleEntry entry)
         {
             return new ResourceIdentity(entry.Id).OperationPath.ToString();

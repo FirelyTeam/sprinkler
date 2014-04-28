@@ -133,7 +133,6 @@ namespace Sprinkler.Framework
             }
         }
 
-
         public static string GetDemoPatientJson()
         {
             var pat = GetDemoPatient();

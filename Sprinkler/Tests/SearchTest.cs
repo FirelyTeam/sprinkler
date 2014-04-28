@@ -102,6 +102,7 @@ namespace Sprinkler.Tests
 
             if (conditions.Entries.Count == 0)
                 TestResult.Fail("no conditions found - cannot run test");
+            
             var condition = conditions.Entries.ByResourceType<Condition>()
                 .Where(c => c.Resource.Subject != null && new ResourceIdentity(c.Resource.Subject.Url).Collection == "Patient") 
                 .First();
@@ -112,7 +113,6 @@ namespace Sprinkler.Tests
 
             if(patient == null)
                 TestResult.Fail("failed to find patient condition is referring to");
-
 
             var result = client.Search<Condition>(new string[] { "subject=" + patientRef });
             HttpTests.AssertEntryIdsArePresentAndAbsoluteUrls(result);
@@ -141,8 +141,15 @@ namespace Sprinkler.Tests
             
             if (result.Entries.Count() == 0)
                 TestResult.Fail("failed to find any conditions (using subject.identifier)");
-            
+        }
 
+        [SprinklerTest("SE05", "Search with includes")]
+        public void SearchWithIncludes()
+        {
+            Bundle bundle  = client.Search<Condition>(new string[] { "_include=Condition.subject" });
+
+            var patients = bundle.Entries.ByResourceType<Patient>();
+            TestResult.Assert(patients.Count() > 0, "Search Conditions with _include=Condition.subject should have patients");
         }
 
         private string CreateObservation(decimal value)

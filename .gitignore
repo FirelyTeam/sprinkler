@@ -1,3 +1,4 @@
 /packages
-/Sprinkler/bin
-/Sprinkler/obj
+/*/bin
+/*/obj
+*.suo

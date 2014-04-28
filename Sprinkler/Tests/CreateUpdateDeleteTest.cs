@@ -64,55 +64,79 @@ namespace Sprinkler.Tests
             CreateDate = DateTimeOffset.Now;
         }
 
+        [SprinklerTest("CR04", "Create a patient with an extension")]
+        public void CreatePatientWithExtension()
+        {
+            Patient selena = Utils.NewPatient("Gomez", "Selena");
+            selena.AddAddress("Cornett", "Amanda", "United States", "Texas", "Grand Prairie");
+            
+            Uri qualifier = new Uri("http://hl7.org/fhir/Profile/iso-21090#qualifier");
+            selena.Contact[0].Name.AddExtension(qualifier, new Code("AC"));
+
+            ResourceEntry<Patient> entry = client.Create(selena, null, false);
+            string id = entry.GetBasicId();
+            //entry = null;
+            entry = client.Read<Patient>(entry.GetBasicId());
+
+            var extensions = entry.Resource.Contact[0].Name.GetExtensions(qualifier);
+
+            if (extensions == null || extensions.Count() == 0)
+                TestResult.Fail("Extensions have disappeared on resource " + Location);
+
+            if (!extensions.Any(ext => ext.Value is Code && ((Code)ext.Value).Value == "AC"))
+                TestResult.Fail("Resource extension was not persisted on created resource " + entry.GetBasicId());
+
+        }
+
         [SprinklerTest("UP01", "update that patient (no extensions altered)")]
         public void UpdatePersonNoExt()
         {
             if (CreateDate == null) TestResult.Skipped();
-            var patE = client.Read<Patient>(Location);
+            var entry = client.Read<Patient>(Location);
 
-            patE.Resource.Telecom.Add( new Contact() { System = Contact.ContactSystem.Url, Value = "http://www.nu.nl" } );
+            entry.Resource.Telecom.Add( new Contact() { System = Contact.ContactSystem.Url, Value = "http://www.nu.nl" } );
 
-            client.Update(patE);
+            client.Update(entry);
 
-            patE = client.Read<Patient>(Location);
+            entry = client.Read<Patient>(Location);
 
-            if (!patE.Resource.Telecom.Any(tel => tel.System == Contact.ContactSystem.Url &&
-                                    tel.Value == "http://www.nu.nl"))
+            if (!entry.Resource.Telecom.Any(
+                    tel => tel.System == Contact.ContactSystem.Url && tel.Value == "http://www.nu.nl"))
                 TestResult.Fail(String.Format("Resource {0} unchanged after update", Location));
 
-            Versions.Add(patE.SelfLink);
+            Versions.Add(entry.SelfLink);
         }
 
         [SprinklerTest("UP02", "update that person again (alter extensions)")]
-        public void UpdatePersonExt()
+        public void UpdatePersonAndAddExtension()
         {
             if (CreateDate == null) TestResult.Skipped();
 
-            var patE = client.Read<Patient>(Location);
+            var entry = client.Read<Patient>(Location);
 
-            var name = patE.Resource.Contact[0].Name;
+            var name = entry.Resource.Contact[0].Name;
             var qualifier = new Uri("http://hl7.org/fhir/Profile/iso-21090#qualifier");
 
             var qExt1 = name.FamilyElement[0].GetExtension(qualifier);
             ((Code)qExt1.Value).Value = "NB";
             name.FamilyElement[0].AddExtension(qualifier, new Code("AC"));
 
-            client.Update(patE);
+            client.Update(entry);
 
-            patE = client.Read<Patient>(Location);
+            entry = client.Read<Patient>(Location);
 
-            var exts = patE.Resource.Contact[0].Name.FamilyElement[0].GetExtensions(qualifier);
+            var extensions = entry.Resource.Contact[0].Name.FamilyElement[0].GetExtensions(qualifier);
 
-            if (exts == null || exts.Count() == 0)
+            if (extensions == null || extensions.Count() == 0)
                 TestResult.Fail("Extensions have disappeared on resource " + Location);
 
-            if (!exts.Any(ext => ext.Value is Code && ((Code)ext.Value).Value == "NB"))
+            if (!extensions.Any(ext => ext.Value is Code && ((Code)ext.Value).Value == "NB"))
                 TestResult.Fail("Resource extension update was not persisted on resource " + Location);
 
-            if (!exts.Any(ext => ext.Value is Code && ((Code)ext.Value).Value == "AC"))
+            if (!extensions.Any(ext => ext.Value is Code && ((Code)ext.Value).Value == "AC"))
                 TestResult.Fail("Resource extension addition was not persisted on resource " + Location);
 
-            Versions.Add(patE.SelfLink);
+            Versions.Add(entry.SelfLink);
         }
 
         [SprinklerTest("DE01", "delete that person")]

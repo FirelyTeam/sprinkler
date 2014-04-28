@@ -59,6 +59,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ConsoleApplication.cs" />
     <Compile Include="Framework\SprinklerTestClass.cs" />
     <Compile Include="Framework\TestAttributes.cs" />
     <Compile Include="Framework\TestResult.cs" />
