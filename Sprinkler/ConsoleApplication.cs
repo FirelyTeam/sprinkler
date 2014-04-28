@@ -74,7 +74,7 @@ namespace Sprinkler
 
             Console.WriteLine("Running tests for CONNECTATHON 6 (may 2014)");
             //tester.Run<CreateUpdateDeleteTest>();
-            tester.Run("SE05");
+            tester.RunAll();
         }
     }
 }
