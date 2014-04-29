@@ -73,8 +73,7 @@ namespace Sprinkler
             TestRunner tester = new TestRunner(client, LogTest);
 
             Console.WriteLine("Running tests for CONNECTATHON 6 (may 2014)");
-            //tester.Run<CreateUpdateDeleteTest>();
-            tester.RunAll();
+            tester.Run<CreateUpdateDeleteTest>();
         }
     }
 }

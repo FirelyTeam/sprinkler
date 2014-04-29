@@ -96,7 +96,7 @@ namespace Sprinkler.Tests
             if (entries[0].Id == connDoc.Id || entries[4].Id == binDoc.Id)  // etcetera
                 TestResult.Fail("submitting a bundle with identical cids should still create new resources");
 
-            //TODO: verify server honor the 'search' link
+            //TODO: verify server honors the 'search' link
         }
 
         [SprinklerTest("BU04", "post a bundle with updates")]

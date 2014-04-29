@@ -12,7 +12,7 @@
           <status value="generated" />
           <div xmlns="http://www.w3.org/1999/xhtml">Consultation note for Henry Levin the 7th</div>
         </text>
-        <instant value="2014-01-18T17:38:04-06:00" />
+        <date value="2014-01-18T17:38:04-06:00" />
         <type>
           <coding>
             <system value="http://www.loinc.org/" />
