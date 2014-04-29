@@ -51,7 +51,7 @@ namespace Sprinkler.Tests
         [SprinklerTest("BI02", "retrieve & update that binary")]
         public void RetrieveBinary()
         {
-            if (binaryId == null) TestResult.Skipped();
+            if (binaryId == null) TestResult.Skip();
 
             var received = client.Read<Binary>(binaryId);
             compareData(DemoData.GetDemoBinary().Content, received);
@@ -68,7 +68,7 @@ namespace Sprinkler.Tests
         [SprinklerTest("BI02", "delete the binary")]
         public void DeleteBinary()
         {
-            if (binaryId == null) TestResult.Skipped();
+            if (binaryId == null) TestResult.Skip();
 
             client.Delete(binaryId);
 

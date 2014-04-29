@@ -33,7 +33,7 @@ namespace Sprinkler.Tests
         [SprinklerTest("TR02", "Updating a patient")]
         public void Updating()
         {
-            // Gregorian calendar
+            // Birthday of Bach on Gregorian calendar
             entry.Resource.BirthDate = "16850321";
             client.Update<Patient>(entry, true);
 
@@ -41,10 +41,10 @@ namespace Sprinkler.Tests
             TestResult.Assert((bundle.Entries.Count == 2), "History of patient is not valid");
         }
 
-        [SprinklerTest("TR02", "Reupdating a patient")]
+        [SprinklerTest("TR03", "Reupdating a patient")]
         public void UpdatingAgain()
         {
-            // Julian calendar
+            // Birthday of Bach on Julian calendar
             entry.Resource.BirthDate = "16850331";
             client.Update<Patient>(entry, true);
 
@@ -52,7 +52,7 @@ namespace Sprinkler.Tests
             TestResult.Assert((bundle.Entries.Count == 3), "History of patient is not valid");
         }
 
-        [SprinklerTest("TR03", "Deleting record")]
+        [SprinklerTest("TR04", "Deleting record")]
         public void CountHistory()
         {
             client.Delete(entry);

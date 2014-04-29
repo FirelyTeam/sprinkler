@@ -34,7 +34,7 @@ namespace Sprinkler.Framework
         public TestOutcome Outcome { get; set; }
         public Exception Exception { get; set; }
 
-        public static void Skipped()
+        public static void Skip()
         {
             throw new TestFailedException(TestOutcome.Skipped);
         }

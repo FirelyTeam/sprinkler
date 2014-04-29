@@ -91,7 +91,7 @@ namespace Sprinkler.Tests
         [SprinklerTest("UP01", "update that patient (no extensions altered)")]
         public void UpdatePersonNoExt()
         {
-            if (CreateDate == null) TestResult.Skipped();
+            if (CreateDate == null) TestResult.Skip();
             var entry = client.Read<Patient>(Location);
 
             entry.Resource.Telecom.Add( new Contact() { System = Contact.ContactSystem.Url, Value = "http://www.nu.nl" } );
@@ -110,7 +110,7 @@ namespace Sprinkler.Tests
         [SprinklerTest("UP02", "update that person again (alter extensions)")]
         public void UpdatePersonAndAddExtension()
         {
-            if (CreateDate == null) TestResult.Skipped();
+            if (CreateDate == null) TestResult.Skip();
 
             var entry = client.Read<Patient>(Location);
 
@@ -142,7 +142,7 @@ namespace Sprinkler.Tests
         [SprinklerTest("DE01", "delete that person")]
         public void DeletePerson()
         {
-            if (CreateDate == null) TestResult.Skipped();
+            if (CreateDate == null) TestResult.Skip();
             string location = "Patient/" + CrudId;
             client.Delete(location);
             

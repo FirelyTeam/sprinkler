@@ -50,7 +50,7 @@ namespace Sprinkler.Tests
         [SprinklerTest("MA02", "Read contents of mailbox post")]
         public void Test()
         {
-            if (_deliveryResult == null) TestResult.Skipped();
+            if (_deliveryResult == null) TestResult.Skip();
 
             var dref1 = _deliveryResult.Entries.ByResourceType<DocumentReference>().First();
             var bin1 = _deliveryResult.Entries.ByResourceType<Binary>().First();

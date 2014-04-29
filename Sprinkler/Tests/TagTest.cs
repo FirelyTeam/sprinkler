@@ -92,7 +92,7 @@ namespace Sprinkler.Tests
         [SprinklerTest("TA03", "Update tags with update")]
         public void UpdateTagsOnUpdate()
         {
-            if (original == null) TestResult.Skipped();
+            if (original == null) TestResult.Skip();
 
             // Update one tag, add another
             var newtags = new List<Tag>() { 

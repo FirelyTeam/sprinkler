@@ -21,6 +21,7 @@ namespace Sprinkler.Tests
     [SprinklerTestModule("Search")]
     public class SearchTest : SprinklerTestClass
     {
+        private Bundle allPatients;
 
        // [SprinklerTest("search full system without criteria")]
         public void SearchWithoutCriteria()
@@ -53,11 +54,12 @@ namespace Sprinkler.Tests
         }
 
 
-        private Bundle allPatients;
+        
 
         [SprinklerTest("SE03", "Search patient resource on partial familyname")]
         public void SearchResourcesWithNameCriterium()
         {
+            if (allPatients == null) TestResult.Skip();
             // First create a search argument: any family name present in the
             // previous unlimited search result that has at least 5 characters
             var name = allPatients.Entries.ByResourceType<Patient>()

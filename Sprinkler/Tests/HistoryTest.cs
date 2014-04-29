@@ -55,7 +55,7 @@ namespace Sprinkler.Tests
         public void HistoryForSpecificResource()
         {
             initialize();
-            if (CreateDate == null) TestResult.Skipped();
+            if (CreateDate == null) TestResult.Skip();
 
             history = client.History(Location);
             HttpTests.AssertEntryIdsArePresentAndAbsoluteUrls(history);
@@ -80,7 +80,7 @@ namespace Sprinkler.Tests
         [SprinklerTest("HI02", "Request the full history for a resource with _since")]
         public void HistoryForSpecificResourceId()
         {
-            if (CreateDate == null) TestResult.Skipped();
+            if (CreateDate == null) TestResult.Skip();
 
             var before = CreateDate.Value.AddMinutes(-1);
             var after = before.AddHours(1);
@@ -127,7 +127,7 @@ namespace Sprinkler.Tests
         [SprinklerTest("HI04", "Fetching history of non-existing resource returns exception")]
         public void HistoryForNonExistingResource()
         {
-            if (CreateDate == null) TestResult.Skipped();
+            if (CreateDate == null) TestResult.Skip();
 
             HttpTests.AssertFail(client, () => client.History("Patient/3141592unlikely"), HttpStatusCode.NotFound);
         }
@@ -136,7 +136,7 @@ namespace Sprinkler.Tests
         [SprinklerTest("HI06", "Get all history for a resource type with _since")]
         public void HistoryForResourceType()
         {
-            if (CreateDate == null) TestResult.Skipped();
+            if (CreateDate == null) TestResult.Skip();
 
             var before = CreateDate.Value.AddMinutes(-1);
             var after = before.AddHours(1);
@@ -163,7 +163,7 @@ namespace Sprinkler.Tests
         [SprinklerTest("HI08", "Get the history for the whole system with _since")]
         public void HistoryForWholeSystem()
         {
-            if (CreateDate == null) TestResult.Skipped();
+            if (CreateDate == null) TestResult.Skip();
 
             var before = CreateDate.Value.AddMinutes(-1);
             
@@ -218,7 +218,7 @@ namespace Sprinkler.Tests
         [SprinklerTest("HI10", "Page backwards through a resource type history")]
         public void PageBackThroughResourceHistory()
         {
-            if (forwardCount == -1) TestResult.Skipped();
+            if (forwardCount == -1) TestResult.Skip();
 
             var pageSize = 30;
             var page = client.TypeHistory<Patient>(pageSize: pageSize);
