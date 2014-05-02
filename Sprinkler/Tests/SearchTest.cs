@@ -97,7 +97,22 @@ namespace Sprinkler.Tests
                 TestResult.Fail("search result contains patients that do not match the criterium");
         }
 
-        [SprinklerTest("SE04", "Search condition by subject (patient) reference")]
+
+
+        [SprinklerTest("SE04", "Search patient resource on given name")]
+        public void SearchPatientOnGiven()
+        {
+            Patient patient = Utils.NewPatient("Adams", "Fester");
+            client.Create<Patient>(patient);
+            Bundle bundle = client.Search<Patient>(new string[] { "given=Fester" });
+
+            bool found = bundle.ResourcesOf<Patient>().Where(p => p.HasGiven("Fester")).Count() > 0;
+
+            TestResult.Assert(found, "Patient was not found with given name");
+            
+        }
+
+        [SprinklerTest("SE05", "Search condition by subject (patient) reference")]
         public void SearchConditionByPatientReference()
         {
             var conditions = client.Search<Condition>();
@@ -145,7 +160,7 @@ namespace Sprinkler.Tests
                 TestResult.Fail("failed to find any conditions (using subject.identifier)");
         }
 
-        [SprinklerTest("SE05", "Search with includes")]
+        [SprinklerTest("SE06", "Search with includes")]
         public void SearchWithIncludes()
         {
             Bundle bundle  = client.Search<Condition>(new string[] { "_include=Condition.subject" });
@@ -154,7 +169,7 @@ namespace Sprinkler.Tests
             TestResult.Assert(patients.Count() > 0, "Search Conditions with _include=Condition.subject should have patients");
         }
 
-        private string CreateObservation(decimal value)
+        private string createObservation(decimal value)
         {
             Observation observation = new Observation();
             observation.Name = new CodeableConcept("http://loinc.org", "2164-2");
@@ -168,9 +183,9 @@ namespace Sprinkler.Tests
         [SprinklerTest("SE21", "Search for quantity (in observation) - precision tests")]
         public void SearchQuantity()
         {
-            string id0 = CreateObservation(4.12345M);
-            string id1 = CreateObservation(4.12346M);
-            string id2 = CreateObservation(4.12349M);
+            string id0 = createObservation(4.12345M);
+            string id1 = createObservation(4.12346M);
+            string id2 = createObservation(4.12349M);
 
             Bundle bundle = client.Search("Observation", new string[] { "value-quantity=4.1234||mmol" });
 
@@ -182,9 +197,9 @@ namespace Sprinkler.Tests
         [SprinklerTest("SE22", "Search for quantity (in observation) - operators")]
         public void SearchQuantityGreater()
         {
-            string id0 = CreateObservation(4.12M);
-            string id1 = CreateObservation(5.12M);
-            string id2 = CreateObservation(6.12M);
+            string id0 = createObservation(4.12M);
+            string id1 = createObservation(5.12M);
+            string id2 = createObservation(6.12M);
 
             Bundle bundle = client.Search("Observation", new string[] { "value-quantity=>5||mmol" });
 

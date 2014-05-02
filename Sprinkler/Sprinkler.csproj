@@ -59,7 +59,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ConsoleApplication.cs" />
+    <Compile Include="TestSets.cs" />
     <Compile Include="Framework\SprinklerTestClass.cs" />
     <Compile Include="Framework\TestAttributes.cs" />
     <Compile Include="Framework\TestResult.cs" />
@@ -68,6 +68,7 @@
     <Compile Include="Tests\ConformanceTest.cs" />
     <Compile Include="Tests\BinaryTest.cs" />
     <Compile Include="Tests\BundleTest.cs" />
+    <Compile Include="Tests\QuestionaireTest.cs" />
     <Compile Include="Tests\TagTest.cs" />
     <Compile Include="Tests\SearchTest.cs" />
     <Compile Include="Tests\HistoryTest.cs" />

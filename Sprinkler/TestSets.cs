@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace Sprinkler
 {
-    class ConsoleApplication
+    class TestSets
     {
         public static void registerTestException(Exception exception)
         {
@@ -73,7 +73,12 @@ namespace Sprinkler
             TestRunner tester = new TestRunner(client, LogTest);
 
             Console.WriteLine("Running tests for CONNECTATHON 6 (may 2014)");
-            tester.Run<CreateUpdateDeleteTest>();
+            
+            // Track 1
+            tester.Run("CR01", "CR04", "HI01", "SE01", "SE03", "SE04");
+
+            // Track 2
+            tester.Run("QU01", "QU02", "QU04");
         }
     }
 }

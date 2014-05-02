@@ -55,6 +55,10 @@ namespace Sprinkler.Tests
             patient.AddContact(name, address);
         }
         
+        public static bool HasGiven(this Patient patient, string given)
+        {
+            return patient.Name.Exists(n => n.Given.Contains(given));
+        }
 
         public static string GetBasicId(this BundleEntry entry)
         {
@@ -70,8 +74,14 @@ namespace Sprinkler.Tests
         {
             return bundle.Entries.FirstOrDefault(e => e.GetBasicId() == id) != null;
         }
-    
 
+        public static IEnumerable<T> ResourcesOf<T>(this Bundle bundle) where T : Resource, new()
+        {
+            IEnumerable<ResourceEntry<T>> entries = bundle.Entries.ByResourceType<T>();
+            return entries.Select(e => (T)e.Resource);
+        }
+
+        
     }
 
 }
