@@ -68,6 +68,16 @@ namespace Sprinkler
             //tester.Run<HistoryTest>();
         }
 
+        public static void Run(string url, string test)
+        {
+            FhirClient client = getClient(url);
+            TestRunner tester = new TestRunner(client, LogTest);
+
+            Console.WriteLine("Running single test " + test);
+
+            tester.Run(test);
+        }
+
         public static void Connectathon6(string url)
         {
             FhirClient client = getClient(url);
