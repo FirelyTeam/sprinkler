@@ -65,7 +65,7 @@ namespace Sprinkler.Tests
             compareData(data, received);
         }
 
-        [SprinklerTest("BI02", "delete the binary")]
+        [SprinklerTest("BI03", "delete the binary")]
         public void DeleteBinary()
         {
             if (binaryId == null) TestResult.Skip();
