@@ -14,12 +14,25 @@ namespace Sprinkler.Tests
         [SprinklerTest("QU01", "Download a completed questionnaire")]
         public void DownloadCompletedTest()
         {
-            Bundle bundle = client.Search<Questionnaire>(new string[] { "status=Completed" });
+            Bundle bundle = client.Search<Questionnaire>(new string[] { "status=completed" });
             Uri id = bundle.Entries.First().Id;
 
             Questionnaire questionnaire = client.Read<Questionnaire>(id).Resource;
         }
 
+        [SprinklerTest("QU02", "Reupload as a template")]
+        public void ReuploadAsTemplate()
+        {
+            // There  are no templates. So we have to create one:
+            Bundle bundle = client.Search<Questionnaire>(new string[] { "status=completed" });
+            Uri id = bundle.Entries.First().Id;
+
+            Questionnaire questionnaire = client.Read<Questionnaire>(id).Resource;
+            questionnaire.Status = Questionnaire.QuestionnaireStatus.Published;
+            client.Create<Questionnaire>(questionnaire);
+
+        }
+        
         private void DisplayAvailableStatusses()
         {
             Bundle bundle = client.Search<Questionnaire>();
@@ -28,17 +41,17 @@ namespace Sprinkler.Tests
             from entry in bundle.Entries.ByResourceType<Questionnaire>()
             select entry.Resource.Status.ToString();
 
-                    foreach (string status in statusses.Distinct())
-                    {
-                        Console.WriteLine("-" + status);
-                    }
+            foreach (string status in statusses.Distinct())
+            {
+                Console.WriteLine("-" + status);
+            }
 
         }
 
-        [SprinklerTest("QU02", "Download a template questionnaire")]
+        [SprinklerTest("QU03", "Download a template questionnaire")]
         public void DownloadTemplate()
         {
-            Bundle bundle = client.Search<Questionnaire>(new string[] { "status=Published" });
+            Bundle bundle = client.Search<Questionnaire>(new string[] { "status=published" });
             Uri id = bundle.Entries.First().Id;
 
             Questionnaire questionnaire = client.Read<Questionnaire>(id).Resource;
@@ -47,7 +60,7 @@ namespace Sprinkler.Tests
         [SprinklerTest("QU04", "Upload a new questionnaire")]
         public void UploadATemplate()
         {
-            Bundle bundle = client.Search<Questionnaire>(new string[] { "status=Published" });
+            Bundle bundle = client.Search<Questionnaire>(new string[] { "status=published" });
             Uri id = bundle.Entries.First().Id;
 
             Questionnaire questionnaire = client.Read<Questionnaire>(id).Resource;

@@ -65,6 +65,7 @@ namespace Sprinkler
 
             Console.WriteLine("Running all tests");
             tester.RunAll();
+            //tester.Run<HistoryTest>();
         }
 
         public static void Run(string url, string test)
@@ -88,7 +89,7 @@ namespace Sprinkler
             tester.Run("CR01", "CR04", "HI01", "SE01", "SE03", "SE04");
 
             // Track 2
-            tester.Run("QU01", "QU02", "QU04");
+            tester.Run("QU01", "QU02", "QU03", "QU04");
         }
     }
 }
