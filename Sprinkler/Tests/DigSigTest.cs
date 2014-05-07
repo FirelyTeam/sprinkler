@@ -83,7 +83,7 @@ namespace Sprinkler.Tests
         private HttpWebResponse postBundle(string bundle)
         {
             var req = HttpWebRequest.Create(client.Endpoint);
-            req.ContentType = "application/xml+fhir";
+            req.ContentType = "application/atom+xml";
             req.Method = "POST";
             var outStream = req.GetRequestStream();
             var outStreamWriter = new StreamWriter(outStream, Encoding.UTF8);
