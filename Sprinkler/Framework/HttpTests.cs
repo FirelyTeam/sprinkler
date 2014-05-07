@@ -145,5 +145,13 @@ namespace Sprinkler.Framework
                 TestResult.Fail("Got status code " + client.LastResponseDetails.Result +
                     ". Did you install the standard test-set?");
         }
+
+        internal static void AssertHasAllForwardNavigationLinks(Bundle history)
+        {
+            if (history.Links.FirstLink == null ||
+                history.Links.NextLink == null ||
+                history.Links.LastLink == null)
+                TestResult.Fail("Expecting first, next and last link to be present");
+        }
     }
 }

@@ -169,6 +169,8 @@ namespace Sprinkler.Tests
             
             var history = client.WholeSystemHistory(before);
             HttpTests.AssertEntryIdsArePresentAndAbsoluteUrls(history);
+
+            HttpTests.AssertHasAllForwardNavigationLinks(history); // Assumption: system has more history than pagesize
             systemHistory = history;
             checkSortOrder(history);
 

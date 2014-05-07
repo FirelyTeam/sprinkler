@@ -37,16 +37,17 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Hl7.Fhir.Api, Version=0.9.4.1, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="Hl7.Fhir.Api, Version=0.10.0.0, Culture=neutral, PublicKeyToken=d706911480550fc3, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\FhirApi\Hl7.Fhir.Api.dll</HintPath>
+      <HintPath>..\packages\Hl7.Fhir.0.10.0\lib\net45\Hl7.Fhir.Api.dll</HintPath>
     </Reference>
-    <Reference Include="Hl7.Fhir.Model">
-      <HintPath>..\FhirApi\Hl7.Fhir.Model.dll</HintPath>
-    </Reference>
-    <Reference Include="Newtonsoft.Json, Version=4.5.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+    <Reference Include="Hl7.Fhir.Model, Version=0.10.0.2408, Culture=neutral, PublicKeyToken=d706911480550fc3, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\FhirApi\Newtonsoft.Json.dll</HintPath>
+      <HintPath>..\packages\Hl7.Fhir.0.10.0\lib\net45\Hl7.Fhir.Model.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Newtonsoft.Json.6.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -90,8 +91,8 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
-    <None Include="packages.config" />
     <EmbeddedResource Include="Tests\spark.pfx" />
+    <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="conn5-21-example.xml">
