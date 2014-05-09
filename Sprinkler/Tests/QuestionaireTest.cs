@@ -14,6 +14,12 @@ namespace Sprinkler.Tests
         [SprinklerTest("QU01", "Download a completed questionnaire")]
         public void DownloadCompletedTest()
         {
+            var completedQuestionaire = new Questionnaire
+            {
+                Status = Questionnaire.QuestionnaireStatus.Completed
+            };
+            client.Create(completedQuestionaire);
+
             Bundle bundle = client.Search<Questionnaire>(new string[] { "status=completed" });
             Uri id = bundle.Entries.First().Id;
 
