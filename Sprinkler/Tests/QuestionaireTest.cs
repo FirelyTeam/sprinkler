@@ -16,7 +16,8 @@ namespace Sprinkler.Tests
         {
             var completedQuestionaire = new Questionnaire
             {
-                Status = Questionnaire.QuestionnaireStatus.Completed
+                Status = Questionnaire.QuestionnaireStatus.Completed,
+                Authored = "2013-08-13"
             };
             client.Create(completedQuestionaire);
 

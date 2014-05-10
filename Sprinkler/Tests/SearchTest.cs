@@ -118,7 +118,19 @@ namespace Sprinkler.Tests
             var conditions = client.Search<Condition>();
 
             if (conditions.Entries.Count == 0)
-                TestResult.Fail("no conditions found - cannot run test");
+            {
+                var patients = client.Search<Patient>();
+                if (patients.Entries.Count == 0)
+                    TestResult.Fail("no patients found - cannot run test");
+                var newCondition = new Condition
+                {
+                    Subject = new ResourceReference
+                    {
+                        Reference = patients.Entries[0].Id.ToString()
+                    }
+                };
+                client.Create(newCondition);
+            }
             
             var condition = conditions.Entries.ByResourceType<Condition>()
                 .Where(c => c.Resource.Subject != null && new ResourceIdentity(c.Resource.Subject.Url).Collection == "Patient") 
@@ -172,6 +184,8 @@ namespace Sprinkler.Tests
         private string createObservation(decimal value)
         {
             Observation observation = new Observation();
+            observation.Status = Observation.ObservationStatus.Preliminary;
+            observation.Reliability = Observation.ObservationReliability.Questionable;
             observation.Name = new CodeableConcept("http://loinc.org", "2164-2");
             observation.Value = new Quantity() { System = new Uri("http://unitofmeasure.org"), Value = value, Units = "mmol" };
             observation.BodySite = new CodeableConcept("http://snomed.info/sct", "182756003");

@@ -45,6 +45,7 @@
       <Patient xmlns="http://hl7.org/fhir">
         <language value="en-US" />
         <text>
+          <status value="generated" />
           <div xmlns="http://www.w3.org/1999/xhtml">Parkerson, Parkie</div>
         </text>
         <identifier>
@@ -65,7 +66,7 @@
           </coding>
           <text value="Male" />
         </gender>
-        <birthDate value="19840101" />
+        <birthDate value="1984-01-01" />
         <address>
           <text value="4016 Canal St." />
           <city value="New Orleans" />
@@ -108,7 +109,6 @@
             <code value="M" />
           </coding>
         </gender>
-        <organization id="cid:17bf54cc-44a3-4fc3-bb92-2bead3a0d987" />
       </Practitioner>
     </content>
     <summary type="xhtml">
@@ -136,6 +136,7 @@
     <content type="text/xml">
       <AllergyIntolerance xmlns="http://hl7.org/fhir">
         <text>
+          <status value="generated" />
           <div xmlns="http://www.w3.org/1999/xhtml">House dust allergy</div>
         </text>
         <identifier>
@@ -166,6 +167,7 @@
     <content type="text/xml">
       <List xmlns="http://hl7.org/fhir">
         <text>
+          <status value="generated" />
           <div xmlns="http://www.w3.org/1999/xhtml">
             <table>
               <thead>

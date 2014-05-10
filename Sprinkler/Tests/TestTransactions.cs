@@ -34,7 +34,7 @@ namespace Sprinkler.Tests
         public void Updating()
         {
             // Birthday of Bach on Gregorian calendar
-            entry.Resource.BirthDate = "16850321";
+            entry.Resource.BirthDate = "1685-03-21";
             client.Update<Patient>(entry, true);
 
             Bundle bundle = client.History(entry);
@@ -45,7 +45,7 @@ namespace Sprinkler.Tests
         public void UpdatingAgain()
         {
             // Birthday of Bach on Julian calendar
-            entry.Resource.BirthDate = "16850331";
+            entry.Resource.BirthDate = "1685-03-31";
             client.Update<Patient>(entry, true);
 
             Bundle bundle = client.History(entry);
