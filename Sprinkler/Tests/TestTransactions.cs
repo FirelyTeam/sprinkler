@@ -35,7 +35,7 @@ namespace Sprinkler.Tests
         {
             // Birthday of Bach on Gregorian calendar
             entry.Resource.BirthDate = "1685-03-21";
-            client.Update<Patient>(entry, true);
+            entry = client.Update<Patient>(entry, true);
 
             Bundle bundle = client.History(entry);
             TestResult.Assert((bundle.Entries.Count == 2), "History of patient is not valid");
