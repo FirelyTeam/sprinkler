@@ -23,12 +23,12 @@ namespace Sprinkler
         {
             //string FHIR_URL = "http://localhost.fiddler:1396/fhir";
             
-            string FHIR_URL = "http://localhost:1396/fhir";
+            //string FHIR_URL = "http://localhost:1396/fhir";
 
             //string FHIR_URL = "http://fhirlab.apphb.com/fhir";
             //string FHIR_URL = "http://localhost.:62124/fhir";
             
-            //string FHIR_URL = "http://spark.furore.com/fhir";
+            string FHIR_URL = "http://spark.furore.com/fhir";
 
             //string FHIR_URL = "http://hl7connect.healthintersections.com.au/svc/fhir";
 
