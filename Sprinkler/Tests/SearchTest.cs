@@ -131,12 +131,16 @@ namespace Sprinkler.Tests
                 };
                 client.Create(newCondition);
             }
-            
-            var condition = conditions.Entries.ByResourceType<Condition>()
-                .Where(c => c.Resource.Subject != null && new ResourceIdentity(c.Resource.Subject.Url).Collection == "Patient") 
-                .First();
+
+            var conditionsForPatients = conditions.Entries.ByResourceType<Condition>()
+                .Where(c => c.Resource.Subject != null && new ResourceIdentity(c.Resource.Subject.Url).Collection == "Patient");
+
+            var condition = conditionsForPatients.First();
 
             var patientRef = new ResourceIdentity(condition.Resource.Subject.Url);
+
+            var allConditionsForThisPatient = conditionsForPatients.Where(c => c.Resource.Subject != null && c.Resource.Subject.Url == patientRef);
+            var nrOfConditionsForThisPatient = allConditionsForThisPatient.Count();
 
             var patient = client.Read<Patient>(patientRef);
 
@@ -146,14 +150,18 @@ namespace Sprinkler.Tests
             var result = client.Search<Condition>(new string[] { "subject=" + patientRef });
             HttpTests.AssertEntryIdsArePresentAndAbsoluteUrls(result);
 
-            if (result.Entries.Count() == 0)
-                TestResult.Fail("failed to find any conditions (using subject=)");
+            HttpTests.AssertCorrectNumberOfResults(nrOfConditionsForThisPatient, result.Entries.Count(), "conditions for this patient (using subject=)");
+
+            //Test for issue #6, https://github.com/furore-fhir/spark/issues/6
+            result = client.Search<Condition>(new string[] { "subject:Patient=" + patientRef });
+            HttpTests.AssertEntryIdsArePresentAndAbsoluteUrls(result);
+
+            HttpTests.AssertCorrectNumberOfResults(nrOfConditionsForThisPatient, result.Entries.Count(), "conditions for this patient (using subject:Patient=)");
 
             result = client.Search<Condition>(new string[] { "subject._id=" + patientRef.Id });
             HttpTests.AssertEntryIdsArePresentAndAbsoluteUrls(result);
 
-            if (result.Entries.Count() == 0)
-                TestResult.Fail("failed to find any conditions (using subject._id=)");
+            HttpTests.AssertCorrectNumberOfResults(nrOfConditionsForThisPatient, result.Entries.Count(), "conditions for this patient (using subject._id=)");
 
             string patFirstName = patient.Resource.Name[0].Family.First();
             //.Substring(2, 3);
