@@ -86,7 +86,7 @@ namespace Sprinkler.Tests
 
             HttpTests.AssertFail(client, () => { tags = client.Tags<Patient>("nonexisting"); }, HttpStatusCode.NotFound);
 
-            HttpTests.AssertFail(client, () => { tags = client.Tags<Patient>("nonexisting", "nonexisting"); }, HttpStatusCode.NotFound);
+            HttpTests.AssertFail(client, () => { tags = client.Tags<Patient>("nonexisting", "1"); }, HttpStatusCode.NotFound);
         }
 
         [SprinklerTest("TA03", "Update tags with update")]
