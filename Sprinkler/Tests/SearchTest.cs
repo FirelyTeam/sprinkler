@@ -23,10 +23,10 @@ namespace Sprinkler.Tests
     {
         private Bundle allPatients;
 
-       // [SprinklerTest("search full system without criteria")]
+        // [SprinklerTest("search full system without criteria")]
         public void SearchWithoutCriteria()
         {
-            var result = client.WholeSystemSearch(pageSize:10);
+            var result = client.WholeSystemSearch(pageSize: 10);
         }
 
         [SprinklerTest("SE01", "Search resource type without criteria")]
@@ -38,10 +38,10 @@ namespace Sprinkler.Tests
             if (result.Entries.Count == 0)
                 TestResult.Fail("search did not return any results");
 
-            if(result.Entries.Count > 10)
+            if (result.Entries.Count > 10)
                 TestResult.Fail("search returned more patients than specified in _count");
 
-            if(result.Entries.ByResourceType<Patient>().Count() ==0)
+            if (result.Entries.ByResourceType<Patient>().Count() == 0)
                 TestResult.Fail("search returned entries other than patient");
 
             allPatients = result;
@@ -54,7 +54,7 @@ namespace Sprinkler.Tests
         }
 
 
-        
+
 
         [SprinklerTest("SE03", "Search patient resource on partial familyname")]
         public void SearchResourcesWithNameCriterium()
@@ -72,8 +72,8 @@ namespace Sprinkler.Tests
             // Take the first three characters
             name = name.Substring(0, 3);
 
-            
-            var result = client.Search<Patient>(new string[] { "family="+name });
+
+            var result = client.Search<Patient>(new string[] { "family=" + name });
             HttpTests.AssertEntryIdsArePresentAndAbsoluteUrls(result);
 
             if (result.Entries.Count == 0)
@@ -82,7 +82,7 @@ namespace Sprinkler.Tests
             // Each patient returned should have a family name with the
             // criterium
             var names = result.Entries.ByResourceType<Patient>()
-                .Where(p=>p.Resource.Name != null)
+                .Where(p => p.Resource.Name != null)
                    .SelectMany(p => p.Resource.Name)
                     .Where(hn => hn.Family != null)
                         .SelectMany(hn => hn.Family);
@@ -109,7 +109,7 @@ namespace Sprinkler.Tests
             bool found = bundle.ResourcesOf<Patient>().Where(p => p.HasGiven("Fester")).Count() > 0;
 
             TestResult.Assert(found, "Patient was not found with given name");
-            
+
         }
 
         [SprinklerTest("SE05", "Search condition by subject (patient) reference")]
@@ -144,7 +144,7 @@ namespace Sprinkler.Tests
 
             var patient = client.Read<Patient>(patientRef);
 
-            if(patient == null)
+            if (patient == null)
                 TestResult.Fail("failed to find patient condition is referring to");
 
             var result = client.Search<Condition>(new string[] { "subject=" + patientRef });
@@ -166,7 +166,7 @@ namespace Sprinkler.Tests
             string patFirstName = patient.Resource.Name[0].Family.First();
             //.Substring(2, 3);
             var param = "subject.name=" + patFirstName;
-            
+
             result = client.Search<Condition>(new string[] { param });
             HttpTests.AssertEntryIdsArePresentAndAbsoluteUrls(result);
 
@@ -174,8 +174,8 @@ namespace Sprinkler.Tests
                 TestResult.Fail("failed to find any conditions (using subject.name)");
 
             string identifier = patient.Resource.Identifier[0].Value;
-            result = client.Search<Condition>(new string[] {  "subject.identifier=" + identifier });
-            
+            result = client.Search<Condition>(new string[] { "subject.identifier=" + identifier });
+
             if (result.Entries.Count() == 0)
                 TestResult.Fail("failed to find any conditions (using subject.identifier)");
         }
@@ -183,7 +183,7 @@ namespace Sprinkler.Tests
         [SprinklerTest("SE06", "Search with includes")]
         public void SearchWithIncludes()
         {
-            Bundle bundle  = client.Search<Condition>(new string[] { "_include=Condition.subject" });
+            Bundle bundle = client.Search<Condition>(new string[] { "_include=Condition.subject" });
 
             var patients = bundle.Entries.ByResourceType<Patient>();
             TestResult.Assert(patients.Count() > 0, "Search Conditions with _include=Condition.subject should have patients");
@@ -228,8 +228,33 @@ namespace Sprinkler.Tests
             TestResult.Assert(!bundle.Has(id0), "Search greater than quantity should not return lesser value.");
             TestResult.Assert(bundle.Has(id1), "Search greater than quantity should return greater value");
             TestResult.Assert(bundle.Has(id2), "Search greater than quantity should return greater value");
-            
+
         }
+
+        [SprinklerTest("SE23", "Search with quantifier :missing, on Patient.gender.")]
+        public void SearchPatientByGenderMissing()
+        {
+            var patients = client.Search<Patient>().Entries.ByResourceType<Patient>();
+            var patientsNoGender = patients.Where(p => p.Resource.Gender.CodeableConceptNull());
+            var nrOfPatientsWithMissingGender = patientsNoGender.Count();
+
+            Bundle actual = client.Search("Patient", new string[] { "gender:missing=true" });
+
+            HttpTests.AssertCorrectNumberOfResults(nrOfPatientsWithMissingGender, actual.Entries.Count(), String.Format("Expected {0} patients without gender, but got {1}.", nrOfPatientsWithMissingGender, actual.Entries.Count()));
+        }
+
     }
 
+    internal static class TestExtensions
+    {
+        public static bool CodeableConceptNull(this CodeableConcept cc)
+        {
+            return cc == null ||
+                cc.Text == null &&
+                (cc.Coding == null ||
+                cc.Coding.Count() == 0 ||
+                cc.Coding.All(c => c.Code == null));
+        }
+
+    }
 }
