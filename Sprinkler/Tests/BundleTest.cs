@@ -67,7 +67,7 @@ namespace Sprinkler.Tests
             if (!prac2Doc.Id.ToString().Contains(docResource.Author[1].Reference))
                 TestResult.Fail("doc reference's author[1] does not reference newly created practitioner #2");
 
-            var binRl = new ResourceIdentity(binDoc.SelfLink);
+            var binRl = new ResourceIdentity(binDoc.Id);
 
             if (!docResource.Text.Div.Contains(binRl.OperationPath.ToString()))
                 TestResult.Fail("href in narrative was not fixed to point to newly created binary");

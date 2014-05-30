@@ -131,11 +131,10 @@ namespace Sprinkler.Tests
                 };
                 client.Create(newCondition);
             }
-
-            var conditionsForPatients = conditions.Entries.ByResourceType<Condition>()
-                .Where(c => c.Resource.Subject != null && new ResourceIdentity(c.Resource.Subject.Url).Collection == "Patient");
-
-            var condition = conditionsForPatients.First();
+            
+            var condition = conditions.Entries.ByResourceType<Condition>()
+                .Where(c => c.Resource.Subject != null && new ResourceIdentity(c.Resource.Subject.Url).Collection == "Patient") 
+                .First();
 
             var patientRef = new ResourceIdentity(condition.Resource.Subject.Url);
 

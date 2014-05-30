@@ -94,6 +94,11 @@ namespace Sprinkler.Framework
             }
         }
 
+        public static void AssertNoContent(FhirClient client)
+        {
+            if (client.LastResponseDetails.Result != HttpStatusCode.NoContent)
+                TestResult.Fail(string.Format("Expected HTTP status {0}, received {1}", HttpStatusCode.NoContent, client.LastResponseDetails.Result));
+        }
 
         public static void AssertFail(FhirClient client, Action action, HttpStatusCode? expected = null)
         {

@@ -86,7 +86,7 @@ namespace Sprinkler.Tests
 
             HttpTests.AssertFail(client, () => { tags = client.Tags<Patient>("nonexisting"); }, HttpStatusCode.NotFound);
 
-            HttpTests.AssertFail(client, () => { tags = client.Tags<Patient>("nonexisting", "nonexisting"); }, HttpStatusCode.NotFound);
+            HttpTests.AssertFail(client, () => { tags = client.Tags<Patient>("nonexisting", "1"); }, HttpStatusCode.NotFound);
         }
 
         [SprinklerTest("TA03", "Update tags with update")]
@@ -209,10 +209,8 @@ namespace Sprinkler.Tests
             var update = new Tag(NUTAG, Tag.FHIRTAGSCHEME_GENERAL, "newVersion");
             var existing = new Tag(_otherTag, Tag.FHIRTAGSCHEME_GENERAL);
 
-            
-            HttpTests.AssertSuccess(
-                client, () => client.AffixTags(identity, new List<Tag> { update })
-                );
+            client.AffixTags(identity, new List<Tag> { update });
+            HttpTests.AssertNoContent(client);
 
             var result = client.Read<Patient>(latest.Id);
 
