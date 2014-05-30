@@ -94,6 +94,29 @@ namespace Sprinkler.Framework
             }
         }
 
+        /// <summary>
+        /// Use this AssertFail if you want to examine the result afterwards (typically: an OperationOutcome).
+        /// </summary>
+        /// <param name="client"></param>
+        /// <param name="action"></param>
+        /// <param name="result"></param>
+        /// <param name="expected"></param>
+        /// <returns></returns>
+        public static void AssertFail<TOut>(FhirClient client, Func<TOut> action, out TOut result, HttpStatusCode? expected = null)
+        {
+            result = default(TOut);
+            try
+            {
+                result = action();
+                TestResult.Fail("Unexpected success result (" + client.LastResponseDetails.Result + ")");
+            }
+            catch (FhirOperationException)
+            {
+                if (expected != null && client.LastResponseDetails.Result != expected)
+                    TestResult.Fail(String.Format("Expected http result {0} but got {1}", expected,
+                                            client.LastResponseDetails.Result));
+            }
+        }
 
         public static void AssertFail(FhirClient client, Action action, HttpStatusCode? expected = null)
         {
@@ -139,12 +162,13 @@ namespace Sprinkler.Framework
                 TestResult.Fail("Some id/selflinks in the bundle are relative");
         }
 
-        public static void AssertCorrectNumberOfResults(int expected, int actual, string message = "")
+        public static void AssertCorrectNumberOfResults(int expected, int actual, string messageFormat = "")
         {
+            string formattedMessage = String.Format(messageFormat, expected, actual);
             switch (actual.CompareTo(expected))
             {
-                case -1: TestResult.Fail("Too little results for " + message); return;
-                case 1: TestResult.Fail("Too many results for " + message); return;
+                case -1: TestResult.Fail("Too little results: " + messageFormat); return;
+                case 1: TestResult.Fail("Too many results: " + messageFormat); return;
                 default: return;
             }
         }

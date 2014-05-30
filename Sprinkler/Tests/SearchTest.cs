@@ -240,9 +240,33 @@ namespace Sprinkler.Tests
 
             Bundle actual = client.Search("Patient", new string[] { "gender:missing=true" });
 
-            HttpTests.AssertCorrectNumberOfResults(nrOfPatientsWithMissingGender, actual.Entries.Count(), String.Format("Expected {0} patients without gender, but got {1}.", nrOfPatientsWithMissingGender, actual.Entries.Count()));
+            HttpTests.AssertCorrectNumberOfResults(nrOfPatientsWithMissingGender, actual.Entries.Count(), "Expected {0} patients without gender, but got {1}.");
         }
 
+        [SprinklerTest("SE24", "Search with non-existing parameter.")]
+        public void SearchPatientByNonExistingParameter()
+        {
+            var nrOfAllPatients = client.Search<Patient>().Entries.Count();
+            Bundle actual = client.Search("Patient", new string[] { "bonkers=blabla" }); //Obviously a non-existing search parameter
+            var nrOfActualPatients = actual.Entries.ByResourceType<Patient>().Count();
+            HttpTests.AssertCorrectNumberOfResults(nrOfAllPatients, nrOfActualPatients, "Expected all patients ({0}) since the only search parameter is non-existing, but got {1}.");
+            var outcomes = actual.Entries.ByResourceType<OperationOutcome>();
+            TestResult.Assert(outcomes.Any(), "There should be an OperationOutcome.");
+            TestResult.Assert(outcomes.Any(o => o.Resource.Issue.Any(i => i.Severity == OperationOutcome.IssueSeverity.Warning)), "With a warning in it.");
+        }
+
+        [SprinklerTest("SE25", "Search with malformed parameter.")]
+        public void SearchPatientByMalformedParameter()
+        {
+            var nrOfAllPatients = client.Search<Patient>().Entries.Count();
+            Bundle actual = null;
+            HttpTests.AssertFail<Bundle>(client, () => client.Search("Patient", new string[] { "...=test" }), out actual, HttpStatusCode.BadRequest);
+            /* The statements below inspect the OperationOutcome in the result. But the FhirClient currently does not return any of the HttpStatusCode != OK.
+            var nrOfActualPatients = actual.Entries.ByResourceType<Patient>().Count();
+            HttpTests.AssertCorrectNumberOfResults(0, nrOfActualPatients, "Expected no patients ({0}) since the only search parameter is invalid, but got {1}.");
+            TestResult.Assert(actual.Entries.ByResourceType<OperationOutcome>().Any(), "There should be an OperationOutcome.");
+            */
+        }
     }
 
     internal static class TestExtensions
