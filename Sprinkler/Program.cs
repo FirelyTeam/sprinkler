@@ -23,7 +23,7 @@ namespace Sprinkler
         {
             //string FHIR_URL = "http://localhost.fiddler:1396/fhir";
             
-            string FHIR_URL = "http://localhost:1396/fhir";
+            // string FHIR_URL = "http://localhost:1396/fhir";
 
             //string FHIR_URL = "http://fhirlab.apphb.com/fhir";
             //string FHIR_URL = "http://localhost.:62124/fhir";
@@ -41,6 +41,7 @@ namespace Sprinkler
             //string FHIR_URL = "http://12.157.84.95/OnlineFHIRService/diagnosticorder";
             //string FHIR_URL = "http://12.157.84.54:8080/fhir";
             //string FHIR_URL = "http://12.157.84.197:18080/fhir";
+            string FHIR_URL = "http://localhost/blaze/fhir";
 
             if (args.Count() == 1) FHIR_URL = args[0];
 
