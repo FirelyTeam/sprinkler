@@ -22,7 +22,7 @@ namespace Sprinkler
         static void Main(string[] args)
         {
             //string FHIR_URL = "http://localhost.fiddler:1396/fhir";
-            
+
             // string FHIR_URL = "http://localhost:1396/fhir";
 
             //string FHIR_URL = "http://fhirlab.apphb.com/fhir";
@@ -48,7 +48,7 @@ namespace Sprinkler
             Console.WriteLine("Sprinkler v0.6 - Conformance test suite for FHIR 0.8 (DSTU1)");
 
             //TestSets.Connectathon6(FHIR_URL);
-            TestSets.Run(FHIR_URL);
+            TestSets.Run(FHIR_URL, "R0004");
             Console.WriteLine();
             Console.WriteLine("Ready (press any key to continue)");
             Console.ReadKey();

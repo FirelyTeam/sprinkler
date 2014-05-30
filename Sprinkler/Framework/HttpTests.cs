@@ -29,8 +29,8 @@ namespace Sprinkler.Framework
             AssertValidResourceContentTypePresent(client);
 
             var type = client.LastResponseDetails.ContentType;
-            if(ContentType.GetResourceFormatFromContentType(type) != format)
-               TestResult.Fail(String.Format("{0} is not acceptable when expecting {1}", type, format.ToString()));
+            if (ContentType.GetResourceFormatFromContentType(type) != format)
+                TestResult.Fail(String.Format("{0} is not acceptable when expecting {1}", type, format.ToString()));
         }
 
         public static void AssertBodyNotEmpty(FhirClient client)
@@ -75,7 +75,7 @@ namespace Sprinkler.Framework
 
             var rl = new ResourceIdentity(client.LastResponseDetails.Location);
 
-            if(rl.Id == null)
+            if (rl.Id == null)
                 TestResult.Fail("Location does not have an id in it");
 
             if (rl.VersionId == null)
@@ -114,7 +114,7 @@ namespace Sprinkler.Framework
                                             client.LastResponseDetails.Result));
             }
         }
-     
+
         public static void AssertValidResourceContentTypePresent(FhirClient client)
         {
             AssertContentTypePresent(client);
@@ -137,11 +137,21 @@ namespace Sprinkler.Framework
 
         public static void AssertEntryIdsArePresentAndAbsoluteUrls(Bundle b)
         {
-            if( b.Entries.Any(e => e.Id == null || e.SelfLink == null ))
+            if (b.Entries.Any(e => e.Id == null || e.SelfLink == null))
                 TestResult.Fail("Some id/selflinks in the bundle are null");
 
-            if( !b.Entries.All(e => e.Id.IsAbsoluteUri && e.SelfLink.IsAbsoluteUri) )
+            if (!b.Entries.All(e => e.Id.IsAbsoluteUri && e.SelfLink.IsAbsoluteUri))
                 TestResult.Fail("Some id/selflinks in the bundle are relative");
+        }
+
+        public static void AssertCorrectNumberOfResults(int expected, int actual, string message = "")
+        {
+            switch (actual.CompareTo(expected))
+            {
+                case -1: TestResult.Fail("Too little results for " + message); return;
+                case 1: TestResult.Fail("Too many results for " + message); return;
+                default: return;
+            }
         }
 
         internal static void AssertHttpOk(FhirClient client)
@@ -158,5 +168,6 @@ namespace Sprinkler.Framework
                 history.Links.LastLink == null)
                 TestResult.Fail("Expecting first, next and last link to be present");
         }
+
     }
 }
