@@ -135,17 +135,30 @@ namespace Sprinkler.Tests
             var conditionsForPatients = conditions.Entries.ByResourceType<Condition>()
                 .Where(c => c.Resource.Subject != null && new ResourceIdentity(c.Resource.Subject.Url).Collection == "Patient");
 
-            var condition = conditionsForPatients.First();
+            //We want a condition on a patient that has a name, for the last test in this method.
+            ResourceIdentity patientRef = null;
+            ResourceEntry<Patient> patient = null;
+            string patFirstName = "";
 
-            var patientRef = new ResourceIdentity(condition.Resource.Subject.Url);
+            foreach (var cond in conditionsForPatients)
+            {
+                try
+                {
+                    patientRef = new ResourceIdentity(cond.Resource.Subject.Url);
+                    patient = client.Read<Patient>(patientRef);
+                    patFirstName = patient.Resource.Name[0].Family.First();
+                    break;
+                }
+                catch (Exception)
+                {
+                    // Apparently this patient has no name, try again.
+                }
+            }
+            if (patient == null)
+                TestResult.Fail("failed to find patient condition is referring to");
 
             var allConditionsForThisPatient = conditionsForPatients.Where(c => c.Resource.Subject != null && c.Resource.Subject.Url == patientRef);
             var nrOfConditionsForThisPatient = allConditionsForThisPatient.Count();
-
-            var patient = client.Read<Patient>(patientRef);
-
-            if (patient == null)
-                TestResult.Fail("failed to find patient condition is referring to");
 
             var result = client.Search<Condition>(new string[] { "subject=" + patientRef });
             HttpTests.AssertEntryIdsArePresentAndAbsoluteUrls(result);
@@ -163,8 +176,6 @@ namespace Sprinkler.Tests
 
             HttpTests.AssertCorrectNumberOfResults(nrOfConditionsForThisPatient, result.Entries.Count(), "conditions for this patient (using subject._id=)");
 
-            string patFirstName = patient.Resource.Name[0].Family.First();
-            //.Substring(2, 3);
             var param = "subject.name=" + patFirstName;
 
             result = client.Search<Condition>(new string[] { param });
@@ -234,20 +245,26 @@ namespace Sprinkler.Tests
         [SprinklerTest("SE23", "Search with quantifier :missing, on Patient.gender.")]
         public void SearchPatientByGenderMissing()
         {
-            var patients = client.Search<Patient>().Entries.ByResourceType<Patient>();
-            var patientsNoGender = patients.Where(p => p.Resource.Gender.CodeableConceptNull());
+            var patients = new List<ResourceEntry<Patient>>();
+            var bundle = client.Search<Patient>();
+            while (bundle != null && bundle.Entries.ByResourceType<Patient>().Count() > 0)
+            {
+                patients.AddRange(bundle.Entries.ByResourceType<Patient>());
+                bundle = client.Continue(bundle);
+            }
+            var patientsNoGender = patients.Where(p => p.Resource.Gender == null);
             var nrOfPatientsWithMissingGender = patientsNoGender.Count();
 
-            Bundle actual = client.Search("Patient", new string[] { "gender:missing=true" });
+            var actual = client.Search<Patient>(new string[] { "gender:missing=true" }, pageSize: 500).Entries.ByResourceType<Patient>();
 
-            HttpTests.AssertCorrectNumberOfResults(nrOfPatientsWithMissingGender, actual.Entries.Count(), "Expected {0} patients without gender, but got {1}.");
+            HttpTests.AssertCorrectNumberOfResults(nrOfPatientsWithMissingGender, actual.Count(), "Expected {0} patients without gender, but got {1}.");
         }
 
         [SprinklerTest("SE24", "Search with non-existing parameter.")]
         public void SearchPatientByNonExistingParameter()
         {
-            var nrOfAllPatients = client.Search<Patient>().Entries.Count();
-            Bundle actual = client.Search("Patient", new string[] { "bonkers=blabla" }); //Obviously a non-existing search parameter
+            var nrOfAllPatients = client.Search<Patient>().Entries.ByResourceType<Patient>().Count();
+            Bundle actual = client.Search("Patient", criteria: new string[] { "bonkers=blabla" }); //Obviously a non-existing search parameter
             var nrOfActualPatients = actual.Entries.ByResourceType<Patient>().Count();
             HttpTests.AssertCorrectNumberOfResults(nrOfAllPatients, nrOfActualPatients, "Expected all patients ({0}) since the only search parameter is non-existing, but got {1}.");
             var outcomes = actual.Entries.ByResourceType<OperationOutcome>();

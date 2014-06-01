@@ -167,8 +167,8 @@ namespace Sprinkler.Framework
             string formattedMessage = String.Format(messageFormat, expected, actual);
             switch (actual.CompareTo(expected))
             {
-                case -1: TestResult.Fail("Too little results: " + messageFormat); return;
-                case 1: TestResult.Fail("Too many results: " + messageFormat); return;
+                case -1: TestResult.Fail("Too little results: " + formattedMessage); return;
+                case 1: TestResult.Fail("Too many results: " + formattedMessage); return;
                 default: return;
             }
         }

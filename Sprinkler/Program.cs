@@ -47,7 +47,7 @@ namespace Sprinkler
             Console.WriteLine("Sprinkler v0.6 - Conformance test suite for FHIR 0.8 (DSTU1)");
 
             //TestSets.Connectathon6(FHIR_URL);
-            TestSets.Run(FHIR_URL, "SE23");
+            TestSets.Run(FHIR_URL);
             Console.WriteLine();
             Console.WriteLine("Ready (press any key to continue)");
             Console.ReadKey();

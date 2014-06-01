@@ -62,14 +62,14 @@ namespace Sprinkler.Tests
         [SprinklerTest("R003", "Read non-existing resource id")]        
         public void TryReadNonExistingResource()
         {
-            HttpTests.AssertFail(client, () => client.Read<Patient>("3141592unlikely"), HttpStatusCode.NotFound);
+            HttpTests.AssertFail(client, () => client.Read<Patient>("Patient/3141592unlikely"), HttpStatusCode.NotFound);
         }
 
         [SprinklerTest("R004", "Read bad formatted resource id")]
         public void TryReadBadFormattedResourceId()
         {
             //Test for Spark issue #7, https://github.com/furore-fhir/spark/issues/7
-            HttpTests.AssertFail(client, () => client.Read<Patient>("ID-may-not-contain-CAPITALS"), HttpStatusCode.BadRequest);
+            HttpTests.AssertFail(client, () => client.Read<Patient>("Patient/ID-may-not-contain-CAPITALS"), HttpStatusCode.BadRequest);
         }
     }
 }
