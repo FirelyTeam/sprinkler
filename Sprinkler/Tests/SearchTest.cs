@@ -23,10 +23,10 @@ namespace Sprinkler.Tests
     {
         private Bundle allPatients;
 
-       // [SprinklerTest("search full system without criteria")]
+        // [SprinklerTest("search full system without criteria")]
         public void SearchWithoutCriteria()
         {
-            var result = client.WholeSystemSearch(pageSize:10);
+            var result = client.WholeSystemSearch(pageSize: 10);
         }
 
         [SprinklerTest("SE01", "Search resource type without criteria")]
@@ -38,10 +38,10 @@ namespace Sprinkler.Tests
             if (result.Entries.Count == 0)
                 TestResult.Fail("search did not return any results");
 
-            if(result.Entries.Count > 10)
+            if (result.Entries.Count > 10)
                 TestResult.Fail("search returned more patients than specified in _count");
 
-            if(result.Entries.ByResourceType<Patient>().Count() ==0)
+            if (result.Entries.ByResourceType<Patient>().Count() == 0)
                 TestResult.Fail("search returned entries other than patient");
 
             allPatients = result;
@@ -54,7 +54,7 @@ namespace Sprinkler.Tests
         }
 
 
-        
+
 
         [SprinklerTest("SE03", "Search patient resource on partial familyname")]
         public void SearchResourcesWithNameCriterium()
@@ -72,8 +72,8 @@ namespace Sprinkler.Tests
             // Take the first three characters
             name = name.Substring(0, 3);
 
-            
-            var result = client.Search<Patient>(new string[] { "family="+name });
+
+            var result = client.Search<Patient>(new string[] { "family=" + name });
             HttpTests.AssertEntryIdsArePresentAndAbsoluteUrls(result);
 
             if (result.Entries.Count == 0)
@@ -82,7 +82,7 @@ namespace Sprinkler.Tests
             // Each patient returned should have a family name with the
             // criterium
             var names = result.Entries.ByResourceType<Patient>()
-                .Where(p=>p.Resource.Name != null)
+                .Where(p => p.Resource.Name != null)
                    .SelectMany(p => p.Resource.Name)
                     .Where(hn => hn.Family != null)
                         .SelectMany(hn => hn.Family);
@@ -109,7 +109,7 @@ namespace Sprinkler.Tests
             bool found = bundle.ResourcesOf<Patient>().Where(p => p.HasGiven("Fester")).Count() > 0;
 
             TestResult.Assert(found, "Patient was not found with given name");
-            
+
         }
 
         [SprinklerTest("SE05", "Search condition by subject (patient) reference")]
@@ -131,34 +131,53 @@ namespace Sprinkler.Tests
                 };
                 client.Create(newCondition);
             }
-            
-            var condition = conditions.Entries.ByResourceType<Condition>()
-                .Where(c => c.Resource.Subject != null && new ResourceIdentity(c.Resource.Subject.Url).Collection == "Patient") 
-                .First();
 
-            var patientRef = new ResourceIdentity(condition.Resource.Subject.Url);
+            var conditionsForPatients = conditions.Entries.ByResourceType<Condition>()
+                .Where(c => c.Resource.Subject != null && new ResourceIdentity(c.Resource.Subject.Url).Collection == "Patient");
 
-            var patient = client.Read<Patient>(patientRef);
+            //We want a condition on a patient that has a name, for the last test in this method.
+            ResourceIdentity patientRef = null;
+            ResourceEntry<Patient> patient = null;
+            string patFirstName = "";
 
-            if(patient == null)
+            foreach (var cond in conditionsForPatients)
+            {
+                try
+                {
+                    patientRef = new ResourceIdentity(cond.Resource.Subject.Url);
+                    patient = client.Read<Patient>(patientRef);
+                    patFirstName = patient.Resource.Name[0].Family.First();
+                    break;
+                }
+                catch (Exception)
+                {
+                    // Apparently this patient has no name, try again.
+                }
+            }
+            if (patient == null)
                 TestResult.Fail("failed to find patient condition is referring to");
+
+            var allConditionsForThisPatient = conditionsForPatients.Where(c => c.Resource.Subject != null && c.Resource.Subject.Url == patientRef);
+            var nrOfConditionsForThisPatient = allConditionsForThisPatient.Count();
 
             var result = client.Search<Condition>(new string[] { "subject=" + patientRef });
             HttpTests.AssertEntryIdsArePresentAndAbsoluteUrls(result);
 
-            if (result.Entries.Count() == 0)
-                TestResult.Fail("failed to find any conditions (using subject=)");
+            HttpTests.AssertCorrectNumberOfResults(nrOfConditionsForThisPatient, result.Entries.Count(), "conditions for this patient (using subject=)");
+
+            //Test for issue #6, https://github.com/furore-fhir/spark/issues/6
+            result = client.Search<Condition>(new string[] { "subject:Patient=" + patientRef });
+            HttpTests.AssertEntryIdsArePresentAndAbsoluteUrls(result);
+
+            HttpTests.AssertCorrectNumberOfResults(nrOfConditionsForThisPatient, result.Entries.Count(), "conditions for this patient (using subject:Patient=)");
 
             result = client.Search<Condition>(new string[] { "subject._id=" + patientRef.Id });
             HttpTests.AssertEntryIdsArePresentAndAbsoluteUrls(result);
 
-            if (result.Entries.Count() == 0)
-                TestResult.Fail("failed to find any conditions (using subject._id=)");
+            HttpTests.AssertCorrectNumberOfResults(nrOfConditionsForThisPatient, result.Entries.Count(), "conditions for this patient (using subject._id=)");
 
-            string patFirstName = patient.Resource.Name[0].Family.First();
-            //.Substring(2, 3);
             var param = "subject.name=" + patFirstName;
-            
+
             result = client.Search<Condition>(new string[] { param });
             HttpTests.AssertEntryIdsArePresentAndAbsoluteUrls(result);
 
@@ -166,8 +185,8 @@ namespace Sprinkler.Tests
                 TestResult.Fail("failed to find any conditions (using subject.name)");
 
             string identifier = patient.Resource.Identifier[0].Value;
-            result = client.Search<Condition>(new string[] {  "subject.identifier=" + identifier });
-            
+            result = client.Search<Condition>(new string[] { "subject.identifier=" + identifier });
+
             if (result.Entries.Count() == 0)
                 TestResult.Fail("failed to find any conditions (using subject.identifier)");
         }
@@ -175,19 +194,19 @@ namespace Sprinkler.Tests
         [SprinklerTest("SE06", "Search with includes")]
         public void SearchWithIncludes()
         {
-            Bundle bundle  = client.Search<Condition>(new string[] { "_include=Condition.subject" });
+            Bundle bundle = client.Search<Condition>(new string[] { "_include=Condition.subject" });
 
             var patients = bundle.Entries.ByResourceType<Patient>();
             TestResult.Assert(patients.Count() > 0, "Search Conditions with _include=Condition.subject should have patients");
         }
 
-        private string createObservation(decimal value, string units = "mmol")
+        private string createObservation(decimal value)
         {
             Observation observation = new Observation();
             observation.Status = Observation.ObservationStatus.Preliminary;
             observation.Reliability = Observation.ObservationReliability.Questionable;
             observation.Name = new CodeableConcept("http://loinc.org", "2164-2");
-            observation.Value = new Quantity() { System = new Uri("http://unitsofmeasure.org"), Value = value, Units = units, Code = units };
+            observation.Value = new Quantity() { System = new Uri("http://unitofmeasure.org"), Value = value, Units = "mmol" };
             observation.BodySite = new CodeableConcept("http://snomed.info/sct", "182756003");
 
             ResourceEntry<Observation> entry = client.Create<Observation>(observation, null, true);
@@ -220,26 +239,63 @@ namespace Sprinkler.Tests
             TestResult.Assert(!bundle.Has(id0), "Search greater than quantity should not return lesser value.");
             TestResult.Assert(bundle.Has(id1), "Search greater than quantity should return greater value");
             TestResult.Assert(bundle.Has(id2), "Search greater than quantity should return greater value");
+
         }
 
-        [SprinklerTest("SE23", "Search for quantity (in observation) - unit conversion")]
-        public void SearchQuantityWithUcum()
+        [SprinklerTest("SE23", "Search with quantifier :missing, on Patient.gender.")]
+        public void SearchPatientByGenderMissing()
         {
-            string id;
-            Bundle bundle;
+            var patients = new List<ResourceEntry<Patient>>();
+            var bundle = client.Search<Patient>();
+            while (bundle != null && bundle.Entries.ByResourceType<Patient>().Count() > 0)
+            {
+                patients.AddRange(bundle.Entries.ByResourceType<Patient>());
+                bundle = client.Continue(bundle);
+            }
+            var patientsNoGender = patients.Where(p => p.Resource.Gender == null);
+            var nrOfPatientsWithMissingGender = patientsNoGender.Count();
 
-            id = createObservation(4, "kg");
-            bundle = client.Search("Observation", new string[] { "value-quantity=4000||g" });
-            TestResult.Assert(!bundle.Has(id), "Search on quantity result should not return an observation with a less precise value.");
-            
-            id = createObservation(4000, "g");
-            bundle = client.Search("Observation", new string[] { "value-quantity=4||kg" });
-            TestResult.Assert(bundle.Has(id), "Search on quantity should return an observation with a more precise value.");
+            var actual = client.Search<Patient>(new string[] { "gender:missing=true" }, pageSize: 500).Entries.ByResourceType<Patient>();
 
-            id = createObservation(7, "N");
-            bundle = client.Search("Observation", new string[] { "value-quantity=7||kg.m/s2" });
-            TestResult.Assert(bundle.Has(id), "Search on quantity should return an observation with a more precise value.");
+            HttpTests.AssertCorrectNumberOfResults(nrOfPatientsWithMissingGender, actual.Count(), "Expected {0} patients without gender, but got {1}.");
+        }
+
+        [SprinklerTest("SE24", "Search with non-existing parameter.")]
+        public void SearchPatientByNonExistingParameter()
+        {
+            var nrOfAllPatients = client.Search<Patient>().Entries.ByResourceType<Patient>().Count();
+            Bundle actual = client.Search("Patient", criteria: new string[] { "bonkers=blabla" }); //Obviously a non-existing search parameter
+            var nrOfActualPatients = actual.Entries.ByResourceType<Patient>().Count();
+            HttpTests.AssertCorrectNumberOfResults(nrOfAllPatients, nrOfActualPatients, "Expected all patients ({0}) since the only search parameter is non-existing, but got {1}.");
+            var outcomes = actual.Entries.ByResourceType<OperationOutcome>();
+            TestResult.Assert(outcomes.Any(), "There should be an OperationOutcome.");
+            TestResult.Assert(outcomes.Any(o => o.Resource.Issue.Any(i => i.Severity == OperationOutcome.IssueSeverity.Warning)), "With a warning in it.");
+        }
+
+        [SprinklerTest("SE25", "Search with malformed parameter.")]
+        public void SearchPatientByMalformedParameter()
+        {
+            var nrOfAllPatients = client.Search<Patient>().Entries.Count();
+            Bundle actual = null;
+            HttpTests.AssertFail<Bundle>(client, () => client.Search("Patient", new string[] { "...=test" }), out actual, HttpStatusCode.BadRequest);
+            /* The statements below inspect the OperationOutcome in the result. But the FhirClient currently does not return any of the HttpStatusCode != OK.
+            var nrOfActualPatients = actual.Entries.ByResourceType<Patient>().Count();
+            HttpTests.AssertCorrectNumberOfResults(0, nrOfActualPatients, "Expected no patients ({0}) since the only search parameter is invalid, but got {1}.");
+            TestResult.Assert(actual.Entries.ByResourceType<OperationOutcome>().Any(), "There should be an OperationOutcome.");
+            */
         }
     }
 
+    internal static class TestExtensions
+    {
+        public static bool CodeableConceptNull(this CodeableConcept cc)
+        {
+            return cc == null ||
+                cc.Text == null &&
+                (cc.Coding == null ||
+                cc.Coding.Count() == 0 ||
+                cc.Coding.All(c => c.Code == null));
+        }
+
+    }
 }

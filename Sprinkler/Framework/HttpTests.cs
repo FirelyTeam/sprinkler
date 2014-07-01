@@ -29,8 +29,8 @@ namespace Sprinkler.Framework
             AssertValidResourceContentTypePresent(client);
 
             var type = client.LastResponseDetails.ContentType;
-            if(ContentType.GetResourceFormatFromContentType(type) != format)
-               TestResult.Fail(String.Format("{0} is not acceptable when expecting {1}", type, format.ToString()));
+            if (ContentType.GetResourceFormatFromContentType(type) != format)
+                TestResult.Fail(String.Format("{0} is not acceptable when expecting {1}", type, format.ToString()));
         }
 
         public static void AssertBodyNotEmpty(FhirClient client)
@@ -75,7 +75,7 @@ namespace Sprinkler.Framework
 
             var rl = new ResourceIdentity(client.LastResponseDetails.Location);
 
-            if(rl.Id == null)
+            if (rl.Id == null)
                 TestResult.Fail("Location does not have an id in it");
 
             if (rl.VersionId == null)
@@ -94,6 +94,29 @@ namespace Sprinkler.Framework
             }
         }
 
+        /// <summary>
+        /// Use this AssertFail if you want to examine the result afterwards (typically: an OperationOutcome).
+        /// </summary>
+        /// <param name="client"></param>
+        /// <param name="action"></param>
+        /// <param name="result"></param>
+        /// <param name="expected"></param>
+        /// <returns></returns>
+        public static void AssertFail<TOut>(FhirClient client, Func<TOut> action, out TOut result, HttpStatusCode? expected = null)
+        {
+            result = default(TOut);
+            try
+            {
+                result = action();
+                TestResult.Fail("Unexpected success result (" + client.LastResponseDetails.Result + ")");
+            }
+            catch (FhirOperationException)
+            {
+                if (expected != null && client.LastResponseDetails.Result != expected)
+                    TestResult.Fail(String.Format("Expected http result {0} but got {1}", expected,
+                                            client.LastResponseDetails.Result));
+            }
+        }
 
         public static void AssertFail(FhirClient client, Action action, HttpStatusCode? expected = null)
         {
@@ -109,7 +132,7 @@ namespace Sprinkler.Framework
                                             client.LastResponseDetails.Result));
             }
         }
-     
+
         public static void AssertValidResourceContentTypePresent(FhirClient client)
         {
             AssertContentTypePresent(client);
@@ -132,11 +155,22 @@ namespace Sprinkler.Framework
 
         public static void AssertEntryIdsArePresentAndAbsoluteUrls(Bundle b)
         {
-            if( b.Entries.Any(e => e.Id == null || e.SelfLink == null ))
+            if (b.Entries.Any(e => e.Id == null || e.SelfLink == null))
                 TestResult.Fail("Some id/selflinks in the bundle are null");
 
-            if( !b.Entries.All(e => e.Id.IsAbsoluteUri && e.SelfLink.IsAbsoluteUri) )
+            if (!b.Entries.All(e => e.Id.IsAbsoluteUri && e.SelfLink.IsAbsoluteUri))
                 TestResult.Fail("Some id/selflinks in the bundle are relative");
+        }
+
+        public static void AssertCorrectNumberOfResults(int expected, int actual, string messageFormat = "")
+        {
+            string formattedMessage = String.Format(messageFormat, expected, actual);
+            switch (actual.CompareTo(expected))
+            {
+                case -1: TestResult.Fail("Too little results: " + formattedMessage); return;
+                case 1: TestResult.Fail("Too many results: " + formattedMessage); return;
+                default: return;
+            }
         }
 
         internal static void AssertHttpOk(FhirClient client)
@@ -153,5 +187,6 @@ namespace Sprinkler.Framework
                 history.Links.LastLink == null)
                 TestResult.Fail("Expecting first, next and last link to be present");
         }
+
     }
 }

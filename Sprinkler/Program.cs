@@ -22,7 +22,7 @@ namespace Sprinkler
         static void Main(string[] args)
         {
             //string FHIR_URL = "http://localhost.fiddler:1396/fhir";
-            
+
             string FHIR_URL = "http://localhost:1396/fhir";
 
             //string FHIR_URL = "http://fhirlab.apphb.com/fhir";
@@ -48,7 +48,6 @@ namespace Sprinkler
 
             //TestSets.Connectathon6(FHIR_URL);
             TestSets.Run(FHIR_URL);
-            //TestSets.MySelection(FHIR_URL);
             Console.WriteLine();
             Console.WriteLine("Ready (press any key to continue)");
             Console.ReadKey();

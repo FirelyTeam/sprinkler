@@ -38,13 +38,7 @@ namespace Sprinkler.Tests
         {
             Patient p = NewPatient("Emerald", "Caro");
             ResourceEntry<Patient> entry = client.Create(p, null, false);
-/* 
- * Copyright (c) 2014, Furore (info@furore.com) and contributors
- * See the file CONTRIBUTORS for details.
- * 
- * This file is licensed under the BSD 3-Clause license
- * available at https://raw.github.com/furore-fhir/sprinkler/master/LICENSE
- */            string id = entry.GetBasicId();
+            string id = entry.GetBasicId();
 
             var pat = client.Read<Patient>(id);
 
@@ -68,8 +62,14 @@ namespace Sprinkler.Tests
         [SprinklerTest("R003", "Read non-existing resource id")]        
         public void TryReadNonExistingResource()
         {
-            HttpTests.AssertFail(client, () => client.Read<Patient>("3141592unlikely"), HttpStatusCode.NotFound);
+            HttpTests.AssertFail(client, () => client.Read<Patient>("Patient/3141592unlikely"), HttpStatusCode.NotFound);
         }
 
+        [SprinklerTest("R004", "Read bad formatted resource id")]
+        public void TryReadBadFormattedResourceId()
+        {
+            //Test for Spark issue #7, https://github.com/furore-fhir/spark/issues/7
+            HttpTests.AssertFail(client, () => client.Read<Patient>("Patient/ID-may-not-contain-CAPITALS"), HttpStatusCode.BadRequest);
+        }
     }
 }
