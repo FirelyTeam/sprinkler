@@ -91,5 +91,14 @@ namespace Sprinkler
             // Track 2
             tester.Run("QU01", "QU02", "QU03", "QU04");
         }
+
+        public static void MySelection(string url)
+        {
+            FhirClient client = getClient(url);
+            TestRunner tester = new TestRunner(client, LogTest);
+
+            Console.WriteLine("Running tests for personal debugging");
+            tester.Run("SE23");
+        }
     }
 }

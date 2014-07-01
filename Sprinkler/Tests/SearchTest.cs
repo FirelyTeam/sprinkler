@@ -181,13 +181,13 @@ namespace Sprinkler.Tests
             TestResult.Assert(patients.Count() > 0, "Search Conditions with _include=Condition.subject should have patients");
         }
 
-        private string createObservation(decimal value)
+        private string createObservation(decimal value, string units = "mmol")
         {
             Observation observation = new Observation();
             observation.Status = Observation.ObservationStatus.Preliminary;
             observation.Reliability = Observation.ObservationReliability.Questionable;
             observation.Name = new CodeableConcept("http://loinc.org", "2164-2");
-            observation.Value = new Quantity() { System = new Uri("http://unitofmeasure.org"), Value = value, Units = "mmol" };
+            observation.Value = new Quantity() { System = new Uri("http://unitsofmeasure.org"), Value = value, Units = units, Code = units };
             observation.BodySite = new CodeableConcept("http://snomed.info/sct", "182756003");
 
             ResourceEntry<Observation> entry = client.Create<Observation>(observation, null, true);
@@ -220,7 +220,25 @@ namespace Sprinkler.Tests
             TestResult.Assert(!bundle.Has(id0), "Search greater than quantity should not return lesser value.");
             TestResult.Assert(bundle.Has(id1), "Search greater than quantity should return greater value");
             TestResult.Assert(bundle.Has(id2), "Search greater than quantity should return greater value");
+        }
+
+        [SprinklerTest("SE23", "Search for quantity (in observation) - unit conversion")]
+        public void SearchQuantityWithUcum()
+        {
+            string id;
+            Bundle bundle;
+
+            id = createObservation(4, "kg");
+            bundle = client.Search("Observation", new string[] { "value-quantity=4000||g" });
+            TestResult.Assert(!bundle.Has(id), "Search on quantity result should not return an observation with a less precise value.");
             
+            id = createObservation(4000, "g");
+            bundle = client.Search("Observation", new string[] { "value-quantity=4||kg" });
+            TestResult.Assert(bundle.Has(id), "Search on quantity should return an observation with a more precise value.");
+
+            id = createObservation(7, "N");
+            bundle = client.Search("Observation", new string[] { "value-quantity=7||kg.m/s2" });
+            TestResult.Assert(bundle.Has(id), "Search on quantity should return an observation with a more precise value.");
         }
     }
 
