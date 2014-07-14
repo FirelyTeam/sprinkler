@@ -5,14 +5,13 @@
  * This file is licensed under the BSD 3-Clause license
  * available at https://raw.github.com/furore-fhir/sprinkler/master/LICENSE
  */
+
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Net;
-using Hl7.Fhir.Support;
-using Hl7.Fhir.Rest;
+using System.Text;
 using Hl7.Fhir.Model;
+using Hl7.Fhir.Rest;
 
 namespace Sprinkler.Framework
 {
@@ -28,9 +27,9 @@ namespace Sprinkler.Framework
         {
             AssertValidResourceContentTypePresent(client);
 
-            var type = client.LastResponseDetails.ContentType;
+            string type = client.LastResponseDetails.ContentType;
             if (ContentType.GetResourceFormatFromContentType(type) != format)
-                TestResult.Fail(String.Format("{0} is not acceptable when expecting {1}", type, format.ToString()));
+                TestResult.Fail(String.Format("{0} is not acceptable when expecting {1}", type, format));
         }
 
         public static void AssertBodyNotEmpty(FhirClient client)
@@ -95,14 +94,15 @@ namespace Sprinkler.Framework
         }
 
         /// <summary>
-        /// Use this AssertFail if you want to examine the result afterwards (typically: an OperationOutcome).
+        ///     Use this AssertFail if you want to examine the result afterwards (typically: an OperationOutcome).
         /// </summary>
         /// <param name="client"></param>
         /// <param name="action"></param>
         /// <param name="result"></param>
         /// <param name="expected"></param>
         /// <returns></returns>
-        public static void AssertFail<TOut>(FhirClient client, Func<TOut> action, out TOut result, HttpStatusCode? expected = null)
+        public static void AssertFail<TOut>(FhirClient client, Func<TOut> action, out TOut result,
+            HttpStatusCode? expected = null)
         {
             result = default(TOut);
             try
@@ -114,7 +114,7 @@ namespace Sprinkler.Framework
             {
                 if (expected != null && client.LastResponseDetails.Result != expected)
                     TestResult.Fail(String.Format("Expected http result {0} but got {1}", expected,
-                                            client.LastResponseDetails.Result));
+                        client.LastResponseDetails.Result));
             }
         }
 
@@ -129,7 +129,7 @@ namespace Sprinkler.Framework
             {
                 if (expected != null && client.LastResponseDetails.Result != expected)
                     TestResult.Fail(String.Format("Expected http result {0} but got {1}", expected,
-                                            client.LastResponseDetails.Result));
+                        client.LastResponseDetails.Result));
             }
         }
 
@@ -138,7 +138,8 @@ namespace Sprinkler.Framework
             AssertContentTypePresent(client);
 
             if (!ContentType.IsValidResourceContentType(client.LastResponseDetails.ContentType))
-                TestResult.Fail("expected xml or json content type, but received " + client.LastResponseDetails.ContentType);
+                TestResult.Fail("expected xml or json content type, but received " +
+                                client.LastResponseDetails.ContentType);
             if (client.LastResponseDetails.CharacterEncoding != Encoding.UTF8)
                 TestResult.Fail("content type does not specify UTF8");
         }
@@ -148,7 +149,8 @@ namespace Sprinkler.Framework
             AssertContentTypePresent(client);
 
             if (!ContentType.IsValidBundleContentType(client.LastResponseDetails.ContentType))
-                TestResult.Fail("expected Atom xml or json bundle content type, but received " + client.LastResponseDetails.ContentType);
+                TestResult.Fail("expected Atom xml or json bundle content type, but received " +
+                                client.LastResponseDetails.ContentType);
             if (client.LastResponseDetails.CharacterEncoding != Encoding.UTF8)
                 TestResult.Fail("content type does not specify UTF8");
         }
@@ -167,9 +169,14 @@ namespace Sprinkler.Framework
             string formattedMessage = String.Format(messageFormat, expected, actual);
             switch (actual.CompareTo(expected))
             {
-                case -1: TestResult.Fail("Too little results: " + formattedMessage); return;
-                case 1: TestResult.Fail("Too many results: " + formattedMessage); return;
-                default: return;
+                case -1:
+                    TestResult.Fail("Too little results: " + formattedMessage);
+                    return;
+                case 1:
+                    TestResult.Fail("Too many results: " + formattedMessage);
+                    return;
+                default:
+                    return;
             }
         }
 
@@ -177,7 +184,7 @@ namespace Sprinkler.Framework
         {
             if (client.LastResponseDetails.Result != HttpStatusCode.OK)
                 TestResult.Fail("Got status code " + client.LastResponseDetails.Result +
-                    ". Did you install the standard test-set?");
+                                ". Did you install the standard test-set?");
         }
 
         internal static void AssertHasAllForwardNavigationLinks(Bundle history)
@@ -187,6 +194,5 @@ namespace Sprinkler.Framework
                 history.Links.LastLink == null)
                 TestResult.Fail("Expecting first, next and last link to be present");
         }
-
     }
 }

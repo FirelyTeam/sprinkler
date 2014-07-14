@@ -60,6 +60,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Framework\TestResults.cs" />
     <Compile Include="TestSets.cs" />
     <Compile Include="Framework\SprinklerTestClass.cs" />
     <Compile Include="Framework\TestAttributes.cs" />
@@ -105,6 +106,12 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="conn5-21-cid-example.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="xmlToHtml.xslt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <SubType>Designer</SubType>
+    </None>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

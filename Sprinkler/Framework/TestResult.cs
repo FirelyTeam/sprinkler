@@ -6,33 +6,108 @@
  * available at https://raw.github.com/furore-fhir/sprinkler/master/LICENSE
  */
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+using System.Globalization;
+using System.Xml;
+using System.Xml.Schema;
+using System.Xml.Serialization;
+using Hl7.Fhir.Rest;
 
 namespace Sprinkler.Framework
 {
-    public enum TestOutcome { Success, Fail, Skipped }
+    public enum TestOutcome
+    {
+        Success,
+        Fail,
+        Skipped
+    }
 
-    public class TestFailedException : Exception
+    [Serializable]
+    public class TestFailedException : Exception, IXmlSerializable
     {
         public TestOutcome Outcome = TestOutcome.Fail;
-        public TestFailedException(string message) : base(message) { }
+
+        // parameterless constructor for serialization
+        public TestFailedException()
+        {
+        }
+
+        // overloaded ctor: message
+        public TestFailedException(string message) : base(message)
+        {
+        }
+
+        // overloaded ctor: outcome
         public TestFailedException(TestOutcome outcome)
             : base(outcome.ToString())
         {
-            this.Outcome = outcome;
+            Outcome = outcome;
         }
-        public TestFailedException(string message, Exception inner) : base(message, inner) { }
+
+        // overloaded ctor: message, inner exception
+        public TestFailedException(string message, Exception inner) : base(message, inner)
+        {
+        }
+
+        public XmlSchema GetSchema()
+        {
+            return null;
+        }
+
+        public void ReadXml(XmlReader reader)
+        {
+            throw new NotImplementedException();
+        }
+
+        // used by serialization
+        public void WriteXml(XmlWriter writer)
+        {
+            WriteXml(writer, this);
+        }
+
+        private static void WriteXml(XmlWriter writer, Exception exception)
+        {
+            writer.WriteStartElement("Message");
+            if (exception is FhirOperationException)
+            {
+                var foe = exception as FhirOperationException;
+                if (foe.Outcome != null && foe.Outcome.Issue != null)
+                {
+                    var isuenr = 1;
+                    foreach (var issue in foe.Outcome.Issue)
+                    {
+                        if (!issue.Details.StartsWith("Stack"))
+                        {
+                            writer.WriteStartElement("Stack");
+                            writer.WriteAttributeString("issue", isuenr.ToString(CultureInfo.CurrentCulture));
+                            writer.WriteString(issue.Details);
+                            writer.WriteEndElement();
+                        }
+                        isuenr++;
+                    }
+                }
+            }
+            else
+            {
+                writer.WriteString(exception.Message);
+            }
+            exception = exception.InnerException;
+            if (exception != null)
+            {
+                writer.WriteStartElement("Inner");
+                WriteXml(writer, exception);
+                writer.WriteEndElement();
+            }
+            writer.WriteEndElement();
+        }
     }
-   
+
     public class TestResult
     {
         public string Category { get; set; }
         public string Code { get; set; }
         public string Title { get; set; }
         public TestOutcome Outcome { get; set; }
-        public Exception Exception { get; set; }
+        public TestFailedException Exception { get; set; }
 
         public static void Skip()
         {
@@ -55,5 +130,4 @@ namespace Sprinkler.Framework
                 Fail(message);
         }
     }
-
 }

@@ -5,13 +5,11 @@
  * This file is licensed under the BSD 3-Clause license
  * available at https://raw.github.com/furore-fhir/sprinkler/master/LICENSE
  */
-using Hl7.Fhir.Model;
-using Hl7.Fhir.Rest;
-using System;
+
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Hl7.Fhir.Model;
+using Hl7.Fhir.Rest;
 
 namespace Sprinkler.Tests
 {
@@ -19,9 +17,12 @@ namespace Sprinkler.Tests
     {
         public static Patient NewPatient(string family, params string[] given)
         {
-            Patient p = new Patient();
-            HumanName n = new HumanName();
-            foreach (string g in given) { n.WithGiven(g); }
+            var p = new Patient();
+            var n = new HumanName();
+            foreach (string g in given)
+            {
+                n.WithGiven(g);
+            }
 
             n.AndFamily(family);
             p.Name = new List<HumanName>();
@@ -32,20 +33,21 @@ namespace Sprinkler.Tests
         public static void AddContact(this Patient patient, HumanName name, Address address)
         {
             patient.Contact = new List<Patient.ContactComponent>();
-            Patient.ContactComponent contact = new Patient.ContactComponent();
+            var contact = new Patient.ContactComponent();
             contact.Name = name;
             contact.Address = address;
             patient.Contact.Add(contact);
         }
 
-        public static void AddAddress(this Patient patient, string family, string given, string country, string state, string city, params string[] lines)
+        public static void AddAddress(this Patient patient, string family, string given, string country, string state,
+            string city, params string[] lines)
         {
-            HumanName name = new HumanName
+            var name = new HumanName
             {
-                Family = new List<string> { family },
-                Given = new List<string> { given }
+                Family = new List<string> {family},
+                Given = new List<string> {given}
             };
-            Address address = new Address
+            var address = new Address
             {
                 Country = country,
                 State = state,
@@ -54,7 +56,7 @@ namespace Sprinkler.Tests
             };
             patient.AddContact(name, address);
         }
-        
+
         public static bool HasGiven(this Patient patient, string given)
         {
             return patient.Name.Exists(n => n.Given.Contains(given));
@@ -65,7 +67,7 @@ namespace Sprinkler.Tests
             return new ResourceIdentity(entry.Id).OperationPath.ToString();
         }
 
-        public static IEnumerable<string>GetBasicIds(this Bundle bundle)
+        public static IEnumerable<string> GetBasicIds(this Bundle bundle)
         {
             return bundle.Entries.Select(be => be.GetBasicId()).ToArray();
         }
@@ -78,10 +80,7 @@ namespace Sprinkler.Tests
         public static IEnumerable<T> ResourcesOf<T>(this Bundle bundle) where T : Resource, new()
         {
             IEnumerable<ResourceEntry<T>> entries = bundle.Entries.ByResourceType<T>();
-            return entries.Select(e => (T)e.Resource);
+            return entries.Select(e => e.Resource);
         }
-
-        
     }
-
 }
