@@ -12,6 +12,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using Sprinkler.Framework;
+using Sprinkler.Properties;
 
 namespace Sprinkler
 {
@@ -26,13 +27,12 @@ namespace Sprinkler
         private const string OutputPar = "-o";
         private const string ListPar = "-l";
         private const string FormatPar = "-f";
-        private const string Header = "Sprinkler v0.6 - Conformance test suite for FHIR 0.8 (DSTU1)";
 
         public static IDictionary<string, string> KnownPars = new Dictionary<string, string>
         {
-            {ListPar, "list all available modules and tests"},
-            {FormatPar, "format: -f:Xml | -f:Html (optional. Default: Xml output)"},
-            {OutputPar, "output path with filename (optional. Default: output to console)"}
+            {ListPar, Resources.listPar},
+            {FormatPar, Resources.formatPar},
+            {OutputPar, Resources.outputPar}
         };
 
         /**
@@ -49,53 +49,67 @@ namespace Sprinkler
             var pars = ReadArgs(args);
             var opts = pars.Item1;
             var mandatoryPars = pars.Item2;
-            Console.WriteLine(Header);
+            Console.WriteLine(Resources.header);
             Console.WriteLine();
             if (opts.ContainsKey(ListPar))
             {
                 ShowModulesList();
             }
-            else if (!mandatoryPars.Any() || !IsValidUrl(mandatoryPars[0]))
+            else if (!mandatoryPars.Any() || !TestSets.IsValidUrl(mandatoryPars[0]))
             {
                 ShowOptions();
-                Console.Error.WriteLine("Missing mandatory Fhir-server URL.");
+                Console.Error.WriteLine(Resources.missingURL);
             }
             else
             {
                 try
                 {
-                    Console.Write("Test started...");
                     RunTests(opts, mandatoryPars);
                 }
                 catch (Exception x)
                 {
-                    ShowOptions();
-                    Console.Error.WriteLine(x.Message);
+                    Console.Error.WriteLine(Resources.caughtException, x.Message);
                 }
             }
-        }
-
-        private static bool IsValidUrl(string text)
-        {
-            Uri uri;
-            return (Uri.TryCreate(text, UriKind.Absolute, out uri) && null != uri);
         }
 
         private static void RunTests(IDictionary<string, string> opts, IList<string> mandatoryPars)
         {
             var url = mandatoryPars[0];
-            var results = new TestResults(Header, true);
+            var results = new TestResults(Resources.header, true);
+            var outputFormat = GetOutputFormat(opts);
+            var outputFilename = GetOutputFilename(opts, outputFormat);
+            var outputWriter = outputFilename == null
+                ? Console.Out
+                : File.CreateText(GetOutputFilename(opts, outputFormat));
+
+            Console.Write(Resources.testStarted);
             TestSets.Run(url, results, mandatoryPars.Skip(1).ToArray());
-            ProcessOutputOptions(results, opts);
+            Console.Write("\r{0}\r",new string(' ', Console.WindowWidth - 1));
+            ProcessOutputOptions(results, outputWriter, outputFormat);
+        }
+
+        private static string GetOutputFilename(IDictionary<string, string> opts, OutputFormat outputFormat)
+        {
+            if (!opts.ContainsKey(OutputPar)) return null;
+            var outputFilename = opts[OutputPar];
+            if (String.Empty == outputFilename)
+            {
+                throw new ArgumentException(string.Format(Resources.wrongValueForParameter, OutputPar, outputFilename));
+            }
+            var format = outputFormat.ToString().ToLowerInvariant();
+            return outputFilename.EndsWith(format, StringComparison.OrdinalIgnoreCase)
+                ? outputFilename
+                : outputFilename + "." + format;
         }
 
         private static void ShowModulesList()
         {
             var list = TestSets.GetTestModules();
-            Console.WriteLine("Available modules and codes:\n");
+            Console.WriteLine(Resources.availableModules);
             foreach (var module in list)
             {
-                Console.WriteLine(module.Key);
+                Console.WriteLine(module.Key+":");
                 foreach (var method in module.Value)
                 {
                     Console.WriteLine("\t{0} {1}", method.Item1, method.Item2);
@@ -106,30 +120,25 @@ namespace Sprinkler
         private static void ShowOptions()
         {
             var executable = Path.GetFileName(Assembly.GetExecutingAssembly().CodeBase);
-            Console.WriteLine("{0} [-options] <url> [<codes>]", executable);
-            Console.WriteLine("\nParameters:");
-            Console.WriteLine("\t<url>\tThe URL address of the FHIR server");
-            Console.WriteLine(
-                "\t<codes>\tA space-separated list of the test-modules or test-codes to execute (optional. Default: all tests will be executed).");
-            Console.WriteLine("\nOptions:");
+            Console.WriteLine("{0} {1}", executable,Resources.syntax);
+            Console.WriteLine(Resources.parameters);
+            Console.WriteLine(Resources.parametersDesc);
+            Console.WriteLine(Resources.options);
             foreach (var opt in KnownPars)
             {
                 Console.WriteLine("\t{0}\t{1}", opt.Key, opt.Value);
             }
         }
 
-        private static void ProcessOutputOptions(TestResults results, IDictionary<string, string> opts)
+        private static void ProcessOutputOptions(TestResults results, TextWriter outputWriter, OutputFormat outputFormat)
         {
-            var outputWriter = opts.ContainsKey(OutputPar) ? File.CreateText(opts[OutputPar]) : Console.Out;
-            var outputFormat = GetOutputFormat(opts);
             if (outputFormat == OutputFormat.Xml)
             {
                 results.SerializeTo(outputWriter);
             }
             else
             {
-                var path = Path.Combine(Environment.CurrentDirectory, @"xmlToHtml.xslt");
-                TextReader xslReader = File.OpenText(path);
+                TextReader xslReader = new StringReader(Resources.xmlToHtml);
                 results.SerializeTo(outputWriter, xslReader);
             }
             outputWriter.Close();
@@ -141,7 +150,7 @@ namespace Sprinkler
             OutputFormat format;
             if (!Enum.TryParse(formatOpt, true, out format))
             {
-                throw new ArgumentException(string.Format("Wrong value for parameter {0}:{1}", FormatPar, formatOpt));
+                throw new ArgumentException(string.Format(Resources.wrongValueForParameter, FormatPar, formatOpt));
             }
             return format;
         }

@@ -143,10 +143,9 @@ namespace Sprinkler.Framework
             return testclass.GetMethods().Where(method => IsProperTestMethod(method, codes));
         }
 
-        private static string Category(SprinklerTestClass instance)
+        internal static string Category(SprinklerTestClass instance)
         {
-            var moduleAttr = SprinklerTestModuleAttribute.AttributeOf(instance.GetType());
-            return moduleAttr != null ? moduleAttr.Name : "General";
+            return SprinklerTestModuleAttribute.AttributeOf(instance.GetType()).Name;
         }
 
         private static bool IsProperTestMethod(MethodInfo method, IEnumerable<string> codes)

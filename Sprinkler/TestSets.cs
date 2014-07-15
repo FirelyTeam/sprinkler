@@ -15,11 +15,24 @@ namespace Sprinkler
 
         private static FhirClient GetClient(string url)
         {
-            if (!url.StartsWith("http:") && !url.StartsWith("https:"))
+            if (!CheckUrlHasValidPrefix(url))
                 url = "http://" + url;
 
             var endpoint = new Uri(url, UriKind.Absolute);
             return new FhirClient(endpoint);
+        }
+
+        private static bool CheckUrlHasValidPrefix(string url)
+        {
+            string[] validPrefixes = { "http:", "https:" };
+            return validPrefixes.Any(url.StartsWith);
+        }
+
+        public static bool IsValidUrl(string text)
+        {
+            Uri uri;
+            
+            return (Uri.TryCreate(text, UriKind.Absolute, out uri) && null != uri && CheckUrlHasValidPrefix(text));
         }
 
         // overloaded Run method
