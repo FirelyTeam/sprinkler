@@ -123,13 +123,17 @@
     <comment>transform xml-serialized output to html</comment>
   </data>
   <data name="parameters" xml:space="preserve">
-    <value>&#xA;Parameters:</value>
+    <value>
+Parameters:</value>
   </data>
   <data name="parametersDesc" xml:space="preserve">
-    <value>	&lt;url&gt;&#x9;The URL address of the FHIR server&#xA;&#x9;&lt;codes&gt;&#x9;A space-separated list of the test-modules or test-codes to execute.&#xA;&#x9;&#x9;(optional. Default: all tests will be executed).</value>
+    <value>	&lt;url&gt;	The URL address of the FHIR server
+	&lt;codes&gt;	A space-separated list of the test-modules or test-codes to execute.
+		(optional. Default: all tests will be executed).</value>
   </data>
   <data name="options" xml:space="preserve">
-    <value>&#xA;Options:</value>
+    <value>
+Options:</value>
   </data>
   <data name="availableModules" xml:space="preserve">
     <value>Available modules and codes:
@@ -148,7 +152,7 @@
     <value>Wrong value for parameter {0}:{1}</value>
   </data>
   <data name="formatPar" xml:space="preserve">
-    <value>format: -f:Xml | -f:Html (optional. Default: Xml output)</value>
+    <value>format: -f:Xml | -f:Html | -f:Raw (optional. Default: Raw output)</value>
   </data>
   <data name="header" xml:space="preserve">
     <value>Sprinkler v0.6 - Conformance test suite for FHIR 0.8 (DSTU1)</value>
@@ -160,9 +164,19 @@
     <value>output path with filename (optional. Default: output to console)</value>
   </data>
   <data name="statusForCategoryCode" xml:space="preserve">
-    <value>&#xD;{0}&#xD;Tested module:[{1}] method:[{2}]</value>
+    <value>
+{0}
+Tested module:[{1}] method:[{2}]</value>
   </data>
-  <data name="caughtException" xml:space="preserve">
-    <value>Caught exception: {0}</value>
+  <data name="usage" xml:space="preserve">
+    <value>Usage:
+	{0} {1}</value>
+  </data>
+  <data name="error" xml:space="preserve">
+    <value>Error: {0}</value>
+  </data>
+  <data name="xmlToRaw" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\xmltoraw.xslt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+    <comment>transform to text console output</comment>
   </data>
 </root>

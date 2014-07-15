@@ -21,7 +21,8 @@ namespace Sprinkler
         public enum OutputFormat
         {
             Html,
-            Xml
+            Xml,
+            Raw
         };
 
         private const string OutputPar = "-o";
@@ -55,10 +56,9 @@ namespace Sprinkler
             {
                 ShowModulesList();
             }
-            else if (!mandatoryPars.Any() || !TestSets.IsValidUrl(mandatoryPars[0]))
+            else if (!mandatoryPars.Any())
             {
                 ShowOptions();
-                Console.Error.WriteLine(Resources.missingURL);
             }
             else
             {
@@ -68,24 +68,29 @@ namespace Sprinkler
                 }
                 catch (Exception x)
                 {
-                    Console.Error.WriteLine(Resources.caughtException, x.Message);
+                    Console.Error.WriteLine(Resources.error, x.Message);
                 }
             }
+
         }
 
         private static void RunTests(IDictionary<string, string> opts, IList<string> mandatoryPars)
         {
             var url = mandatoryPars[0];
-            var results = new TestResults(Resources.header, true);
+            if (!TestSets.IsValidUrl(url))
+            {
+                throw new ArgumentException(Resources.missingURL);
+            }
+            
             var outputFormat = GetOutputFormat(opts);
             var outputFilename = GetOutputFilename(opts, outputFormat);
             var outputWriter = outputFilename == null
                 ? Console.Out
                 : File.CreateText(GetOutputFilename(opts, outputFormat));
-
-            Console.Write(Resources.testStarted);
+            var results = new TestResults(Resources.header, outputFormat!=OutputFormat.Raw);
+            if (outputFormat!=OutputFormat.Raw) Console.Write(Resources.testStarted);
             TestSets.Run(url, results, mandatoryPars.Skip(1).ToArray());
-            Console.Write("\r{0}\r",new string(' ', Console.WindowWidth - 1));
+            Console.Write("\r{0}\r", new string(' ', Console.WindowWidth - 1));
             ProcessOutputOptions(results, outputWriter, outputFormat);
         }
 
@@ -119,8 +124,8 @@ namespace Sprinkler
 
         private static void ShowOptions()
         {
-            var executable = Path.GetFileName(Assembly.GetExecutingAssembly().CodeBase);
-            Console.WriteLine("{0} {1}", executable,Resources.syntax);
+            var executable = Path.GetFileNameWithoutExtension(Assembly.GetExecutingAssembly().Location);
+            Console.WriteLine(Resources.usage, executable,Resources.syntax);
             Console.WriteLine(Resources.parameters);
             Console.WriteLine(Resources.parametersDesc);
             Console.WriteLine(Resources.options);
@@ -132,21 +137,31 @@ namespace Sprinkler
 
         private static void ProcessOutputOptions(TestResults results, TextWriter outputWriter, OutputFormat outputFormat)
         {
-            if (outputFormat == OutputFormat.Xml)
+            if (outputFormat == OutputFormat.Raw) return; // nothing to do 
+            TextReader xslTransform=null;
+            //switch (outputFormat)
+            //{
+            //    case OutputFormat.Raw:
+            //        xslTransform = new StringReader(Resources.xmlToRaw);
+            //        break;
+            //    case OutputFormat.Html:
+            //        xslTransform = new StringReader(Resources.xmlToHtml);
+            //        break;
+            //    default:
+            //        xslTransform = null;
+            //        break;
+            //}
+            if (outputFormat == OutputFormat.Html)
             {
-                results.SerializeTo(outputWriter);
+                xslTransform = new StringReader(Resources.xmlToHtml);
             }
-            else
-            {
-                TextReader xslReader = new StringReader(Resources.xmlToHtml);
-                results.SerializeTo(outputWriter, xslReader);
-            }
+            results.SerializeTo(outputWriter, xslTransform);
             outputWriter.Close();
         }
 
         private static OutputFormat GetOutputFormat(IDictionary<string, string> opts)
         {
-            var formatOpt = GetOptionValue(opts, FormatPar, OutputFormat.Xml.ToString());
+            var formatOpt = GetOptionValue(opts, FormatPar, OutputFormat.Raw.ToString());
             OutputFormat format;
             if (!Enum.TryParse(formatOpt, true, out format))
             {

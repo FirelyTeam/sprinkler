@@ -65,7 +65,15 @@
         <xsl:value-of select="Title" />
       </td>
       <td>
-        <xsl:attribute name="class">outcome <xsl:if test="Outcome='Success'">success</xsl:if><xsl:if test="Outcome='Fail'">failure</xsl:if></xsl:attribute>
+        <xsl:attribute name="class">
+          outcome <xsl:choose>
+          <xsl:when test="Outcome='Success'">success</xsl:when>
+          <xsl:when test="Outcome='Success'">success</xsl:when>
+          <xsl:when test="Outcome='Fail'">failure</xsl:when>
+          <xsl:when test="Outcome='Skipped'">skipped</xsl:when>
+          <xsl:otherwise>other</xsl:otherwise>
+        </xsl:choose>
+        </xsl:attribute>
         <xsl:value-of select="Outcome" />
       </td>
     </tr>
@@ -76,14 +84,14 @@
     <tr class="exception">
       <td colspan="4">
         <a class="clickable" tabindex="0">
-          [+]
+          <xsl:if test=".//Stack">[+]</xsl:if>
           <xsl:apply-templates select="Message" />
-        </a>
+          </a>
       </td>
     </tr>
   </xsl:template>
 
-  <xsl:template match="*/Message">
+  <xsl:template match="Message">
     <xsl:if test="normalize-space(child::text()) != ''">
       <div class="message">
         <xsl:value-of select="normalize-space(child::text())" />
@@ -93,7 +101,7 @@
     <xsl:apply-templates select="*/Message" />
   </xsl:template>
 
-  <xsl:template match="*/Stack">
+  <xsl:template match="Stack">
     <div class="stack">
       [#<xsl:value-of select="attribute::issue" />]<xsl:value-of select="child::text()" />
     </div>

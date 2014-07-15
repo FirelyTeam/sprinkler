@@ -71,16 +71,16 @@ namespace Sprinkler.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Caught exception: {0}.
+        ///   Looks up a localized string similar to Error: {0}.
         /// </summary>
-        internal static string caughtException {
+        internal static string error {
             get {
-                return ResourceManager.GetString("caughtException", resourceCulture);
+                return ResourceManager.GetString("error", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to format: -f:Xml | -f:Html (optional. Default: Xml output).
+        ///   Looks up a localized string similar to format: -f:Xml | -f:Html | -f:Raw (optional. Default: Raw output).
         /// </summary>
         internal static string formatPar {
             get {
@@ -156,7 +156,9 @@ namespace Sprinkler.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to         ///{0}        ///Tested module:[{1}] method:[{2}].
+        ///   Looks up a localized string similar to 
+        ///{0}
+        ///Tested module:[{1}] method:[{2}].
         /// </summary>
         internal static string statusForCategoryCode {
             get {
@@ -179,6 +181,16 @@ namespace Sprinkler.Properties {
         internal static string testStarted {
             get {
                 return ResourceManager.GetString("testStarted", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Usage:
+        ///	{0} {1}.
+        /// </summary>
+        internal static string usage {
+            get {
+                return ResourceManager.GetString("usage", resourceCulture);
             }
         }
         
@@ -212,6 +224,21 @@ namespace Sprinkler.Properties {
         internal static string xmlToHtml {
             get {
                 return ResourceManager.GetString("xmlToHtml", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot;?&gt;
+        ///&lt;xsl:stylesheet version=&quot;1.0&quot; xmlns:xsl=&quot;http://www.w3.org/1999/XSL/Transform&quot;&gt;
+        ///  &lt;xsl:output method=&quot;html&quot; doctype-system=&quot;about:legacy-compat&quot; encoding=&quot;UTF-8&quot; indent=&quot;yes&quot; /&gt;
+        ///  &lt;xsl:variable name=&quot;newline&quot; select=&quot;&apos;&amp;#10;&apos;&quot;/&gt;
+        ///  &lt;xsl:variable name=&quot;indent&quot;&gt;&lt;xsl:value-of select=&quot;$newline&quot;/&gt;   - &lt;/xsl:variable&gt;
+        ///  &lt;xsl:template match=&quot;Title&quot; /&gt;
+        ///  &lt;xsl:template match=&quot;TestResult&quot;&gt;&lt;xsl:value-of select=&quot;Code&quot; /&gt;: &lt;xsl:value-of select=&quot;Title&quot; /&gt; : &lt;xsl:value-of select= [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string xmlToRaw {
+            get {
+                return ResourceManager.GetString("xmlToRaw", resourceCulture);
             }
         }
     }
