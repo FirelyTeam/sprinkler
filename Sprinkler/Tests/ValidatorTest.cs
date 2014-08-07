@@ -5,19 +5,14 @@
  * This file is licensed under the BSD 3-Clause license
  * available at https://raw.github.com/furore-fhir/sprinkler/master/LICENSE
  */
-using Hl7.Fhir.Model;
-using Hl7.Fhir.Rest;
-using Hl7.Fhir.Validation;
-using Sprinkler.Framework;
+
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-using System.Text;
+using Hl7.Fhir.Model;
+using Sprinkler.Framework;
 
 namespace Sprinkler.Tests
 {
-  
     [SprinklerTestModule("Validation")]
     public class ValidatorTest : SprinklerTestClass
     {
@@ -27,7 +22,7 @@ namespace Sprinkler.Tests
             Patient patient = DemoData.GetDemoPatient();
 
             OperationOutcome oo;
-            if(!client.TryValidateCreate(patient, out oo, null))
+            if (!Client.TryValidateCreate(patient, out oo, null))
                 TestResult.Fail("Validation incorrectly reported failure.");
         }
 
@@ -35,10 +30,10 @@ namespace Sprinkler.Tests
         public void ValidateInvalidCreateResource()
         {
             Patient patient = DemoData.GetDemoPatient();
-            patient.Identifier = new List<Identifier> { new Identifier { System = new Uri("urn:oid:hallo") } };
+            patient.Identifier = new List<Identifier> {new Identifier {System = new Uri("urn:oid:hallo")}};
 
             OperationOutcome oo;
-            if (!client.TryValidateCreate(patient, out oo, null))
+            if (!Client.TryValidateCreate(patient, out oo, null))
                 TestResult.Fail("Validation incorrectly reported failure.");
         }
 
@@ -46,25 +41,23 @@ namespace Sprinkler.Tests
         public void ValidateUpdateResource()
         {
             Patient patient = DemoData.GetDemoPatient();
-            ResourceEntry<Patient> result = client.Create<Patient>(patient);
+            ResourceEntry<Patient> result = Client.Create(patient);
 
             OperationOutcome oo;
-            if(!client.TryValidateUpdate(result, out oo))
+            if (!Client.TryValidateUpdate(result, out oo))
                 TestResult.Fail("Validation incorrectly reported failure.");
-            
         }
 
         [SprinklerTest("V004", "Validate an invalid resource update")]
         public void ValidateInvalidUpdateResource()
         {
             Patient patient = DemoData.GetDemoPatient();
-            ResourceEntry<Patient> result = client.Create<Patient>(patient);
-            patient.Identifier = new List<Identifier> { new Identifier { System = new Uri("urn:oid:hallo") } };
+            ResourceEntry<Patient> result = Client.Create(patient);
+            patient.Identifier = new List<Identifier> {new Identifier {System = new Uri("urn:oid:hallo")}};
 
             OperationOutcome oo;
-            if (!client.TryValidateUpdate(result, out oo)) 
+            if (!Client.TryValidateUpdate(result, out oo))
                 TestResult.Fail("Validation incorrectly reported failure.");
         }
-       
     }
 }

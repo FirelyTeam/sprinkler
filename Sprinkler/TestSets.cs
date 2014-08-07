@@ -1,104 +1,79 @@
-﻿using Hl7.Fhir.Rest;
-using Sprinkler.Framework;
-using Sprinkler.Tests;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Hl7.Fhir.Rest;
+using Sprinkler.Framework;
 
 namespace Sprinkler
 {
-    class TestSets
+    internal class TestSets
     {
-        public static void registerTestException(Exception exception)
+        private static Action<TestResult> LogTest(TestResults results)
         {
-            string indent = "    - ";
-
-            while (exception != null)
-            {
-                if (!String.IsNullOrEmpty(exception.Message))
-                    Console.WriteLine("{0}{1}", indent, exception.Message);
-
-                if (exception is FhirOperationException)
-                {
-                    var foe = exception as FhirOperationException;
-                    if (foe.Outcome != null && foe.Outcome.Issue != null)
-                    {
-                        int isuenr = 1;
-                        foreach (var issue in foe.Outcome.Issue)
-                        {
-                            if (!issue.Details.StartsWith("Stack"))
-                                Console.WriteLine(String.Format("{0}OperationOutcome.Issue({1}): {2}", indent, isuenr, issue.Details));
-                            isuenr++;
-                        }
-                    }
-                }
-
-                exception = exception.InnerException;
-            }
+            return results.AddTestResult;
         }
 
-        static void LogTest(TestResult test)
+        private static FhirClient GetClient(string url)
         {
-            string title = string.Format("{0}: {1}", test.Code, test.Title);
-            string outcome = test.Outcome.ToString().ToUpper();
-            Console.WriteLine(string.Format("{0,-60} : {1}", title, outcome));
-
-            if (test.Exception != null)
-                registerTestException(test.Exception);
-        }
-
-        private static FhirClient getClient(string url)
-        {
-            if (!url.StartsWith("http:") && !url.StartsWith("https:"))
+            if (!CheckUrlHasValidPrefix(url))
                 url = "http://" + url;
-            
+
             var endpoint = new Uri(url, UriKind.Absolute);
             return new FhirClient(endpoint);
         }
 
-        public static void Run(string url)
+        private static bool CheckUrlHasValidPrefix(string url)
         {
-            FhirClient client = getClient(url);
-            TestRunner tester = new TestRunner(client, LogTest);
-
-            Console.WriteLine("Running all tests");
-            tester.RunAll();
-            //tester.Run<HistoryTest>();
+            string[] validPrefixes = { "http:", "https:" };
+            return validPrefixes.Any(url.StartsWith);
         }
 
-        public static void Run(string url, string test)
+        public static bool IsValidUrl(string text)
         {
-            FhirClient client = getClient(url);
-            TestRunner tester = new TestRunner(client, LogTest);
-
-            Console.WriteLine("Running single test " + test);
-
-            tester.Run(test);
-        }
-
-        public static void Connectathon6(string url)
-        {
-            FhirClient client = getClient(url);
-            TestRunner tester = new TestRunner(client, LogTest);
-
-            Console.WriteLine("Running tests for CONNECTATHON 6 (may 2014)");
+            Uri uri;
             
-            // Track 1
-            tester.Run("CR01", "CR04", "HI01", "SE01", "SE03", "SE04");
-
-            // Track 2
-            tester.Run("QU01", "QU02", "QU03", "QU04");
+            return (Uri.TryCreate(text, UriKind.Absolute, out uri) && null != uri && CheckUrlHasValidPrefix(text));
         }
 
-        public static void MySelection(string url)
+        // overloaded Run method
+        public static TestResults Run(string url)
         {
-            FhirClient client = getClient(url);
-            TestRunner tester = new TestRunner(client, LogTest);
+            return Run(url, null as string[]);
+        }
 
-            Console.WriteLine("Running tests for personal debugging");
-            tester.Run("SE23");
+        // overloaded Run method
+        public static TestResults Run(string url, params string[] tests)
+        {
+            return Run(url, new TestResults(), tests);
+        }
+
+        // Run method
+        public static TestResults Run(string url, TestResults results, params string[] tests)
+        {
+            var client = GetClient(url);
+            var tester = new TestRunner(client, LogTest(results));
+
+            tester.Run(tests);
+            return results;
+        }
+
+        public static IDictionary<string, List<Tuple<string, string>>> GetTestModules()
+        {
+            IDictionary<string, List<Tuple<string, string>>> dictModulesCodes =
+                new Dictionary<string, List<Tuple<string, string>>>();
+            var testclasses = TestRunner.GetTestClasses();
+
+            foreach (var testclass in testclasses)
+            {
+                var testmethods =
+                    TestRunner.GetTestMethods(testclass)
+                        .Select(SprinklerTestAttribute.AttributeOf)
+                        .Select(methodAttr => Tuple.Create(methodAttr.Code, methodAttr.Title))
+                        .ToList();
+                var moduleAttr = SprinklerTestModuleAttribute.AttributeOf(testclass);
+                dictModulesCodes.Add(moduleAttr.Name, testmethods);
+            }
+            return dictModulesCodes;
         }
     }
 }

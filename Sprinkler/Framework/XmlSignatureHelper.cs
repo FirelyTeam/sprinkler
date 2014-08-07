@@ -5,25 +5,14 @@
  * This file is licensed under the BSD 3-Clause license
  * available at https://raw.github.com/furore-fhir/sprinkler/master/LICENSE
  */
+
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Security.Cryptography.X509Certificates;
+using System.Security.Cryptography.Xml;
+using System.Xml;
 
 namespace Sprinkler
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Security.Cryptography;
-    using System.Security.Cryptography.X509Certificates;
-    using System.Security.Cryptography.Xml;
-    using System.Text;
-    using System.Threading.Tasks;
-    using System.Xml;
-    using System.Xml.Linq;
-
     namespace Framework
     {
         // This code contains parts of the code found at
@@ -35,7 +24,7 @@ namespace Sprinkler
             {
                 if (xml == null) throw new ArgumentNullException("xml");
 
-                XmlDocument doc = new XmlDocument();
+                var doc = new XmlDocument();
                 doc.PreserveWhitespace = true;
                 doc.LoadXml(xml);
 
@@ -43,8 +32,8 @@ namespace Sprinkler
                 XmlNode signatureNode = findSignatureElement(doc);
                 if (signatureNode == null) return true;
 
-                SignedXml signedXml = new SignedXml(doc);
-                signedXml.LoadXml((XmlElement)signatureNode);
+                var signedXml = new SignedXml(doc);
+                signedXml.LoadXml((XmlElement) signatureNode);
 
                 //var x509Certificates = signedXml.KeyInfo.OfType<KeyInfoX509Data>();
                 //var certificate = x509Certificates.SelectMany(cert => cert.Certificates.Cast<X509Certificate2>()).FirstOrDefault();
@@ -58,13 +47,13 @@ namespace Sprinkler
 
             private static XmlNode findSignatureElement(XmlDocument doc)
             {
-                var signatureElements = doc.DocumentElement.GetElementsByTagName("Signature", "http://www.w3.org/2000/09/xmldsig#");
+                XmlNodeList signatureElements = doc.DocumentElement.GetElementsByTagName("Signature",
+                    "http://www.w3.org/2000/09/xmldsig#");
                 if (signatureElements.Count == 1)
                     return signatureElements[0];
-                else if (signatureElements.Count == 0)
+                if (signatureElements.Count == 0)
                     return null;
-                else
-                    throw new InvalidOperationException("Document has multiple xmldsig Signature elements");
+                throw new InvalidOperationException("Document has multiple xmldsig Signature elements");
             }
 
 
@@ -85,31 +74,32 @@ namespace Sprinkler
             {
                 if (xml == null) throw new ArgumentNullException("xml");
                 if (certificate == null) throw new ArgumentNullException("certificate");
-                if (!certificate.HasPrivateKey) throw new ArgumentException("certificate", "Certificate should have a private key");
+                if (!certificate.HasPrivateKey)
+                    throw new ArgumentException("certificate", "Certificate should have a private key");
 
-                XmlDocument doc = new XmlDocument();
+                var doc = new XmlDocument();
 
                 doc.PreserveWhitespace = true;
                 doc.LoadXml(xml);
 
-                SignedXml signedXml = new SignedXml(doc);
+                var signedXml = new SignedXml(doc);
                 signedXml.SigningKey = certificate.PrivateKey;
 
                 // Attach certificate KeyInfo
-                KeyInfoX509Data keyInfoData = new KeyInfoX509Data(certificate);
-                KeyInfo keyInfo = new KeyInfo();
+                var keyInfoData = new KeyInfoX509Data(certificate);
+                var keyInfo = new KeyInfo();
                 keyInfo.AddClause(keyInfoData);
                 signedXml.KeyInfo = keyInfo;
 
                 // Attach transforms
                 var reference = new Reference("");
-                reference.AddTransform(new XmlDsigEnvelopedSignatureTransform(includeComments: false));
-                reference.AddTransform(new XmlDsigExcC14NTransform(includeComments: false));
+                reference.AddTransform(new XmlDsigEnvelopedSignatureTransform(false));
+                reference.AddTransform(new XmlDsigExcC14NTransform(false));
                 signedXml.AddReference(reference);
 
                 // Compute signature
                 signedXml.ComputeSignature();
-                var signatureElement = signedXml.GetXml();
+                XmlElement signatureElement = signedXml.GetXml();
 
                 // Add signature to bundle
                 doc.DocumentElement.AppendChild(doc.ImportNode(signatureElement, true));
@@ -118,5 +108,4 @@ namespace Sprinkler
             }
         }
     }
-
 }

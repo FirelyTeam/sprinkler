@@ -5,166 +5,164 @@
  * This file is licensed under the BSD 3-Clause license
  * available at https://raw.github.com/furore-fhir/sprinkler/master/LICENSE
  */
-using Hl7.Fhir.Rest;
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using System.Text;
+using Hl7.Fhir.Rest;
 
 namespace Sprinkler.Framework
 {
-
     public class TestRunner
     {
-        private Action<TestResult> log;
-        private FhirClient client;
+        private readonly FhirClient _client;
+        private readonly Action<TestResult> _log;
 
         public TestRunner(FhirClient client, Action<TestResult> log)
         {
-            this.client = client;
-            this.log = log;
-        }
-
-        public static SprinklerTestAttribute AttributeOf(MethodInfo method)
-        {
-            var attribute = method.GetCustomAttributes(typeof(SprinklerTestAttribute), false).FirstOrDefault()
-                                as SprinklerTestAttribute;
-            return attribute;
-        }
-
-        private static bool match(IEnumerable<string> tests, string test)
-        {
-            return (tests != null) ? tests.Contains(test) : true;
-        }
-
-        public static bool IsProperTestMethod(MethodInfo method, IEnumerable<string> codes)
-        {
-            if (method.GetParameters().Length == 0)
-            {
-                SprinklerTestAttribute attribute = AttributeOf(method);
-                if (attribute != null && match(codes, attribute.Code))
-                {
-                    return true;
-                }
-            }
-            return false;
-
+            _client = client;
+            _log = log;
         }
 
         public static IEnumerable<MethodInfo> TestMethodsOf(object instance, IEnumerable<string> codes = null)
         {
-            MethodInfo[] methods = instance.GetType().GetMethods();
+            var methods = instance.GetType().GetMethods();
             return methods.Where(m => IsProperTestMethod(m, codes));
         }
-       
+
         public static TestResult RunTestMethod(string category, object instance, MethodInfo method)
         {
-            TestResult test = new TestResult(); 
-            test.Category = category;
-            var attribute = AttributeOf(method);
-            test.Title = attribute.Title;
-            test.Code = attribute.Code;
-
+            var test = new TestResult {Category = category};
+            var attribute = SprinklerTestAttribute.AttributeOf(method);
+            if (attribute != null)
+            {
+                test.Title = attribute.Title;
+                test.Code = attribute.Code;
+            }
             try
             {
                 method.Invoke(instance, null);
                 test.Outcome = TestOutcome.Success;
                 test.Exception = null;
             }
-            catch (System.Reflection.TargetInvocationException e)
+            catch (TargetInvocationException e)
             {
                 if (e.InnerException is TestFailedException)
                 {
                     test.Outcome = (e.InnerException as TestFailedException).Outcome;
                 }
-                else 
-                { 
-                    test.Outcome = TestOutcome.Fail; 
+                else
+                {
+                    test.Outcome = TestOutcome.Fail;
                 }
 
-                test.Exception = e.InnerException;
+                test.Exception = new TestFailedException(e.Message, e.InnerException);
             }
 
             return test;
         }
 
-        private string category(SprinklerTestClass instance)
+        public void Run(string[] codesOrModules)
         {
-            var moduleAttr = instance.GetType()
-                   .GetCustomAttributes(typeof(SprinklerTestModuleAttribute), false).FirstOrDefault()
-                       as SprinklerTestModuleAttribute;
-
-           return moduleAttr != null ? moduleAttr.Name : "General";
-
-        }
-        public void Run(SprinklerTestClass Instance)
-        {
-            Instance.SetClient(client);
-            string category = this.category(Instance);
-            foreach (var method in TestMethodsOf(Instance))
+            var tests = FilterTestsForCodeOrModule(GetTestClasses(),
+                codesOrModules);
+            foreach (var test in tests)
             {
-                TestResult test = RunTestMethod(category, Instance, method);
-                this.log(test);
+                var testInstance = Instantiate(test.Key);
+                foreach (var testMethod in test.Value)
+                {
+                    Run(testInstance, testMethod);
+                }
             }
         }
 
-        
-        public void Run(SprinklerTestClass Instance, IEnumerable<string> codes = null)
+        private static IEnumerable<KeyValuePair<Type, List<MethodInfo>>> FilterTestsForCodeOrModule(
+            IEnumerable<Type> testclasses, string[] codesOrModules)
         {
-            Instance.SetClient(client);
-            string category = this.category(Instance);
-            foreach (var method in TestMethodsOf(Instance, codes))
+            IDictionary<Type, List<MethodInfo>> methods = new Dictionary<Type, List<MethodInfo>>();
+            foreach (var testclass in testclasses)
             {
-                TestResult test = RunTestMethod(category, Instance, method);
-                this.log(test);
+                var moduleAttr = SprinklerTestModuleAttribute.AttributeOf(testclass);
+                if (moduleAttr != null)
+                {
+                    if (codesOrModules.Length == 0 || codesOrModules.Contains(moduleAttr.Name, StringComparer.OrdinalIgnoreCase))
+                    {
+                        methods.Add(testclass, GetTestMethods(testclass).ToList());
+                        
+                    }
+                    else
+                    {
+                        methods.Add(testclass, GetTestMethods(testclass, codesOrModules).ToList());
+                    }
+                } 
             }
+            return methods;
         }
 
+        private void Run(SprinklerTestClass instance, MethodInfo methodInfo)
+        {
+            instance.SetClient(_client);
+            RunAndLog(instance, methodInfo);
+        }
+
+        public void Run(SprinklerTestClass instance, IEnumerable<string> codes = null)
+        {
+            instance.SetClient(_client);
+            foreach (var methodInfo in TestMethodsOf(instance, codes))
+            {
+                RunAndLog(instance, methodInfo);
+            }
+        }
 
         public T Run<T>() where T : SprinklerTestClass
         {
-            T instance = Activator.CreateInstance<T>();
+            var instance = Activator.CreateInstance<T>();
             Run(instance);
             return instance;
         }
 
         public static IEnumerable<Type> GetTypesWithAttribute<T>(Assembly assembly)
         {
-            foreach (Type type in assembly.GetTypes())
-            {
-                if (type.GetCustomAttributes(typeof(T), true).Length > 0)
-                {
-                    yield return type;
-                }
-            }
+            return assembly.GetTypes().Where(type => type.GetCustomAttributes(typeof (T), true).Length > 0);
         }
 
-        public static IEnumerable<SprinklerTestClass> InstanciateAll()
+        public static SprinklerTestClass Instantiate(Type testclass)
         {
-            Assembly assembly = Assembly.GetExecutingAssembly();
-            IEnumerable<Type> testclasses = GetTypesWithAttribute<SprinklerTestModuleAttribute>(assembly);
-            foreach(Type t in testclasses)
-            {
-                SprinklerTestClass c = (SprinklerTestClass) Activator.CreateInstance(t);
-                yield return c;
-            }
+            return (SprinklerTestClass) Activator.CreateInstance(testclass);
         }
 
-        public void RunAll()
+        public static IEnumerable<Type> GetTestClasses()
         {
-            foreach(SprinklerTestClass stc in InstanciateAll())
-            {
-                Run(stc);
-            }
+            var assembly = Assembly.GetExecutingAssembly();
+            return GetTypesWithAttribute<SprinklerTestModuleAttribute>(assembly);
         }
 
-        public void Run(params string[] codes)
+        public static IEnumerable<MethodInfo> GetTestMethods(Type testclass, string[] codes = null)
         {
-            foreach (SprinklerTestClass stc in InstanciateAll())
-            {
-                Run(stc, codes);
-            }
+            return testclass.GetMethods().Where(method => IsProperTestMethod(method, codes));
+        }
+
+        internal static string Category(SprinklerTestClass instance)
+        {
+            return SprinklerTestModuleAttribute.AttributeOf(instance.GetType()).Name;
+        }
+
+        private static bool IsProperTestMethod(MethodInfo method, IEnumerable<string> codes)
+        {
+            return codes == null ? IsProperTestMethod(method, null as string) : codes.Any(code => IsProperTestMethod(method, code));
+        }
+
+        private static bool IsProperTestMethod(MethodInfo method, string code)
+        {
+            var testAttribute = SprinklerTestAttribute.AttributeOf(method);
+            return testAttribute != null && (code == null || code.Equals(testAttribute.Code,StringComparison.OrdinalIgnoreCase));
+        }
+
+        private void RunAndLog(SprinklerTestClass instance, MethodInfo methodInfo)
+        {
+            var test = RunTestMethod(Category(instance), instance, methodInfo);
+            _log(test);
         }
     }
 }
