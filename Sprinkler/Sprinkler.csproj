@@ -37,13 +37,17 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Hl7.Fhir.Api, Version=0.10.0.0, Culture=neutral, PublicKeyToken=d706911480550fc3, processorArchitecture=MSIL">
+    <Reference Include="Fhir.Testing, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\Hl7.Fhir.0.10.0\lib\net45\Hl7.Fhir.Api.dll</HintPath>
+      <HintPath>..\packages\Fhir.Testing.0.1.0\lib\net45\Fhir.Testing.dll</HintPath>
     </Reference>
-    <Reference Include="Hl7.Fhir.Model, Version=0.10.0.2408, Culture=neutral, PublicKeyToken=d706911480550fc3, processorArchitecture=MSIL">
+    <Reference Include="Hl7.Fhir.Api, Version=0.11.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\Hl7.Fhir.0.10.0\lib\net45\Hl7.Fhir.Model.dll</HintPath>
+      <HintPath>..\packages\Fhir.Testing.0.1.0\lib\net45\Hl7.Fhir.Api.dll</HintPath>
+    </Reference>
+    <Reference Include="Hl7.Fhir.Model, Version=0.0.81.2634, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Fhir.Testing.0.1.0\lib\net45\Hl7.Fhir.Model.dll</HintPath>
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -60,37 +64,13 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Framework\TestResults.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <Compile Include="TestSets.cs" />
-    <Compile Include="Framework\SprinklerTestClass.cs" />
-    <Compile Include="Framework\TestAttributes.cs" />
-    <Compile Include="Framework\TestResult.cs" />
-    <Compile Include="Tests\MailboxTest.cs" />
-    <Compile Include="Tests\DigSigTest.cs" />
-    <Compile Include="Tests\ConformanceTest.cs" />
-    <Compile Include="Tests\BinaryTest.cs" />
-    <Compile Include="Tests\BundleTest.cs" />
-    <Compile Include="Tests\QuestionaireTest.cs" />
-    <Compile Include="Tests\TagTest.cs" />
-    <Compile Include="Tests\SearchTest.cs" />
-    <Compile Include="Tests\HistoryTest.cs" />
-    <Compile Include="Tests\CreateUpdateDeleteTest.cs" />
-    <Compile Include="Framework\DemoData.cs" />
-    <Compile Include="Framework\HttpTests.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Tests\ReadTest.cs" />
-    <Compile Include="Tests\RequestFormatTest.cs" />
-    <Compile Include="Framework\SprinklerTest.cs" />
-    <Compile Include="Tests\TestTransactions.cs" />
-    <Compile Include="Tests\Utils.cs" />
-    <Compile Include="Tests\ValidatorTest.cs" />
-    <Compile Include="Framework\XmlSignatureHelper.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="patient-example.xml" />
@@ -102,7 +82,6 @@
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Tests\spark.pfx" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>

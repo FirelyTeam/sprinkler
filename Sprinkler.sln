@@ -1,9 +1,11 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
-VisualStudioVersion = 12.0.21005.1
+VisualStudioVersion = 12.0.30501.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sprinkler", "Sprinkler\Sprinkler.csproj", "{DE0DEC0E-4D3D-419A-8552-A9C5F9063796}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Fhir.Testing", "Fhir.Testing\Fhir.Testing.csproj", "{90248E7C-FD51-42D8-86FE-E1DDBE856691}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -25,6 +27,16 @@ Global
 		{DE0DEC0E-4D3D-419A-8552-A9C5F9063796}.Release|Mixed Platforms.Build.0 = Release|x86
 		{DE0DEC0E-4D3D-419A-8552-A9C5F9063796}.Release|x86.ActiveCfg = Release|x86
 		{DE0DEC0E-4D3D-419A-8552-A9C5F9063796}.Release|x86.Build.0 = Release|x86
+		{90248E7C-FD51-42D8-86FE-E1DDBE856691}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{90248E7C-FD51-42D8-86FE-E1DDBE856691}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{90248E7C-FD51-42D8-86FE-E1DDBE856691}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{90248E7C-FD51-42D8-86FE-E1DDBE856691}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{90248E7C-FD51-42D8-86FE-E1DDBE856691}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{90248E7C-FD51-42D8-86FE-E1DDBE856691}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{90248E7C-FD51-42D8-86FE-E1DDBE856691}.Release|Any CPU.Build.0 = Release|Any CPU
+		{90248E7C-FD51-42D8-86FE-E1DDBE856691}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{90248E7C-FD51-42D8-86FE-E1DDBE856691}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{90248E7C-FD51-42D8-86FE-E1DDBE856691}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

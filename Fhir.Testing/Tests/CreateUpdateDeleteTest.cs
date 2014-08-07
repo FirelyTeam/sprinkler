@@ -63,8 +63,9 @@ namespace Sprinkler.Tests
             Patient selena = Utils.NewPatient("Gomez", "Selena");
             selena.AddAddress("Cornett", "Amanda", "United States", "Texas", "Grand Prairie");
 
-            var qualifier = new Uri("http://hl7.org/fhir/Profile/iso-21090#qualifier");
+            string qualifier = "http://hl7.org/fhir/Profile/iso-21090#qualifier";
             selena.Contact[0].Name.AddExtension(qualifier, new Code("AC"));
+            
 
             ResourceEntry<Patient> entry = Client.Create(selena, null, false);
             string id = entry.GetBasicId();
@@ -107,7 +108,7 @@ namespace Sprinkler.Tests
             ResourceEntry<Patient> entry = Client.Read<Patient>(Location);
 
             HumanName name = entry.Resource.Contact[0].Name;
-            var qualifier = new Uri("http://hl7.org/fhir/Profile/iso-21090#qualifier");
+            string qualifier = "http://hl7.org/fhir/Profile/iso-21090#qualifier";
 
             Extension qExt1 = name.FamilyElement[0].GetExtension(qualifier);
             ((Code) qExt1.Value).Value = "NB";

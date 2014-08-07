@@ -13,7 +13,7 @@ using System.Xml;
 using System.Xml.Serialization;
 using System.Xml.Xsl;
 using Hl7.Fhir.Rest;
-using Sprinkler.Properties;
+//using Sprinkler.Properties;
 
 namespace Sprinkler.Framework
 {
@@ -81,7 +81,9 @@ namespace Sprinkler.Framework
         {
             if (ShowStatusInConsole)
             {
-                Console.Write(Resources.statusForCategoryCode, new string(' ', Console.WindowWidth - 1),
+
+                string s = "{0}\nTested module:[{1}] method:[{2}]";
+                Console.Write(s, new string(' ', Console.WindowWidth - 1),
                     testResult.Category, testResult.Code);
             }
             else

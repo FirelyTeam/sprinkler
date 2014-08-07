@@ -6,7 +6,7 @@ using Sprinkler.Framework;
 
 namespace Sprinkler
 {
-    internal class TestSets
+    public class TestSets
     {
         private static Action<TestResult> LogTest(TestResults results)
         {

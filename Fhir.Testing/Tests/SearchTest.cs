@@ -210,7 +210,7 @@ namespace Sprinkler.Tests
             observation.Name = new CodeableConcept("http://loinc.org", "2164-2");
             observation.Value = new Quantity
             {
-                System = new Uri("http://unitofmeasure.org"),
+                System = "http://unitofmeasure.org",
                 Value = value,
                 Units = "mmol"
             };

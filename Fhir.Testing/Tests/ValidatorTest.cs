@@ -30,7 +30,7 @@ namespace Sprinkler.Tests
         public void ValidateInvalidCreateResource()
         {
             Patient patient = DemoData.GetDemoPatient();
-            patient.Identifier = new List<Identifier> {new Identifier {System = new Uri("urn:oid:hallo")}};
+            patient.Identifier = new List<Identifier> {new Identifier {System = "urn:oid:hallo" }};
 
             OperationOutcome oo;
             if (!Client.TryValidateCreate(patient, out oo, null))
@@ -53,7 +53,7 @@ namespace Sprinkler.Tests
         {
             Patient patient = DemoData.GetDemoPatient();
             ResourceEntry<Patient> result = Client.Create(patient);
-            patient.Identifier = new List<Identifier> {new Identifier {System = new Uri("urn:oid:hallo")}};
+            patient.Identifier = new List<Identifier> {new Identifier {System = "urn:oid:hallo" }};
 
             OperationOutcome oo;
             if (!Client.TryValidateUpdate(result, out oo))
