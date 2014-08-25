@@ -10,6 +10,7 @@ using System.IO;
 using System.Reflection;
 using Hl7.Fhir.Model;
 using Hl7.Fhir.Serialization;
+using Fhir.Testing.Properties;
 
 namespace Sprinkler.Framework
 {
@@ -17,14 +18,7 @@ namespace Sprinkler.Framework
     {
         public static string GetDemoConn5ExampleBundleXml()
         {
-            Assembly assembly = Assembly.GetExecutingAssembly();
-            string resourceName = "Sprinkler.conn5-21-example.xml";
-
-            using (Stream stream = assembly.GetManifestResourceStream(resourceName))
-            using (var reader = new StreamReader(stream))
-            {
-                return reader.ReadToEnd();
-            }
+            return Resources.conn5_21_example;
         }
 
         public static Bundle GetDemoConn5ExampleBundle()
@@ -36,14 +30,7 @@ namespace Sprinkler.Framework
 
         public static string GetDemoConn5CidExampleBundleXml()
         {
-            Assembly assembly = Assembly.GetExecutingAssembly();
-            string resourceName = "Sprinkler.conn5-21-cid-example.xml";
-
-            using (Stream stream = assembly.GetManifestResourceStream(resourceName))
-            using (var reader = new StreamReader(stream))
-            {
-                return reader.ReadToEnd();
-            }
+            return Resources.conn5_21_cid_example;
         }
 
         public static Bundle GetDemoConn5CidExampleBundle()
@@ -55,14 +42,7 @@ namespace Sprinkler.Framework
 
         public static string GetDemoXdsBundleXml()
         {
-            Assembly assembly = Assembly.GetExecutingAssembly();
-            string resourceName = "Sprinkler.xds-example.xml";
-
-            using (Stream stream = assembly.GetManifestResourceStream(resourceName))
-            using (var reader = new StreamReader(stream))
-            {
-                return reader.ReadToEnd();
-            }
+            return Resources.xds_example;
         }
 
         public static Bundle GetDemoXdsBundle()
@@ -75,7 +55,7 @@ namespace Sprinkler.Framework
         //public static string GetDemoCdaXml()
         //{
         //    var assembly = Assembly.GetExecutingAssembly();
-        //    var resourceName = "Sprinkler.cda-demo.xml";
+        //    var resourceName = "Fhir.Testing.cda-demo.xml";
 
         //    using (Stream stream = assembly.GetManifestResourceStream(resourceName))
         //    using (StreamReader reader = new StreamReader(stream))
@@ -104,26 +84,12 @@ namespace Sprinkler.Framework
 
         public static string GetDemoDocumentXml()
         {
-            Assembly assembly = Assembly.GetExecutingAssembly();
-            string resourceName = "Sprinkler.conn5-21-example.xml";
-
-            using (Stream stream = assembly.GetManifestResourceStream(resourceName))
-            using (var reader = new StreamReader(stream))
-            {
-                return reader.ReadToEnd();
-            }
+            return Resources.conn5_21_example;
         }
 
         public static string GetDemoPatientXml()
         {
-            Assembly assembly = Assembly.GetExecutingAssembly();
-            string resourceName = "Sprinkler.patient-example.xml";
-
-            using (Stream stream = assembly.GetManifestResourceStream(resourceName))
-            using (var reader = new StreamReader(stream))
-            {
-                return reader.ReadToEnd();
-            }
+            return Resources.patient_example;
         }
 
         public static string GetDemoPatientJson()
@@ -154,5 +120,7 @@ namespace Sprinkler.Framework
             var pat = (Patient) FhirParser.ParseResourceFromXml(xml);
             return pat;
         }
+    
     }
+
 }

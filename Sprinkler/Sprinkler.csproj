@@ -37,22 +37,6 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Fhir.Testing, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\Fhir.Testing.0.1.0\lib\net45\Fhir.Testing.dll</HintPath>
-    </Reference>
-    <Reference Include="Hl7.Fhir.Api, Version=0.11.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\Fhir.Testing.0.1.0\lib\net45\Hl7.Fhir.Api.dll</HintPath>
-    </Reference>
-    <Reference Include="Hl7.Fhir.Model, Version=0.0.81.2634, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\Fhir.Testing.0.1.0\lib\net45\Hl7.Fhir.Model.dll</HintPath>
-    </Reference>
-    <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\Newtonsoft.Json.6.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Net" />
@@ -73,28 +57,12 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="patient-example.xml" />
-  </ItemGroup>
-  <ItemGroup>
     <None Include="app.config" />
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <None Include="packages.config" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="conn5-21-example.xml">
-      <SubType>Designer</SubType>
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </EmbeddedResource>
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="xds-example.xml" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="conn5-21-cid-example.xml" />
   </ItemGroup>
   <ItemGroup>
     <None Include="xmlToHtml.xslt">
@@ -105,6 +73,12 @@
     <None Include="xmlToRaw.xslt">
       <SubType>Designer</SubType>
     </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Fhir.Testing\Fhir.Testing.csproj">
+      <Project>{90248e7c-fd51-42d8-86fe-e1ddbe856691}</Project>
+      <Name>Fhir.Testing</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

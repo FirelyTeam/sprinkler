@@ -10,7 +10,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Furore")]
 [assembly: AssemblyProduct("Sprinkler")]
-[assembly: AssemblyCopyright("Copyright © Furore 2012")]
+[assembly: AssemblyCopyright("Copyright © Furore 2014")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 

@@ -86,7 +86,7 @@ namespace Sprinkler.Framework
                 var moduleAttr = SprinklerTestModuleAttribute.AttributeOf(testclass);
                 if (moduleAttr != null)
                 {
-                    if (codesOrModules.Length == 0 || codesOrModules.Contains(moduleAttr.Name, StringComparer.OrdinalIgnoreCase))
+                    if (codesOrModules==null || codesOrModules.Length == 0 || codesOrModules.Contains(moduleAttr.Name, StringComparer.OrdinalIgnoreCase))
                     {
                         methods.Add(testclass, GetTestMethods(testclass).ToList());
                         
