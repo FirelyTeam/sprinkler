@@ -17,12 +17,13 @@ namespace Sprinkler.Framework
     public class TestRunner
     {
         private readonly FhirClient _client;
-        private readonly Action<TestResult> _log;
+        private readonly IDictionary<Type, SprinklerTestClass> _instances;
+        private Action<TestResult> _log;
 
-        public TestRunner(FhirClient client, Action<TestResult> log)
+        public TestRunner(FhirClient client)
         {
             _client = client;
-            _log = log;
+            _instances = new Dictionary<Type, SprinklerTestClass>();
         }
 
         public static IEnumerable<MethodInfo> TestMethodsOf(object instance, IEnumerable<string> codes = null)
@@ -31,7 +32,7 @@ namespace Sprinkler.Framework
             return methods.Where(m => IsProperTestMethod(m, codes));
         }
 
-        public static TestResult RunTestMethod(string category, object instance, MethodInfo method)
+        private static TestResult RunTestMethod(string category, object instance, MethodInfo method)
         {
             var test = new TestResult {Category = category};
             var attribute = SprinklerTestAttribute.AttributeOf(method);
@@ -63,13 +64,14 @@ namespace Sprinkler.Framework
             return test;
         }
 
-        public void Run(string[] codesOrModules)
+        public void Run(string[] codesOrModules, Action<TestResult> log)
         {
+            _log = log;
             var tests = FilterTestsForCodeOrModule(GetTestClasses(),
                 codesOrModules);
             foreach (var test in tests)
             {
-                var testInstance = Instantiate(test.Key);
+                var testInstance = GetInstanceOf(test.Key);
                 foreach (var testMethod in test.Value)
                 {
                     Run(testInstance, testMethod);
@@ -127,9 +129,18 @@ namespace Sprinkler.Framework
             return assembly.GetTypes().Where(type => type.GetCustomAttributes(typeof (T), true).Length > 0);
         }
 
-        public static SprinklerTestClass Instantiate(Type testclass)
+        public SprinklerTestClass GetInstanceOf(Type testclass)
         {
-            return (SprinklerTestClass) Activator.CreateInstance(testclass);
+            if (!_instances.ContainsKey(testclass))
+            {
+                _instances.Add(testclass,(SprinklerTestClass)Activator.CreateInstance(testclass));
+            }
+            return _instances[testclass];
+        }
+
+        public void ClearInstances()
+        {
+            _instances.Clear();
         }
 
         public static IEnumerable<Type> GetTestClasses()

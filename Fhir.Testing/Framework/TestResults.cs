@@ -36,8 +36,9 @@ namespace Sprinkler.Framework
 
         public string Title { get; set; }
         public List<TestResult> ResultList { get; set; }
+
         // logging to Console
-        public static void RegisterTestException(Exception exception)
+        public static void LogTestExceptionToConsole(Exception exception)
         {
             const string indent = "    - ";
 
@@ -66,30 +67,28 @@ namespace Sprinkler.Framework
             }
         }
 
-        private static void LogTest(TestResult test)
+        private static void LogTest(TestResult test, bool showAllInConsole)
         {
-            var title = string.Format("{0}: {1}", test.Code, test.Title);
-            var outcome = test.Outcome.ToString().ToUpper();
-            Console.WriteLine(string.Format("{0,-60} : {1}", title, outcome));
-
-            if (test.Exception != null)
-                RegisterTestException(test.Exception);
-        }
-
-
-        public void AddTestResult(TestResult testResult)
-        {
-            if (ShowStatusInConsole)
+            if (showAllInConsole)
             {
-
                 string s = "{0}\nTested module:[{1}] method:[{2}]";
                 Console.Write(s, new string(' ', Console.WindowWidth - 1),
-                    testResult.Category, testResult.Code);
+                    test.Category, test.Code);
             }
             else
             {
-                LogTest(testResult);
+                var title = string.Format("{0}: {1}", test.Code, test.Title);
+                var outcome = test.Outcome.ToString().ToUpper();
+                Console.WriteLine(string.Format("{0,-60} : {1}", title, outcome));
+
+                if (test.Exception != null)
+                    LogTestExceptionToConsole(test.Exception);
             }
+        }
+
+        public void AddTestResult(TestResult testResult)
+        {
+            LogTest(testResult, ShowStatusInConsole);
             ResultList.Add(testResult);
         }
 

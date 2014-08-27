@@ -77,11 +77,11 @@ namespace Sprinkler
         private static void RunTests(IDictionary<string, string> opts, IList<string> mandatoryPars)
         {
             var url = mandatoryPars[0];
-            if (!TestSets.IsValidUrl(url))
+            if (!TestSet.IsValidUrl(url))
             {
                 throw new ArgumentException(Resources.missingURL);
             }
-            
+
             var outputFormat = GetOutputFormat(opts);
             var outputFilename = GetOutputFilename(opts, outputFormat);
             var outputWriter = outputFilename == null
@@ -89,7 +89,8 @@ namespace Sprinkler
                 : File.CreateText(GetOutputFilename(opts, outputFormat));
             var results = new TestResults(Resources.header, outputFormat!=OutputFormat.Raw);
             if (outputFormat!=OutputFormat.Raw) Console.Write(Resources.testStarted);
-            TestSets.Run(url, results, mandatoryPars.Skip(1).ToArray());
+            var testSet=TestSet.NewInstance(url);
+            testSet.Run(results,mandatoryPars.Skip(1).ToArray());
             Console.Write("\r{0}\r", new string(' ', Console.WindowWidth - 1));
             ProcessOutputOptions(results, outputWriter, outputFormat);
         }
@@ -110,12 +111,12 @@ namespace Sprinkler
 
         private static void ShowModulesList()
         {
-            var list = TestSets.GetTestModules();
+            var list = TestSet.GetTestModules();
             Console.WriteLine(Resources.availableModules);
             foreach (var module in list)
             {
-                Console.WriteLine(module.Key+":");
-                foreach (var method in module.Value)
+                Console.WriteLine(module.Item1 +":");
+                foreach (var method in module.Item2)
                 {
                     Console.WriteLine("\t{0} {1}", method.Item1, method.Item2);
                 }

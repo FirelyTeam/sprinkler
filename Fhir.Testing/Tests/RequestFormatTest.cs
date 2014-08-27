@@ -18,7 +18,7 @@ namespace Sprinkler.Tests
         private ResourceEntry<Patient> entry;
         private string id;
 
-        [SprinklerTest("TR01", "Adding a patient")]
+        [SprinklerTest("CT05", "Adding a patient")]
         public void AddPatient()
         {
             Patient patient = Utils.NewPatient("Bach", "Johan", "Sebastian");

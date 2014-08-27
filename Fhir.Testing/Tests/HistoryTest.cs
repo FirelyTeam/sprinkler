@@ -136,7 +136,6 @@ namespace Sprinkler.Tests
             HttpTests.AssertFail(Client, () => Client.History("Patient/3141592unlikely"), HttpStatusCode.NotFound);
         }
 
-        // todo: bug in API. Werkt weer bij volgende versie.
         [SprinklerTest("HI06", "Get all history for a resource type with _since")]
         public void HistoryForResourceType()
         {
