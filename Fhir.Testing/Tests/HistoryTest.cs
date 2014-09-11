@@ -191,7 +191,7 @@ namespace Sprinkler.Tests
         public void PageFwdThroughResourceHistory()
         {
             int pageSize = 30;
-            Bundle page = Client.TypeHistory<Patient>(pageSize: pageSize);
+            Bundle page = Client.TypeHistory<Patient>(since: DateTimeOffset.Now.AddHours(-1), pageSize: pageSize);
             HttpTests.AssertEntryIdsArePresentAndAbsoluteUrls(page);
 
             _forwardCount = 0;
@@ -219,7 +219,7 @@ namespace Sprinkler.Tests
             if (_forwardCount == -1) TestResult.Skip();
 
             int pageSize = 30;
-            Bundle page = Client.TypeHistory<Patient>(pageSize: pageSize);
+            Bundle page = Client.TypeHistory<Patient>(since: DateTimeOffset.Now.AddHours(-1), pageSize: pageSize);
             HttpTests.AssertEntryIdsArePresentAndAbsoluteUrls(page);
 
             page = Client.Continue(page, PageDirection.Last);

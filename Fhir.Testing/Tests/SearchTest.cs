@@ -252,7 +252,8 @@ namespace Sprinkler.Tests
         public void SearchPatientByGenderMissing()
         {
             var patients = new List<ResourceEntry<Patient>>();
-            Bundle bundle = Client.Search<Patient>();
+            var filter = "family=BROOKS";
+            Bundle bundle = Client.Search<Patient>(new[] { filter });
             while (bundle != null && bundle.Entries.ByResourceType<Patient>().Count() > 0)
             {
                 patients.AddRange(bundle.Entries.ByResourceType<Patient>());
@@ -260,9 +261,8 @@ namespace Sprinkler.Tests
             }
             IEnumerable<ResourceEntry<Patient>> patientsNoGender = patients.Where(p => p.Resource.Gender == null);
             int nrOfPatientsWithMissingGender = patientsNoGender.Count();
-
             IEnumerable<ResourceEntry<Patient>> actual =
-                Client.Search<Patient>(new[] {"gender:missing=true"}, pageSize: 500).Entries.ByResourceType<Patient>();
+                Client.Search<Patient>(new[] { "gender:missing=true", filter }, pageSize: 500).Entries.ByResourceType<Patient>();
 
             HttpTests.AssertCorrectNumberOfResults(nrOfPatientsWithMissingGender, actual.Count(),
                 "Expected {0} patients without gender, but got {1}.");
