@@ -33,26 +33,18 @@
     <StartupObject />
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Hl7.Fhir.Api, Version=0.11.0.17346, Culture=neutral, PublicKeyToken=d706911480550fc3, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\Hl7.Fhir.0.11.0\lib\net45\Hl7.Fhir.Api.dll</HintPath>
+    <Reference Include="Hl7.Fhir.Api">
+      <HintPath>..\packages\Hl7.Fhir.0.11.1-alpha\lib\net45\Hl7.Fhir.Api.dll</HintPath>
     </Reference>
-    <Reference Include="Hl7.Fhir.Model, Version=0.0.81.2634, Culture=neutral, PublicKeyToken=d706911480550fc3, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\Hl7.Fhir.0.11.0\lib\net45\Hl7.Fhir.Model.dll</HintPath>
+    <Reference Include="Hl7.Fhir.Model">
+      <HintPath>..\packages\Hl7.Fhir.0.11.1-alpha\lib\net45\Hl7.Fhir.Model.dll</HintPath>
     </Reference>
     <Reference Include="Hl7.Fhir.Profiling">
-      <HintPath>..\packages\Hl7.Fhir.0.11.0\lib\net45\Hl7.Fhir.Profiling.dll</HintPath>
-    </Reference>
-    <Reference Include="Ionic.Zip">
-      <HintPath>..\packages\DotNetZip.1.9.2\lib\net20\Ionic.Zip.dll</HintPath>
+      <HintPath>..\packages\Hl7.Fhir.0.11.1-alpha\lib\net45\Hl7.Fhir.Profiling.dll</HintPath>
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\Newtonsoft.Json.6.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
-    </Reference>
-    <Reference Include="SharpCompress">
-      <HintPath>..\packages\p3-sharpcompress.0.10.5.2\lib\net40\SharpCompress.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -103,6 +95,7 @@
     <EmbeddedResource Include="Tests\spark.pfx" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="app.config" />
     <None Include="conn5-21-example.xml">
       <SubType>Designer</SubType>
     </None>
