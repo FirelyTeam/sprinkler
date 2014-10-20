@@ -75,10 +75,10 @@ namespace Sprinkler.Tests
             IEnumerable<Extension> extensions = entry.Resource.Contact[0].Name.GetExtensions(qualifier);
 
             if (extensions == null || extensions.Count() == 0)
-                TestResult.Fail("Extensions have disappeared on resource " + Location);
+                Assert.Fail("Extensions have disappeared on resource " + Location);
 
             if (!extensions.Any(ext => ext.Value is Code && ((Code) ext.Value).Value == "AC"))
-                TestResult.Fail("Resource extension was not persisted on created resource " + entry.GetBasicId());
+                Assert.Fail("Resource extension was not persisted on created resource " + entry.GetBasicId());
         }
 
         [SprinklerTest("UP01", "update that patient (no extensions altered)")]
@@ -95,7 +95,7 @@ namespace Sprinkler.Tests
 
             if (!entry.Resource.Telecom.Any(
                 tel => tel.System == Contact.ContactSystem.Url && tel.Value == "http://www.nu.nl"))
-                TestResult.Fail(String.Format("Resource {0} unchanged after update", Location));
+                Assert.Fail(String.Format("Resource {0} unchanged after update", Location));
 
             Versions.Add(entry.SelfLink);
         }
@@ -121,13 +121,13 @@ namespace Sprinkler.Tests
             IEnumerable<Extension> extensions = entry.Resource.Contact[0].Name.FamilyElement[0].GetExtensions(qualifier);
 
             if (extensions == null || extensions.Count() == 0)
-                TestResult.Fail("Extensions have disappeared on resource " + Location);
+                Assert.Fail("Extensions have disappeared on resource " + Location);
 
             if (!extensions.Any(ext => ext.Value is Code && ((Code) ext.Value).Value == "NB"))
-                TestResult.Fail("Resource extension update was not persisted on resource " + Location);
+                Assert.Fail("Resource extension update was not persisted on resource " + Location);
 
             if (!extensions.Any(ext => ext.Value is Code && ((Code) ext.Value).Value == "AC"))
-                TestResult.Fail("Resource extension addition was not persisted on resource " + Location);
+                Assert.Fail("Resource extension addition was not persisted on resource " + Location);
 
             Versions.Add(entry.SelfLink);
         }
@@ -139,7 +139,7 @@ namespace Sprinkler.Tests
             string location = "Patient/" + CrudId;
             Client.Delete(location);
 
-            HttpTests.AssertFail(Client, () => Client.Read<Patient>(location), HttpStatusCode.Gone);
+            Assert.Fails(Client, () => Client.Read<Patient>(location), HttpStatusCode.Gone);
         }
 
         [SprinklerTest("DE02", "deletion of a non-existing resource")]
@@ -148,7 +148,7 @@ namespace Sprinkler.Tests
             var rnd = new Random();
             string location = "Patient/sprink" + rnd.Next();
 
-            HttpTests.AssertFail(Client, () => Client.Delete(location), HttpStatusCode.NotFound);
+            Assert.Fails(Client, () => Client.Delete(location), HttpStatusCode.NotFound);
         }
 
         private Uri TryCreatePatient(FhirClient client, ResourceFormat formatIn, string id = null)
@@ -160,27 +160,27 @@ namespace Sprinkler.Tests
 
             if (id == null)
             {
-                HttpTests.AssertSuccess(client, () => created = client.Create(demopat));
+                Assert.Success(client, () => created = client.Create(demopat));
             }
             else
             {
-                HttpTests.AssertSuccess(client, () => created = client.Create(demopat, id));
+                Assert.Success(client, () => created = client.Create(demopat, id));
 
                 var ep = new RestUrl(client.Endpoint);
                 if (!ep.IsEndpointFor(created.Id))
-                    TestResult.Fail("Location of created resource is not located within server endpoint");
+                    Assert.Fail("Location of created resource is not located within server endpoint");
 
                 var rl = new ResourceIdentity(created.Id);
                 if (rl.Id != id)
-                    TestResult.Fail("Server refused to honor client-assigned id");
+                    Assert.Fail("Server refused to honor client-assigned id");
             }
 
-            HttpTests.AssertLocationPresentAndValid(client);
+            Assert.LocationPresentAndValid(client);
 
             // Create bevat geen response content meer. Terecht verwijderd?:
             // EK: Niet helemaal, er is weliswaar geen data meer gereturned, maar de headers (id, versie, modified) worden
             // nog wel geupdate
-            HttpTests.AssertContentLocationValidIfPresent(client);
+            Assert.ContentLocationValidIfPresent(client);
 
             return created.SelfLink;
         }

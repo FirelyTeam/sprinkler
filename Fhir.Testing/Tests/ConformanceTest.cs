@@ -30,8 +30,8 @@ namespace Sprinkler.Tests
 
         private void CheckResultHeaders()
         {
-            HttpTests.AssertValidResourceContentTypePresent(Client);
-            HttpTests.AssertContentLocationValidIfPresent(Client);
+            Assert.ValidResourceContentTypePresent(Client);
+            Assert.ContentLocationValidIfPresent(Client);
         }
     }
 }

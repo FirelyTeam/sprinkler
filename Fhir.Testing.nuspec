@@ -2,7 +2,7 @@
 <package >
   <metadata>
     <id>Fhir.Testing</id>
-    <version>0.1.1</version>
+    <version>0.1.6-alpha1</version>
     <authors>Furore</authors>
     <owners>Furore (http://fhir.furore.com</owners>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
@@ -13,17 +13,10 @@
     <tags>FHIR Testing Sprinkler</tags>
 	 <dependencies>
       <dependency id="Newtonsoft.Json" version="6.0.2" />
+      <dependency id="Hl7.Fhir" version="0.11.2-alpha1" />
     </dependencies>
   </metadata>
     <files>
-		<file src="Fhir.Testing\bin\Release\Hl7.Fhir.Model.dll" target="lib\net45\" />
-		<file src="Fhir.Testing\bin\Release\Hl7.Fhir.Model.xml" target="lib\net45\" />
-		<file src="Fhir.Testing\bin\Release\Hl7.Fhir.Model.pdb" target="lib\net45\" />
-
-		<file src="Fhir.Testing\bin\Release\Hl7.Fhir.Api.dll" target="lib\net45\" />
-		<file src="Fhir.Testing\bin\Release\Hl7.Fhir.Api.xml" target="lib\net45\" />
-		<file src="Fhir.Testing\bin\Release\Hl7.Fhir.Api.pdb" target="lib\net45\" />
-		
 		<file src="Fhir.Testing\bin\Release\Fhir.Testing.dll" target="lib\net45\" />
 		<file src="Fhir.Testing\bin\Release\Fhir.Testing.pdb" target="lib\net45\" />
     </files>

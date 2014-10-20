@@ -32,7 +32,7 @@ namespace Sprinkler.Tests
             Client.PreferredFormat = ResourceFormat.Xml;
             Client.UseFormatParam = false;
             Client.Read<Patient>(id);
-            HttpTests.AssertResourceResponseConformsTo(Client, Client.PreferredFormat);
+            Assert.ResourceResponseConformsTo(Client, Client.PreferredFormat);
         }
 
         [SprinklerTest("CT02", "request xml using _format")]
@@ -41,7 +41,7 @@ namespace Sprinkler.Tests
             Client.PreferredFormat = ResourceFormat.Xml;
             Client.UseFormatParam = true;
             Client.Read<Patient>(id);
-            HttpTests.AssertResourceResponseConformsTo(Client, Client.PreferredFormat);
+            Assert.ResourceResponseConformsTo(Client, Client.PreferredFormat);
         }
 
         [SprinklerTest("CT03", "request json using accept")]
@@ -50,7 +50,7 @@ namespace Sprinkler.Tests
             Client.PreferredFormat = ResourceFormat.Json;
             Client.UseFormatParam = false;
             Client.Read<Patient>(id);
-            HttpTests.AssertResourceResponseConformsTo(Client, Client.PreferredFormat);
+            Assert.ResourceResponseConformsTo(Client, Client.PreferredFormat);
         }
 
         [SprinklerTest("CT04", "request json using _format")]
@@ -59,7 +59,7 @@ namespace Sprinkler.Tests
             Client.PreferredFormat = ResourceFormat.Json;
             Client.UseFormatParam = true;
             Client.Read<Patient>(id);
-            HttpTests.AssertResourceResponseConformsTo(Client, Client.PreferredFormat);
+            Assert.ResourceResponseConformsTo(Client, Client.PreferredFormat);
         }
 
         //TODO: Do this later and check operations returning feeds (xml/json)

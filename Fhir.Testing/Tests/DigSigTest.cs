@@ -51,7 +51,7 @@ namespace Sprinkler.Tests
             using (HttpWebResponse response = PostBundle(bundleSigned))
             {
                 if (response.StatusCode != HttpStatusCode.OK)
-                    TestResult.Fail("Server refused POSTing signed document at /");
+                    Assert.Fail("Server refused POSTing signed document at /");
             }
         }
 
@@ -76,7 +76,7 @@ namespace Sprinkler.Tests
             using (HttpWebResponse response = PostBundle(changedBundle))
             {
                 if (response.StatusCode == HttpStatusCode.OK || response.StatusCode == HttpStatusCode.Created)
-                    TestResult.Fail("Server accepted POSTing an invalid and signed document at /");
+                    Assert.Fail("Server accepted POSTing an invalid and signed document at /");
             }
         }
 

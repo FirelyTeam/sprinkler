@@ -29,53 +29,53 @@ namespace Sprinkler.Tests
             Bundle bundle = DemoData.GetDemoXdsBundle();
 
             _postResult = Client.Transaction(bundle);
-            HttpTests.AssertEntryIdsArePresentAndAbsoluteUrls(_postResult);
+            Assert.EntryIdsArePresentAndAbsoluteUrls(_postResult);
             if (_postResult.Entries.Count != 5)
-                TestResult.Fail(String.Format("Bundle response contained {0} entries in stead of 5",
+                Assert.Fail(String.Format("Bundle response contained {0} entries in stead of 5",
                     _postResult.Entries.Count));
 
             _postResult = Client.RefreshBundle(_postResult);
-            HttpTests.AssertEntryIdsArePresentAndAbsoluteUrls(_postResult);
+            Assert.EntryIdsArePresentAndAbsoluteUrls(_postResult);
             List<BundleEntry> entries = _postResult.Entries.ToList();
 
             _connDoc = entries[0];
 
             if (new ResourceIdentity(_connDoc.Id).Id == null)
-                TestResult.Fail("failed to assign id to new xds document");
+                Assert.Fail("failed to assign id to new xds document");
             if (new ResourceIdentity(_connDoc.SelfLink).VersionId == null)
-                TestResult.Fail("failed to assign a version id to new xds document");
+                Assert.Fail("failed to assign a version id to new xds document");
 
             _patDoc = entries[1];
-            if (new ResourceIdentity(_patDoc.Id) == null) TestResult.Fail("failed to assign id to new patient");
+            if (new ResourceIdentity(_patDoc.Id) == null) Assert.Fail("failed to assign id to new patient");
 
             _prac1Doc = entries[2];
             if (new ResourceIdentity(_prac1Doc.Id).Id == null)
-                TestResult.Fail("failed to assign id to new practitioner (#1)");
+                Assert.Fail("failed to assign id to new practitioner (#1)");
             if (new ResourceIdentity(_prac1Doc.SelfLink).VersionId == null)
-                TestResult.Fail("failed to assign a version id to new practitioner (#1)");
+                Assert.Fail("failed to assign a version id to new practitioner (#1)");
 
             _prac2Doc = entries[3];
             if (new ResourceIdentity(_prac2Doc.Id).Id == null)
-                TestResult.Fail("failed to assign id to new practitioner (#2)");
+                Assert.Fail("failed to assign id to new practitioner (#2)");
             if (new ResourceIdentity(_prac2Doc.SelfLink).VersionId == null)
-                TestResult.Fail("failed to assign a version id to new practitioner (#2)");
+                Assert.Fail("failed to assign a version id to new practitioner (#2)");
 
             _binDoc = entries[4];
-            if (new ResourceIdentity(_binDoc.Id).Id == null) TestResult.Fail("failed to assign id to new binary");
+            if (new ResourceIdentity(_binDoc.Id).Id == null) Assert.Fail("failed to assign id to new binary");
             if (new ResourceIdentity(_binDoc.SelfLink).VersionId == null)
-                TestResult.Fail("failed to assign a version id to new binary");
+                Assert.Fail("failed to assign a version id to new binary");
 
             DocumentReference docResource = ((ResourceEntry<DocumentReference>) _connDoc).Resource;
 
             if (!_prac1Doc.Id.ToString().Contains(docResource.Author[0].Reference))
-                TestResult.Fail("doc reference's author[0] does not reference newly created practitioner #1");
+                Assert.Fail("doc reference's author[0] does not reference newly created practitioner #1");
             if (!_prac2Doc.Id.ToString().Contains(docResource.Author[1].Reference))
-                TestResult.Fail("doc reference's author[1] does not reference newly created practitioner #2");
+                Assert.Fail("doc reference's author[1] does not reference newly created practitioner #2");
 
             var binRl = new ResourceIdentity(_binDoc.Id);
 
             if (!docResource.Text.Div.Contains(binRl.OperationPath.ToString()))
-                TestResult.Fail("href in narrative was not fixed to point to newly created binary");
+                Assert.Fail("href in narrative was not fixed to point to newly created binary");
         }
 
         [SprinklerTest("BU02", "fetch created resources")]
@@ -95,11 +95,11 @@ namespace Sprinkler.Tests
             Bundle bundle = DemoData.GetDemoXdsBundle();
             Bundle trans = Client.Transaction(bundle);
             List<BundleEntry> entries = trans.Entries.ToList();
-            HttpTests.AssertEntryIdsArePresentAndAbsoluteUrls(trans);
+            Assert.EntryIdsArePresentAndAbsoluteUrls(trans);
 
             // If server honors the 'search' link, it might *not* re-create the patient
             if (entries[0].Id == _connDoc.Id || entries[4].Id == _binDoc.Id) // etcetera
-                TestResult.Fail("submitting a bundle with identical cids should still create new resources");
+                Assert.Fail("submitting a bundle with identical cids should still create new resources");
 
             //TODO: verify server honors the 'search' link
         }
@@ -117,32 +117,32 @@ namespace Sprinkler.Tests
 
             List<BundleEntry> entries = _postResult.Entries.ToList();
             Bundle returnedBundle = Client.Transaction(_postResult);
-            HttpTests.AssertEntryIdsArePresentAndAbsoluteUrls(returnedBundle);
+            Assert.EntryIdsArePresentAndAbsoluteUrls(returnedBundle);
 
             List<BundleEntry> entries2 = returnedBundle.Entries.ToList();
             if (entries2[0].Id != entries[0].Id || entries2[4].Id != entries[4].Id) // etcetera
-                TestResult.Fail("submitting a batch with updates created new resources");
+                Assert.Fail("submitting a batch with updates created new resources");
 
             Bundle refreshedBundle = Client.RefreshBundle(returnedBundle);
-            HttpTests.AssertEntryIdsArePresentAndAbsoluteUrls(refreshedBundle);
+            Assert.EntryIdsArePresentAndAbsoluteUrls(refreshedBundle);
 
             if (
                 refreshedBundle.Entries.OfType<ResourceEntry<DocumentReference>>()
                     .First()
                     .Resource.MasterIdentifier.Value != newMasterId)
-                TestResult.Fail("update on document resource was not reflected in batch result");
+                Assert.Fail("update on document resource was not reflected in batch result");
 
             if (refreshedBundle.Entries.OfType<ResourceEntry<Patient>>().First().Resource.Identifier[0].Value !=
                 "3141592")
-                TestResult.Fail("update on patient was not reflected in batch result");
+                Assert.Fail("update on patient was not reflected in batch result");
 
             doc = Client.Read<DocumentReference>(doc.Id);
             if (doc.Resource.MasterIdentifier.Value != newMasterId)
-                TestResult.Fail("update on document resource was not reflected in new version");
+                Assert.Fail("update on document resource was not reflected in new version");
 
             pat = Client.Read<Patient>(pat.Id);
             if (pat.Resource.Identifier[0].Value != "3141592")
-                TestResult.Fail("update on patient was not reflected in new version");
+                Assert.Fail("update on patient was not reflected in new version");
         }
     }
 }

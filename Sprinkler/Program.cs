@@ -25,15 +25,18 @@ namespace Sprinkler
             Raw
         };
 
-        private const string OutputPar = "-o";
-        private const string ListPar = "-l";
-        private const string FormatPar = "-f";
+        internal static class Params
+        {
+            public const string OUTPUT = "-o";
+            public const string LIST = "-l";
+            public const string FORMAT = "-f";
+        }
 
         public static IDictionary<string, string> KnownPars = new Dictionary<string, string>
         {
-            {ListPar, Resources.listPar},
-            {FormatPar, Resources.formatPar},
-            {OutputPar, Resources.outputPar}
+            {Params.LIST, Texts.HelpForListParameter},
+            {Params.FORMAT, Texts.HelpForFormatParameter},
+            {Params.OUTPUT, Texts.HelpForOutputPararameter}
         };
 
         /**
@@ -47,12 +50,12 @@ namespace Sprinkler
 
         public static void Main(string[] args)
         {
-            var pars = ReadArgs(args);
-            var opts = pars.Item1;
-            var mandatoryPars = pars.Item2;
-            Console.WriteLine(Resources.header);
+            var parameters = ReadArgs(args);
+            var opts = parameters.Item1;
+            var mandatoryPars = parameters.Item2;
+            Console.WriteLine(Texts.ProgramTitle);
             Console.WriteLine();
-            if (opts.ContainsKey(ListPar))
+            if (opts.ContainsKey(Params.LIST))
             {
                 ShowModulesList();
             }
@@ -68,40 +71,47 @@ namespace Sprinkler
                 }
                 catch (Exception x)
                 {
-                    Console.Error.WriteLine(Resources.error, x.Message);
+                    Console.Error.WriteLine(Texts.error, x.Message);
                 }
             }
+        }
 
+        private static void log(TestResult result)
+        {
+            string designator = string.Format("{0}/{1} {2}", result.Category, result.Code, result.Title);
+            Console.WriteLine("{0}[{1}]", designator.PadRight(80, '.'), result.Outcome);
         }
 
         private static void RunTests(IDictionary<string, string> opts, IList<string> mandatoryPars)
         {
             var url = mandatoryPars[0];
-            if (!TestSet.IsValidUrl(url))
-            {
-                throw new ArgumentException(Resources.missingURL);
-            }
-
+            
             var outputFormat = GetOutputFormat(opts);
             var outputFilename = GetOutputFilename(opts, outputFormat);
             var outputWriter = outputFilename == null
                 ? Console.Out
                 : File.CreateText(GetOutputFilename(opts, outputFormat));
-            var results = new TestResults(Resources.header, outputFormat!=OutputFormat.Raw);
-            if (outputFormat!=OutputFormat.Raw) Console.Write(Resources.testStarted);
-            var testSet=TestSet.NewInstance(url);
-            testSet.Run(results,mandatoryPars.Skip(1).ToArray());
-            Console.Write("\r{0}\r", new string(' ', Console.WindowWidth - 1));
-            ProcessOutputOptions(results, outputWriter, outputFormat);
+            
+            if (outputFormat != OutputFormat.Raw) Console.Write(Texts.MessageTestStarted);
+            //var testSet = TestSet.NewInstance(url);
+            //testSet.Run(results, mandatoryPars.Skip(1).ToArray());
+
+            var tests = mandatoryPars.Skip(1).ToArray(); 
+
+            TestRunner runner = Test.CreateRunner(url, log);
+            
+            runner.Run(tests);
+
+            Console.WriteLine();
         }
 
         private static string GetOutputFilename(IDictionary<string, string> opts, OutputFormat outputFormat)
         {
-            if (!opts.ContainsKey(OutputPar)) return null;
-            var outputFilename = opts[OutputPar];
+            if (!opts.ContainsKey(Params.OUTPUT)) return null;
+            var outputFilename = opts[Params.OUTPUT];
             if (String.Empty == outputFilename)
             {
-                throw new ArgumentException(string.Format(Resources.wrongValueForParameter, OutputPar, outputFilename));
+                throw new ArgumentException(string.Format(Texts.ErrorWrongValueForParameter, Params.OUTPUT, outputFilename));
             }
             var format = outputFormat.ToString().ToLowerInvariant();
             return outputFilename.EndsWith(format, StringComparison.OrdinalIgnoreCase)
@@ -111,11 +121,11 @@ namespace Sprinkler
 
         private static void ShowModulesList()
         {
-            var list = TestSet.GetTestModules();
-            Console.WriteLine(Resources.availableModules);
+            var list = TestHelper.GetTestModules();
+            Console.WriteLine(Texts.availableModules);
             foreach (var module in list)
             {
-                Console.WriteLine(module.Item1 +":");
+                Console.WriteLine(module.Item1 + ":");
                 foreach (var method in module.Item2)
                 {
                     Console.WriteLine("\t{0} {1}", method.Item1, method.Item2);
@@ -126,20 +136,21 @@ namespace Sprinkler
         private static void ShowOptions()
         {
             var executable = Path.GetFileNameWithoutExtension(Assembly.GetExecutingAssembly().Location);
-            Console.WriteLine(Resources.usage, executable,Resources.syntax);
-            Console.WriteLine(Resources.parameters);
-            Console.WriteLine(Resources.parametersDesc);
-            Console.WriteLine(Resources.options);
+            Console.WriteLine(Texts.HelpForUsage, executable, Texts.HelpForSyntax);
+            Console.WriteLine(Texts.parameters);
+            Console.WriteLine(Texts.HelpForParameters);
+            Console.WriteLine(Texts.options);
             foreach (var opt in KnownPars)
             {
                 Console.WriteLine("\t{0}\t{1}", opt.Key, opt.Value);
             }
         }
 
+        /*
         private static void ProcessOutputOptions(TestResults results, TextWriter outputWriter, OutputFormat outputFormat)
         {
             if (outputFormat == OutputFormat.Raw) return; // nothing to do 
-            TextReader xslTransform=null;
+            TextReader xslTransform = null;
             //switch (outputFormat)
             //{
             //    case OutputFormat.Raw:
@@ -154,19 +165,20 @@ namespace Sprinkler
             //}
             if (outputFormat == OutputFormat.Html)
             {
-                xslTransform = new StringReader(Resources.xmlToHtml);
+                xslTransform = new StringReader(Texts.xmlToHtml);
             }
             results.SerializeTo(outputWriter, xslTransform);
             outputWriter.Close();
         }
+        */
 
         private static OutputFormat GetOutputFormat(IDictionary<string, string> opts)
         {
-            var formatOpt = GetOptionValue(opts, FormatPar, OutputFormat.Raw.ToString());
+            var formatOpt = GetOptionValue(opts, Params.FORMAT, OutputFormat.Raw.ToString());
             OutputFormat format;
             if (!Enum.TryParse(formatOpt, true, out format))
             {
-                throw new ArgumentException(string.Format(Resources.wrongValueForParameter, FormatPar, formatOpt));
+                throw new ArgumentException(string.Format(Texts.ErrorWrongValueForParameter, Params.FORMAT, formatOpt));
             }
             return format;
         }

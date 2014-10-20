@@ -22,7 +22,7 @@ namespace Sprinkler.Framework
     }
 
     [Serializable]
-    public class TestFailedException : Exception, IXmlSerializable
+    public class TestFailedException : Exception
     {
         public TestOutcome Outcome = TestOutcome.Fail;
 
@@ -48,57 +48,6 @@ namespace Sprinkler.Framework
         {
         }
 
-        public XmlSchema GetSchema()
-        {
-            return null;
-        }
-
-        public void ReadXml(XmlReader reader)
-        {
-            throw new NotImplementedException();
-        }
-
-        // used by serialization
-        public void WriteXml(XmlWriter writer)
-        {
-            WriteXml(writer, this);
-        }
-
-        private static void WriteXml(XmlWriter writer, Exception exception)
-        {
-            writer.WriteStartElement("Message");
-            if (exception is FhirOperationException)
-            {
-                var foe = exception as FhirOperationException;
-                if (foe.Outcome != null && foe.Outcome.Issue != null)
-                {
-                    var isuenr = 1;
-                    foreach (var issue in foe.Outcome.Issue)
-                    {
-                        if (!issue.Details.StartsWith("Stack"))
-                        {
-                            writer.WriteStartElement("Stack");
-                            writer.WriteAttributeString("issue", isuenr.ToString(CultureInfo.CurrentCulture));
-                            writer.WriteString(issue.Details);
-                            writer.WriteEndElement();
-                        }
-                        isuenr++;
-                    }
-                }
-            }
-            else
-            {
-                writer.WriteString(exception.Message);
-            }
-            exception = exception.InnerException;
-            if (exception != null)
-            {
-                writer.WriteStartElement("Inner");
-                WriteXml(writer, exception);
-                writer.WriteEndElement();
-            }
-            writer.WriteEndElement();
-        }
     }
 
     public class TestResult
@@ -107,27 +56,17 @@ namespace Sprinkler.Framework
         public string Code { get; set; }
         public string Title { get; set; }
         public TestOutcome Outcome { get; set; }
-        public TestFailedException Exception { get; set; }
+        public Exception Exception { get; set; }
 
         public static void Skip()
         {
             throw new TestFailedException(TestOutcome.Skipped);
         }
 
-        public static void Fail(string message)
-        {
-            throw new TestFailedException(message);
-        }
-
-        public static void Fail(Exception inner, string message = "Exception caught")
-        {
-            throw new TestFailedException(message, inner);
-        }
-
-        public static void Assert(bool assertion, string message)
-        {
-            if (!assertion)
-                Fail(message);
-        }
+        
+       
+        
     }
+
+    
 }

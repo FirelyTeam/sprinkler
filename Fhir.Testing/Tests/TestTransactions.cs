@@ -24,7 +24,7 @@ namespace Sprinkler.Tests
             entry = Client.Create(patient, null, true);
 
             Bundle bundle = Client.History(entry);
-            TestResult.Assert((bundle.Entries.Count == 1), "History of patient is not valid");
+            Assert.IsTrue((bundle.Entries.Count == 1), "History of patient is not valid");
         }
 
         [SprinklerTest("TR02", "Updating a patient")]
@@ -35,7 +35,7 @@ namespace Sprinkler.Tests
             entry = Client.Update(entry, true);
 
             Bundle bundle = Client.History(entry);
-            TestResult.Assert((bundle.Entries.Count == 2), "History of patient is not valid");
+            Assert.IsTrue((bundle.Entries.Count == 2), "History of patient is not valid");
         }
 
         [SprinklerTest("TR03", "Reupdating a patient")]
@@ -46,7 +46,7 @@ namespace Sprinkler.Tests
             Client.Update(entry, true);
 
             Bundle bundle = Client.History(entry);
-            TestResult.Assert((bundle.Entries.Count == 3), "History of patient is not valid");
+            Assert.IsTrue((bundle.Entries.Count == 3), "History of patient is not valid");
         }
 
         [SprinklerTest("TR04", "Deleting record")]
@@ -55,7 +55,7 @@ namespace Sprinkler.Tests
             Client.Delete(entry);
 
             Bundle bundle = Client.History(entry);
-            TestResult.Assert((bundle.Entries.Count == 4), "History of patient is not valid");
+            Assert.IsTrue((bundle.Entries.Count == 4), "History of patient is not valid");
         }
 
         //[SprinklerTest("TR10", "Failing data")]

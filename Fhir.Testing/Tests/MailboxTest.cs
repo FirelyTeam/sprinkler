@@ -29,16 +29,16 @@ namespace Sprinkler.Tests
             _deliveryResult = Client.DeliverToMailbox(xdsBundle);
 
             if (_deliveryResult.Entries.Count != 12)
-                TestResult.Fail("Result bundle should contain exactly two resources");
+                Assert.Fail("Result bundle should contain exactly two resources");
             if (_deliveryResult.Entries.ByResourceType<DocumentReference>().Count() != 1)
-                TestResult.Fail("Result bundle should contain one DocumentReference");
+                Assert.Fail("Result bundle should contain one DocumentReference");
             if (_deliveryResult.Entries.ByResourceType<Binary>().Count() != 1)
-                TestResult.Fail("Result bundle should contain one Binary");
+                Assert.Fail("Result bundle should contain one Binary");
         }
 
 
         [SprinklerTest("MA02", "Read contents of mailbox post")]
-        public void Test()
+        public void TestMailboxPost()
         {
             if (_deliveryResult == null) TestResult.Skip();
 
@@ -49,10 +49,10 @@ namespace Sprinkler.Tests
             ResourceEntry<Binary> bin = Client.Read<Binary>(bin1.SelfLink);
 
             if (!bin.SelfLink.ToString().EndsWith(dref.Resource.Location.ToString()))
-                TestResult.Fail("DocumentReference does not seem to refer to the included binary");
+                Assert.Fail("DocumentReference does not seem to refer to the included binary");
 
             if (!bin.Resource.ContentType.Contains("xml"))
-                TestResult.Fail("Binary's content-type should have been xml");
+                Assert.Fail("Binary's content-type should have been xml");
 
             //TODO: Compare binary with sent data
         }
@@ -67,12 +67,12 @@ namespace Sprinkler.Tests
             _deliveryResult = Client.DeliverToMailbox(xdsBundle);
 
             if (_deliveryResult.Entries.Count != 7)
-                TestResult.Fail("Result bundle should contain exactly 7 resources");
+                Assert.Fail("Result bundle should contain exactly 7 resources");
             if (_deliveryResult.Entries.ByResourceType<DocumentReference>().Count() != 1)
-                TestResult.Fail("Result bundle should contain one DocumentReference");
+                Assert.Fail("Result bundle should contain one DocumentReference");
             if (_deliveryResult.Entries.ByResourceType<Binary>().Count() != 1)
-                TestResult.Fail("Result bundle should contain one Binary");
-            HttpTests.AssertEntryIdsArePresentAndAbsoluteUrls(_deliveryResult);
+                Assert.Fail("Result bundle should contain one Binary");
+            Assert.EntryIdsArePresentAndAbsoluteUrls(_deliveryResult);
         }
     }
 }

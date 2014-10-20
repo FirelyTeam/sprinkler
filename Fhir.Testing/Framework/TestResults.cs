@@ -17,6 +17,7 @@ using Hl7.Fhir.Rest;
 
 namespace Sprinkler.Framework
 {
+    /*
     [Serializable]
     public class TestResults
     {
@@ -92,33 +93,9 @@ namespace Sprinkler.Framework
             ResultList.Add(testResult);
         }
 
-        public void SerializeTo(TextWriter writer, TextReader stylesheet = null)
-        {
-            var serializer = new XmlSerializer(typeof (TestResults));
-            if (stylesheet == null)
-            {
-                serializer.Serialize(writer, this);
-            }
-            else
-            {
-                SerializeAndTransform(writer, stylesheet, serializer);
-            }
-        }
+        
 
-        private void SerializeAndTransform(TextWriter writer, TextReader stylesheet, XmlSerializer serializer)
-        {
-            var outputXml = new StringWriter();
-            serializer.Serialize(outputXml, this);
-            var xslt = new XslCompiledTransform();
-            using (var xmlReader = XmlReader.Create(stylesheet))
-            {
-                xslt.Load(xmlReader);
-            }
-            using (var inputXml = new StringReader(outputXml.ToString()))
-            {
-                var writerSettings = xslt.OutputSettings;
-                xslt.Transform(XmlReader.Create(inputXml), XmlWriter.Create(writer, writerSettings));
-            }
-        }
+        
     }
+    */
 }

@@ -62,18 +62,18 @@ namespace Sprinkler.Tests
             if (_createDate == null) TestResult.Skip();
 
             _history = Client.History(_location);
-            HttpTests.AssertEntryIdsArePresentAndAbsoluteUrls(_history);
+            Assert.EntryIdsArePresentAndAbsoluteUrls(_history);
 
             // There's one version less here, because we don't have the deletion
             int expected = Versions.Count + 1;
 
             if (_history.Entries.Count != expected)
-                TestResult.Fail(String.Format("{0} versions expected after crud test, found {1}", expected,
+                Assert.Fail(String.Format("{0} versions expected after crud test, found {1}", expected,
                     _history.Entries.Count));
 
             if (!_history.Entries.OfType<ResourceEntry>()
                 .All(ent => Versions.Contains(ent.SelfLink)))
-                TestResult.Fail("Selflinks on returned versions do not match links returned on creation" +
+                Assert.Fail("Selflinks on returned versions do not match links returned on creation" +
                                 _history.Entries.Count);
 
 
@@ -90,16 +90,16 @@ namespace Sprinkler.Tests
             DateTimeOffset after = before.AddHours(1);
 
             Bundle history = Client.History(_location, before);
-            HttpTests.AssertEntryIdsArePresentAndAbsoluteUrls(history);
+            Assert.EntryIdsArePresentAndAbsoluteUrls(history);
             CheckSortOrder(history);
             Uri[] historySl = history.Entries.Select(entry => entry.SelfLink).ToArray();
 
             if (!history.Entries.All(entry => historySl.Contains(entry.SelfLink)))
-                TestResult.Fail("history with _since does not contain all versions of instance");
+                Assert.Fail("history with _since does not contain all versions of instance");
 
             history = Client.History(_location, after);
             if (history.Entries.Count != 0)
-                TestResult.Fail("Setting since to after the last update still returns history");
+                Assert.Fail("Setting since to after the last update still returns history");
         }
 
 
@@ -112,19 +112,19 @@ namespace Sprinkler.Tests
 
                 ResourceEntry<Patient> version = Client.Read<Patient>(identity);
 
-                if (version == null) TestResult.Fail("Cannot find version that was present in history");
+                if (version == null) Assert.Fail("Cannot find version that was present in history");
 
-                HttpTests.AssertContentLocationPresentAndValid(Client);
+                Assert.ContentLocationPresentAndValid(Client);
                 var selfLink = new ResourceIdentity(Client.LastResponseDetails.ContentLocation);
                 if (String.IsNullOrEmpty(selfLink.Id) || String.IsNullOrEmpty(selfLink.VersionId))
-                    TestResult.Fail("Optional Content-Location contains an invalid version-specific url");
+                    Assert.Fail("Optional Content-Location contains an invalid version-specific url");
             }
 
             foreach (DeletedEntry ent in _history.Entries.OfType<DeletedEntry>())
             {
                 var identity = new ResourceIdentity(ent.SelfLink);
 
-                HttpTests.AssertFail(Client, () => Client.Read<Patient>(identity), HttpStatusCode.Gone);
+                Assert.Fails(Client, () => Client.Read<Patient>(identity), HttpStatusCode.Gone);
             }
         }
 
@@ -133,7 +133,7 @@ namespace Sprinkler.Tests
         {
             if (_createDate == null) TestResult.Skip();
 
-            HttpTests.AssertFail(Client, () => Client.History("Patient/3141592unlikely"), HttpStatusCode.NotFound);
+            Assert.Fails(Client, () => Client.History("Patient/3141592unlikely"), HttpStatusCode.NotFound);
         }
 
         [SprinklerTest("HI06", "Get all history for a resource type with _since")]
@@ -145,19 +145,19 @@ namespace Sprinkler.Tests
             DateTimeOffset after = before.AddHours(1);
 
             Bundle history = Client.TypeHistory<Patient>(before);
-            HttpTests.AssertEntryIdsArePresentAndAbsoluteUrls(history);
+            Assert.EntryIdsArePresentAndAbsoluteUrls(history);
             _typeHistory = history;
             CheckSortOrder(history);
 
             Uri[] historyLinks = history.Entries.Select(be => be.SelfLink).ToArray();
 
             if (!history.Entries.All(ent => historyLinks.Contains(ent.SelfLink)))
-                TestResult.Fail("history with _since does not contain all versions of instance");
+                Assert.Fail("history with _since does not contain all versions of instance");
 
             history = Client.History(_location, DateTimeOffset.Now.AddMinutes(1));
 
             if (history.Entries.Count != 0)
-                TestResult.Fail("Setting since to a future moment still returns history");
+                Assert.Fail("Setting since to a future moment still returns history");
         }
 
 
@@ -170,21 +170,21 @@ namespace Sprinkler.Tests
 
 
             history = Client.WholeSystemHistory(before);
-            HttpTests.AssertEntryIdsArePresentAndAbsoluteUrls(history);
+            Assert.EntryIdsArePresentAndAbsoluteUrls(history);
 
-            HttpTests.AssertHasAllForwardNavigationLinks(history); // Assumption: system has more history than pagesize
+            Assert.HasAllForwardNavigationLinks(history); // Assumption: system has more history than pagesize
             _systemHistory = history;
             CheckSortOrder(history);
 
             Uri[] historyLinks = history.Entries.Select(be => be.SelfLink).ToArray();
 
             if (!Versions.All(sl => historyLinks.Contains(sl)))
-                TestResult.Fail("history with _since does not contain all versions of instance");
+                Assert.Fail("history with _since does not contain all versions of instance");
 
             history = Client.History(_location, DateTimeOffset.Now.AddMinutes(1));
 
             if (history.Entries.Count != 0)
-                TestResult.Fail("Setting since to a future moment still returns history");
+                Assert.Fail("Setting since to a future moment still returns history");
         }
 
         [SprinklerTest("HI09", "Paging forward through a resource type history")]
@@ -192,7 +192,7 @@ namespace Sprinkler.Tests
         {
             int pageSize = 30;
             Bundle page = Client.TypeHistory<Patient>(since: DateTimeOffset.Now.AddHours(-1), pageSize: pageSize);
-            HttpTests.AssertEntryIdsArePresentAndAbsoluteUrls(page);
+            Assert.EntryIdsArePresentAndAbsoluteUrls(page);
 
             _forwardCount = 0;
 
@@ -200,11 +200,11 @@ namespace Sprinkler.Tests
             while (page != null)
             {
                 if (page.Entries.Count > pageSize)
-                    TestResult.Fail("Server returned a page with more entries than set by _count");
+                    Assert.Fail("Server returned a page with more entries than set by _count");
 
                 _forwardCount += page.Entries.Count;
                 _lastPage = page;
-                HttpTests.AssertEntryIdsArePresentAndAbsoluteUrls(page);
+                Assert.EntryIdsArePresentAndAbsoluteUrls(page);
                 page = Client.Continue(page);
             }
 
@@ -220,7 +220,7 @@ namespace Sprinkler.Tests
 
             int pageSize = 30;
             Bundle page = Client.TypeHistory<Patient>(since: DateTimeOffset.Now.AddHours(-1), pageSize: pageSize);
-            HttpTests.AssertEntryIdsArePresentAndAbsoluteUrls(page);
+            Assert.EntryIdsArePresentAndAbsoluteUrls(page);
 
             page = Client.Continue(page, PageDirection.Last);
             int backwardsCount = 0;
@@ -229,15 +229,15 @@ namespace Sprinkler.Tests
             while (page != null)
             {
                 if (page.Entries.Count > pageSize)
-                    TestResult.Fail("Server returned a page with more entries than set by count");
+                    Assert.Fail("Server returned a page with more entries than set by count");
 
                 backwardsCount += page.Entries.Count;
-                HttpTests.AssertEntryIdsArePresentAndAbsoluteUrls(page);
+                Assert.EntryIdsArePresentAndAbsoluteUrls(page);
                 page = Client.Continue(page, PageDirection.Previous);
             }
 
             if (backwardsCount != _forwardCount)
-                TestResult.Fail(String.Format("Paging forward returns {0} entries, backwards returned {1}",
+                Assert.Fail(String.Format("Paging forward returns {0} entries, backwards returned {1}",
                     _forwardCount, backwardsCount));
         }
 
@@ -259,10 +259,10 @@ namespace Sprinkler.Tests
                     : ((be as DeletedEntry).When);
 
                 if (lastUpdate == null)
-                    TestResult.Fail(String.Format("Result contains entry with no LastUpdate (id: {0})", be.SelfLink));
+                    Assert.Fail(String.Format("Result contains entry with no LastUpdate (id: {0})", be.SelfLink));
 
                 if (lastUpdate > maxDate)
-                    TestResult.Fail("Result is not ordered on LastUpdate, first out of order has id " + be.SelfLink);
+                    Assert.Fail("Result is not ordered on LastUpdate, first out of order has id " + be.SelfLink);
 
                 maxDate = lastUpdate.Value;
             }

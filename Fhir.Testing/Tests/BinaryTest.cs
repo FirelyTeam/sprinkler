@@ -25,17 +25,17 @@ namespace Sprinkler.Tests
         {
             Binary bin = DemoData.GetDemoBinary();
             ResourceEntry<Binary> received = null;
-            HttpTests.AssertSuccess(Client, () => received = Client.Create(bin));
+            Assert.Success(Client, () => received = Client.Create(bin));
 
-            HttpTests.AssertLocationPresentAndValid(Client);
+            Assert.LocationPresentAndValid(Client);
 
             ResourceEntry<Binary> binResult = Client.Read<Binary>(received.Id);
 
             if (binResult.Resource.ContentType != bin.ContentType)
-                TestResult.Fail("Created binary of type " + bin.ContentType +
+                Assert.Fail("Created binary of type " + bin.ContentType +
                                 "but received " + Client.LastResponseDetails.ContentType);
 
-            HttpTests.AssertContentLocationValidIfPresent(Client);
+            Assert.ContentLocationValidIfPresent(Client);
 
             CompareData(bin.Content, binResult);
 
@@ -66,17 +66,17 @@ namespace Sprinkler.Tests
 
             Client.Delete(_binaryId);
 
-            HttpTests.AssertFail(Client, () => Client.Read<Binary>(_binaryId), HttpStatusCode.Gone);
+            Assert.Fails(Client, () => Client.Read<Binary>(_binaryId), HttpStatusCode.Gone);
         }
 
 
         private static void CompareData(byte[] data, ResourceEntry<Binary> received)
         {
             if (data.Length != received.Resource.Content.Length)
-                TestResult.Fail("Binary data returned has a different size");
+                Assert.Fail("Binary data returned has a different size");
             for (int pos = 0; pos < data.Length; pos++)
                 if (data[pos] != received.Resource.Content[pos])
-                    TestResult.Fail("Binary data returned differs from original");
+                    Assert.Fail("Binary data returned differs from original");
         }
     }
 }

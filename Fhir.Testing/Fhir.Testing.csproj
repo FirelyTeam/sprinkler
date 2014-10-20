@@ -33,16 +33,11 @@
     <StartupObject />
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Hl7.Fhir.Api, Version=0.11.0.17346, Culture=neutral, PublicKeyToken=d706911480550fc3, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\Hl7.Fhir.0.11.0\lib\net45\Hl7.Fhir.Api.dll</HintPath>
+    <Reference Include="Hl7.Fhir.Core">
+      <HintPath>..\packages\Hl7.Fhir.0.11.2-alpha1\lib\net45\Hl7.Fhir.Core.dll</HintPath>
     </Reference>
-    <Reference Include="Hl7.Fhir.Model, Version=0.0.81.2634, Culture=neutral, PublicKeyToken=d706911480550fc3, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\Hl7.Fhir.0.11.0\lib\net45\Hl7.Fhir.Model.dll</HintPath>
-    </Reference>
-    <Reference Include="Hl7.Fhir.Profiling">
-      <HintPath>..\packages\Hl7.Fhir.0.11.0\lib\net45\Hl7.Fhir.Profiling.dll</HintPath>
+    <Reference Include="Hl7.Fhir.Specification">
+      <HintPath>..\packages\Hl7.Fhir.0.11.2-alpha1\lib\net45\Hl7.Fhir.Specification.dll</HintPath>
     </Reference>
     <Reference Include="Ionic.Zip">
       <HintPath>..\packages\DotNetZip.1.9.2\lib\net20\Ionic.Zip.dll</HintPath>
@@ -64,13 +59,17 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Framework\Test.cs" />
+    <Compile Include="Utilities\AttributeHelper.cs" />
     <Compile Include="Framework\DemoData.cs" />
-    <Compile Include="Framework\HttpTests.cs" />
-    <Compile Include="Framework\SprinklerTest.cs" />
+    <Compile Include="Framework\Assert.cs" />
     <Compile Include="Framework\SprinklerTestClass.cs" />
     <Compile Include="Framework\TestAttributes.cs" />
+    <Compile Include="Framework\TestHelper.cs" />
     <Compile Include="Framework\TestResult.cs" />
     <Compile Include="Framework\TestResults.cs" />
+    <Compile Include="Framework\TestResultSerializer.cs" />
+    <Compile Include="Framework\TestRunner.cs" />
     <Compile Include="Framework\TestSet.cs" />
     <Compile Include="Framework\XmlSignatureHelper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

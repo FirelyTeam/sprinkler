@@ -41,18 +41,18 @@ namespace Sprinkler.Tests
 
             ResourceEntry<Patient> pat = Client.Read<Patient>(id);
 
-            HttpTests.AssertHttpOk(Client);
+            Assert.HttpOk(Client);
 
-            HttpTests.AssertValidResourceContentTypePresent(Client);
-            HttpTests.AssertLastModifiedPresent(Client);
-            HttpTests.AssertContentLocationPresentAndValid(Client);
+            Assert.ValidResourceContentTypePresent(Client);
+            Assert.LastModifiedPresent(Client);
+            Assert.ContentLocationPresentAndValid(Client);
         }
 
         [SprinklerTest("R002", "Read unknown resource type")]
         public void TryReadUnknownResourceType()
         {
             ResourceIdentity id = ResourceIdentity.Build(Client.Endpoint, "thisreallywondexist", "1");
-            HttpTests.AssertFail(Client, () => Client.Read<Patient>(id), HttpStatusCode.NotFound);
+            Assert.Fails(Client, () => Client.Read<Patient>(id), HttpStatusCode.NotFound);
 
             // todo: if the Content-Type header was not set by the server, this generates an abstract exception:
             // "The given key was not present in the dictionary";
@@ -61,14 +61,14 @@ namespace Sprinkler.Tests
         [SprinklerTest("R003", "Read non-existing resource id")]
         public void TryReadNonExistingResource()
         {
-            HttpTests.AssertFail(Client, () => Client.Read<Patient>("Patient/3141592unlikely"), HttpStatusCode.NotFound);
+            Assert.Fails(Client, () => Client.Read<Patient>("Patient/3141592unlikely"), HttpStatusCode.NotFound);
         }
 
         [SprinklerTest("R004", "Read bad formatted resource id")]
         public void TryReadBadFormattedResourceId()
         {
             //Test for Spark issue #7, https://github.com/furore-fhir/spark/issues/7
-            HttpTests.AssertFail(Client, () => Client.Read<Patient>("Patient/ID-may-not-contain-CAPITALS"),
+            Assert.Fails(Client, () => Client.Read<Patient>("Patient/ID-may-not-contain-CAPITALS"),
                 HttpStatusCode.BadRequest);
         }
     }

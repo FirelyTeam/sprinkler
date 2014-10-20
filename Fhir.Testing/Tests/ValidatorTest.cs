@@ -23,7 +23,7 @@ namespace Sprinkler.Tests
 
             OperationOutcome oo;
             if (!Client.TryValidateCreate(patient, out oo, null))
-                TestResult.Fail("Validation incorrectly reported failure.");
+                Assert.Fail("Validation incorrectly reported failure.");
         }
 
         [SprinklerTest("V002", "Validate an invalid resource")]
@@ -34,7 +34,7 @@ namespace Sprinkler.Tests
 
             OperationOutcome oo;
             if (!Client.TryValidateCreate(patient, out oo, null))
-                TestResult.Fail("Validation incorrectly reported failure.");
+                Assert.Fail("Validation incorrectly reported failure.");
         }
 
         [SprinklerTest("V003", "Validate a valid resource update")]
@@ -45,7 +45,7 @@ namespace Sprinkler.Tests
 
             OperationOutcome oo;
             if (!Client.TryValidateUpdate(result, out oo))
-                TestResult.Fail("Validation incorrectly reported failure.");
+                Assert.Fail("Validation incorrectly reported failure.");
         }
 
         [SprinklerTest("V004", "Validate an invalid resource update")]
@@ -57,7 +57,7 @@ namespace Sprinkler.Tests
 
             OperationOutcome oo;
             if (!Client.TryValidateUpdate(result, out oo))
-                TestResult.Fail("Validation incorrectly reported failure.");
+                Assert.Fail("Validation incorrectly reported failure.");
         }
     }
 }

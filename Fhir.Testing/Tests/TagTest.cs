@@ -42,30 +42,30 @@ namespace Sprinkler.Tests
             var tags = new List<Tag> {new Tag(NUTAG, Tag.FHIRTAGSCHEME_GENERAL, "readTagTest")};
             Patient patient = DemoData.GetDemoPatient();
 
-            HttpTests.AssertSuccess(Client, () => latest = Client.Create(patient, tags, true));
+            Assert.Success(Client, () => latest = Client.Create(patient, tags, true));
 
             if (latest.Tags == null)
-                TestResult.Fail("create did not return any tags");
+                Assert.Fail("create did not return any tags");
 
             IEnumerable<Tag> nutags = latest.Tags.FindByTerm(NUTAG, Tag.FHIRTAGSCHEME_GENERAL);
             if (nutags.Count() != 1 || nutags.First().Label != "readTagTest")
-                TestResult.Fail("create did not return specified tag");
+                Assert.Fail("create did not return specified tag");
 
             ResourceEntry<Patient> read = Client.Read<Patient>(latest.Id);
             if (read.Tags == null)
-                TestResult.Fail("read did not return any tags");
+                Assert.Fail("read did not return any tags");
 
             nutags = latest.Tags.FindByTerm(NUTAG, Tag.FHIRTAGSCHEME_GENERAL);
             if (nutags.Count() != 1 || nutags.First().Label != "readTagTest")
-                TestResult.Fail("read did not return specified tag");
+                Assert.Fail("read did not return specified tag");
 
             ResourceEntry<Patient> vread = Client.Read<Patient>(latest.SelfLink);
             if (vread.Tags == null)
-                TestResult.Fail("vread did not return any tags");
+                Assert.Fail("vread did not return any tags");
 
             nutags = latest.Tags.FindByTerm(NUTAG, Tag.FHIRTAGSCHEME_GENERAL);
             if (nutags.Count() != 1 || nutags.First().Label != "readTagTest")
-                TestResult.Fail("vread did not return specified tag");
+                Assert.Fail("vread did not return specified tag");
 
             original = latest;
         }
@@ -78,12 +78,12 @@ namespace Sprinkler.Tests
             ResourceEntry nep = null; // non-existing-patient
             IEnumerable<Tag> tags = null;
 
-            HttpTests.AssertFail(Client, () => { nep = Client.Read<Patient>("nonexisting"); }, HttpStatusCode.NotFound);
-            TestResult.Assert(nep == null, "Non existing patient instance should be zero");
+            Assert.Fails(Client, () => { nep = Client.Read<Patient>("nonexisting"); }, HttpStatusCode.NotFound);
+            Assert.IsTrue(nep == null, "Non existing patient instance should be zero");
 
-            HttpTests.AssertFail(Client, () => { tags = Client.Tags<Patient>("nonexisting"); }, HttpStatusCode.NotFound);
+            Assert.Fails(Client, () => { tags = Client.Tags<Patient>("nonexisting"); }, HttpStatusCode.NotFound);
 
-            HttpTests.AssertFail(Client, () => { tags = Client.Tags<Patient>("nonexisting", "nonexisting"); },
+            Assert.Fails(Client, () => { tags = Client.Tags<Patient>("nonexisting", "nonexisting"); },
                 HttpStatusCode.NotFound);
         }
 
@@ -99,27 +99,27 @@ namespace Sprinkler.Tests
                 new Tag(_otherTag, Tag.FHIRTAGSCHEME_GENERAL, "dummy")
             };
 
-            HttpTests.AssertSuccess(Client, () => latest = Client.Read<Patient>(original.Id));
+            Assert.Success(Client, () => latest = Client.Read<Patient>(original.Id));
 
             latest.Tags = newtags;
 
-            HttpTests.AssertSuccess(Client, () => Client.Update(latest));
+            Assert.Success(Client, () => Client.Update(latest));
 
             ResourceEntry<Patient> read = Client.Read<Patient>(latest.Id);
 
             if (read.Tags == null)
-                TestResult.Fail("fetch after update did not return any tags");
+                Assert.Fail("fetch after update did not return any tags");
 
             if (read.Tags.Count() != 2)
-                TestResult.Fail(String.Format("Wrong number of tags after update: {0}, expected 2", read.Tags.Count()));
+                Assert.Fail(String.Format("Wrong number of tags after update: {0}, expected 2", read.Tags.Count()));
 
             IEnumerable<Tag> nutags = read.Tags.FindByTerm(NUTAG, Tag.FHIRTAGSCHEME_GENERAL);
             if (nutags.Count() != 1 || nutags.First().Label != "readTagTest2")
-                TestResult.Fail("update did not replace value in tag");
+                Assert.Fail("update did not replace value in tag");
 
             IEnumerable<Tag> othertags = read.Tags.FindByTerm(_otherTag, Tag.FHIRTAGSCHEME_GENERAL);
             if (othertags.Count() != 1 || othertags.First().Label != "dummy")
-                TestResult.Fail("update failed to add new tag");
+                Assert.Fail("update failed to add new tag");
 
             latest = read;
         }
@@ -129,13 +129,13 @@ namespace Sprinkler.Tests
         {
             IEnumerable<Tag> tags = null;
 
-            HttpTests.AssertSuccess(Client, () => tags = Client.WholeSystemTags());
+            Assert.Success(Client, () => tags = Client.WholeSystemTags());
 
 
             IEnumerable<string> tagStrings = tags.FilterOnFhirSchemes().Where(t => t.Term != null).Select(t => t.Term);
 
             if (!tagStrings.Contains(NUTAG) || !tagStrings.Contains(_otherTag))
-                TestResult.Fail("expected tags not found in server-wide tag list");
+                Assert.Fail("expected tags not found in server-wide tag list");
         }
 
         [SprinklerTest("TA05", "Retrieve resource-wide tags")]
@@ -143,18 +143,18 @@ namespace Sprinkler.Tests
         {
             IEnumerable<Tag> tags = null;
 
-            HttpTests.AssertSuccess(Client, () => tags = Client.TypeTags<Patient>());
+            Assert.Success(Client, () => tags = Client.TypeTags<Patient>());
 
             IEnumerable<string> tagStrings = tags.FilterOnFhirSchemes().Where(t => t.Term != null).Select(t => t.Term);
 
             if (!tagStrings.Contains(NUTAG) || !tagStrings.Contains(_otherTag))
-                TestResult.Fail("expected tags not found in resource-wide tag list");
+                Assert.Fail("expected tags not found in resource-wide tag list");
 
-            HttpTests.AssertSuccess(Client, () => tags = Client.TypeTags<Conformance>());
+            Assert.Success(Client, () => tags = Client.TypeTags<Conformance>());
 
             tagStrings = tags.FilterOnFhirSchemes().Where(t => t.Term != null).Select(t => t.Term);
             if (tagStrings.Contains(NUTAG) || tagStrings.Contains(_otherTag))
-                TestResult.Fail("tags showed up while listing tags for another resource type");
+                Assert.Fail("tags showed up while listing tags for another resource type");
         }
 
         [SprinklerTest("TA06", "Retrieve resource instance tags")]
@@ -164,12 +164,12 @@ namespace Sprinkler.Tests
 
             var identity = new ResourceIdentity(latest.SelfLink);
 
-            HttpTests.AssertSuccess(Client, () => tags = Client.Tags<Patient>(identity.Id));
+            Assert.Success(Client, () => tags = Client.Tags<Patient>(identity.Id));
 
             IEnumerable<string> tagStrings = tags.FilterOnFhirSchemes().Where(t => t.Term != null).Select(t => t.Term);
 
             if (!tagStrings.Contains(NUTAG) || !tagStrings.Contains(_otherTag))
-                TestResult.Fail("expected tags not found in resource instance tag list");
+                Assert.Fail("expected tags not found in resource instance tag list");
         }
 
         [SprinklerTest("TA07", "Retrieve resource history tags")]
@@ -179,12 +179,12 @@ namespace Sprinkler.Tests
 
             var rl = new ResourceIdentity(latest.SelfLink);
 
-            HttpTests.AssertSuccess(Client, () => tags = Client.Tags<Patient>(rl.Id, rl.VersionId));
+            Assert.Success(Client, () => tags = Client.Tags<Patient>(rl.Id, rl.VersionId));
 
             IEnumerable<string> tagStrings = tags.FilterOnFhirSchemes().Where(t => t.Term != null).Select(t => t.Term);
 
             if (!tagStrings.Contains(NUTAG) || !tagStrings.Contains(_otherTag))
-                TestResult.Fail("expected tags not found in resource instance tag list");
+                Assert.Fail("expected tags not found in resource instance tag list");
         }
 
         [SprinklerTest("TA08", "Search resource using tags")]
@@ -193,10 +193,10 @@ namespace Sprinkler.Tests
             var tag = new Tag(_otherTag, Tag.FHIRTAGSCHEME_GENERAL, "dummy");
 
             Bundle result = null;
-            HttpTests.AssertSuccess(Client, () => result = Client.Search<Patient>(new[] {"_tag=" + _otherTag}));
+            Assert.Success(Client, () => result = Client.Search<Patient>(new[] {"_tag=" + _otherTag}));
 
             if (result.Entries.ByTag(_otherTag).Count() != 1)
-                TestResult.Fail("could not retrieve patient by its tag");
+                Assert.Fail("could not retrieve patient by its tag");
         }
 
         [SprinklerTest("TA09", "Update tags using POST")]
@@ -208,23 +208,23 @@ namespace Sprinkler.Tests
             var existing = new Tag(_otherTag, Tag.FHIRTAGSCHEME_GENERAL);
 
 
-            HttpTests.AssertSuccess(
+            Assert.Success(
                 Client, () => Client.AffixTags(identity, new List<Tag> {update})
                 );
 
             ResourceEntry<Patient> result = Client.Read<Patient>(latest.Id);
 
             if (result.Tags.Count() != 2)
-                TestResult.Fail("update modified the number of tags");
+                Assert.Fail("update modified the number of tags");
 
             if (!result.Tags.Any(t => t.Equals(existing)))
-                TestResult.Fail("update removed an existing but unchanged tag");
+                Assert.Fail("update removed an existing but unchanged tag");
 
             if (!result.Tags.Any(t => t.Equals(update) && t.Label == update.Label))
-                TestResult.Fail("update did not change the tag");
+                Assert.Fail("update did not change the tag");
 
             if (result.SelfLink != latest.SelfLink)
-                TestResult.Fail("updating the tags created a new version");
+                Assert.Fail("updating the tags created a new version");
         }
 
         [SprinklerTest("TA10", "Update tags on version using POST")]
@@ -235,21 +235,21 @@ namespace Sprinkler.Tests
             var update = new Tag(NUTAG, Tag.FHIRTAGSCHEME_GENERAL, "newVersionForVersion");
             var existing = new Tag(_otherTag, Tag.FHIRTAGSCHEME_GENERAL);
 
-            HttpTests.AssertSuccess(Client, () => Client.AffixTags(identity, new List<Tag> {update}));
+            Assert.Success(Client, () => Client.AffixTags(identity, new List<Tag> {update}));
 
             ResourceEntry<Patient> result = Client.Read<Patient>(latest.Id);
 
             if (result.Tags.Count() != 2)
-                TestResult.Fail("update modified the number of tags");
+                Assert.Fail("update modified the number of tags");
 
             if (!result.Tags.Any(t => t.Equals(existing)))
-                TestResult.Fail("update removed an existing but unchanged tag");
+                Assert.Fail("update removed an existing but unchanged tag");
 
             if (!result.Tags.Any(t => t.Equals(update) && t.Label == update.Label))
-                TestResult.Fail("update did not change the tag");
+                Assert.Fail("update did not change the tag");
 
             if (result.SelfLink != latest.SelfLink)
-                TestResult.Fail("updating the tags created a new version");
+                Assert.Fail("updating the tags created a new version");
 
             //TODO: Check whether taglists on older versions remain unchanged
         }
@@ -262,22 +262,22 @@ namespace Sprinkler.Tests
             var delete = new Tag(NUTAG, Tag.FHIRTAGSCHEME_GENERAL);
             var existing = new Tag(_otherTag, Tag.FHIRTAGSCHEME_GENERAL);
 
-            HttpTests.AssertSuccess(Client, () => Client.DeleteTags(identity, new List<Tag> {delete}));
+            Assert.Success(Client, () => Client.DeleteTags(identity, new List<Tag> {delete}));
 
             ResourceEntry<Patient> result = Client.Read<Patient>(latest.Id);
 
 
             if (result.Tags.Count() != 1)
-                TestResult.Fail("delete resulted in an unexpected number of remaining tags");
+                Assert.Fail("delete resulted in an unexpected number of remaining tags");
 
             if (!result.Tags.Any(t => t.Equals(existing)))
-                TestResult.Fail("delete removed an existing tag the should be untouched");
+                Assert.Fail("delete removed an existing tag the should be untouched");
 
             if (result.Tags.Any(t => t.Equals(delete)))
-                TestResult.Fail("delete did not remove the tag");
+                Assert.Fail("delete did not remove the tag");
 
             if (result.SelfLink != latest.SelfLink)
-                TestResult.Fail("deleting the tags created a new version");
+                Assert.Fail("deleting the tags created a new version");
 
             ////TODO: Check whether taglists on older versions remain unchanged
         }
@@ -290,21 +290,21 @@ namespace Sprinkler.Tests
             var delete = new Tag(NUTAG, Tag.FHIRTAGSCHEME_GENERAL);
             var existing = new Tag(_otherTag, Tag.FHIRTAGSCHEME_GENERAL);
 
-            HttpTests.AssertSuccess(Client, () => Client.DeleteTags(identity, new List<Tag> {delete}));
+            Assert.Success(Client, () => Client.DeleteTags(identity, new List<Tag> {delete}));
 
             ResourceEntry<Patient> result = Client.Read<Patient>(latest.Id);
 
             if (result.Tags.Count() != 1)
-                TestResult.Fail("delete resulted in an unexpected number of remaining tags");
+                Assert.Fail("delete resulted in an unexpected number of remaining tags");
 
             if (!result.Tags.Any(t => t.Equals(existing)))
-                TestResult.Fail("delete removed an existing tag the should be untouched");
+                Assert.Fail("delete removed an existing tag the should be untouched");
 
             if (result.Tags.Any(t => t.Equals(delete)))
-                TestResult.Fail("delete did not remove the tag");
+                Assert.Fail("delete did not remove the tag");
 
             if (result.SelfLink != latest.SelfLink)
-                TestResult.Fail("deleting the tags created a new version");
+                Assert.Fail("deleting the tags created a new version");
 
             //TODO: Check whether taglists on older versions remain unchanged
         }
