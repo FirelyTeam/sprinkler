@@ -16,7 +16,7 @@ using Sprinkler.Framework;
 
 namespace Sprinkler.Tests
 {
-    [SprinklerTestModule("History")]
+    [SprinklerModule("History")]
     public class HistoryTest : SprinklerTestClass
     {
         //private CreateUpdateDeleteTest crudTests;

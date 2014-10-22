@@ -20,7 +20,7 @@ using Sprinkler.Framework;
 
 namespace Sprinkler.Tests
 {
-    [SprinklerTestModule("DIGSIG")]
+    [SprinklerModule("DIGSIG")]
     public class DigSigTest : SprinklerTestClass
     {
         private string _signedXml;

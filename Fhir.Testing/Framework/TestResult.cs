@@ -37,8 +37,7 @@ namespace Sprinkler.Framework
         }
 
         // overloaded ctor: outcome
-        public TestFailedException(TestOutcome outcome)
-            : base(outcome.ToString())
+        public TestFailedException(TestOutcome outcome) : base(outcome.ToString())
         {
             Outcome = outcome;
         }
@@ -62,10 +61,6 @@ namespace Sprinkler.Framework
         {
             throw new TestFailedException(TestOutcome.Skipped);
         }
-
-        
-       
-        
     }
 
     

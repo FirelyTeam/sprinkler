@@ -17,14 +17,14 @@ namespace Sprinkler.Framework
     public class TestRunner
     {
         private readonly FhirClient _client;
-        private readonly IDictionary<Type, SprinklerTestClass> _instances;
+        private readonly IDictionary<Type, SprinklerTestClass> modules;
         private Action<TestResult> log;
 
         public TestRunner(FhirClient client, Action<TestResult> log = null)
         {
             _client = client;
             this.log = log;
-            _instances = new Dictionary<Type, SprinklerTestClass>();
+            modules = new Dictionary<Type, SprinklerTestClass>();
         }
 
         public void Log(TestResult testresult)
@@ -35,7 +35,7 @@ namespace Sprinkler.Framework
         private static TestResult RunTestMethod(string category, SprinklerTestClass instance, MethodInfo method)
         {
             var test = new TestResult {Category = category};
-            var attribute = SprinklerTestAttribute.AttributeOf(method);
+            var attribute = SprinklerTest.AttributeOf(method);
             if (attribute != null)
             {
                 test.Title = attribute.Title;
@@ -64,15 +64,15 @@ namespace Sprinkler.Framework
             return test;
         }
 
-        public void Run(string[] codesOrModules)
+        public void Run(string[] codes)
         {
-            var tests = TestHelper.FilterTestsForCodeOrModule(TestHelper.GetTestClasses(), codesOrModules);
-            foreach (var test in tests)
+            foreach(Type type in TestHelper.GetModules())
             {
-                var testInstance = GetInstanceOf(test.Key);
-                foreach (var testMethod in test.Value)
+                var module = GetInstanceOf(type);
+                var tests = TestHelper.GetTestMethods(type, codes);
+                foreach (var test in tests)
                 {
-                    Run(testInstance, testMethod);
+                    Run(module, test);
                 }
             }
         }
@@ -83,10 +83,10 @@ namespace Sprinkler.Framework
             Log(test);
         }
 
-        private void Run(SprinklerTestClass instance, MethodInfo methodInfo)
+        private void Run(SprinklerTestClass module, MethodInfo methodInfo)
         {
-            instance.SetClient(_client);
-            RunAndLog(instance, methodInfo);
+            module.SetClient(_client);
+            RunAndLog(module, methodInfo);
         }
 
         public void Run(SprinklerTestClass instance, IEnumerable<string> codes = null)
@@ -107,16 +107,16 @@ namespace Sprinkler.Framework
 
         public SprinklerTestClass GetInstanceOf(Type testclass)
         {
-            if (!_instances.ContainsKey(testclass))
+            if (!modules.ContainsKey(testclass))
             {
-                _instances.Add(testclass,(SprinklerTestClass)Activator.CreateInstance(testclass));
+                modules.Add(testclass,(SprinklerTestClass)Activator.CreateInstance(testclass));
             }
-            return _instances[testclass];
+            return modules[testclass];
         }
 
-        public void ClearInstances()
+        public void Clear()
         {
-            _instances.Clear();
+            modules.Clear();
         }
         
     }

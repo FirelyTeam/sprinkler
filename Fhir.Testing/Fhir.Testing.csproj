@@ -64,7 +64,7 @@
     <Compile Include="Framework\DemoData.cs" />
     <Compile Include="Framework\Assert.cs" />
     <Compile Include="Framework\SprinklerTestClass.cs" />
-    <Compile Include="Framework\TestAttributes.cs" />
+    <Compile Include="Framework\Attributes.cs" />
     <Compile Include="Framework\TestHelper.cs" />
     <Compile Include="Framework\TestResult.cs" />
     <Compile Include="Framework\TestResults.cs" />

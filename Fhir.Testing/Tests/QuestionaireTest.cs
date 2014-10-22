@@ -13,7 +13,7 @@ using Sprinkler.Framework;
 
 namespace Sprinkler.Tests
 {
-    [SprinklerTestModule("Questionnaire")]
+    [SprinklerModule("Questionnaire")]
     internal class QuestionaireTest : SprinklerTestClass
     {
         [SprinklerTest("QU01", "Download a completed questionnaire")]

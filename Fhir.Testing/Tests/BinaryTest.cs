@@ -14,7 +14,7 @@ using Sprinkler.Framework;
 
 namespace Sprinkler.Tests
 {
-    [SprinklerTestModule("Binary")]
+    [SprinklerModule("Binary")]
     public class BinaryTest : SprinklerTestClass
     {
         private Uri _binaryId;

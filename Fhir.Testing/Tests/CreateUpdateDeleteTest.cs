@@ -16,7 +16,7 @@ using Sprinkler.Framework;
 
 namespace Sprinkler.Tests
 {
-    [SprinklerTestModule("Writing")]
+    [SprinklerModule("Writing")]
     public class CreateUpdateDeleteTest : SprinklerTestClass
     {
         public CreateUpdateDeleteTest()

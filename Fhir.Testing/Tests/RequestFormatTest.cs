@@ -12,7 +12,7 @@ using Sprinkler.Framework;
 
 namespace Sprinkler.Tests
 {
-    [SprinklerTestModule("ContentType")]
+    [SprinklerModule("ContentType")]
     public class RequestFormatTest : SprinklerTestClass
     {
         private ResourceEntry<Patient> entry;

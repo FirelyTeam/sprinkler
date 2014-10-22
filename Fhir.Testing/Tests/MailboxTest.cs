@@ -12,7 +12,7 @@ using Sprinkler.Framework;
 
 namespace Sprinkler.Tests
 {
-    [SprinklerTestModule("MAILBOX")]
+    [SprinklerModule("MAILBOX")]
     public class MailboxTest : SprinklerTestClass
     {
         private Bundle _deliveryResult;

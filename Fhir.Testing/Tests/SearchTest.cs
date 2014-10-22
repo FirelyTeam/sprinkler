@@ -16,7 +16,7 @@ using Sprinkler.Framework;
 
 namespace Sprinkler.Tests
 {
-    [SprinklerTestModule("Search")]
+    [SprinklerModule("Search")]
     public class SearchTest : SprinklerTestClass
     {
         private Bundle allPatients;

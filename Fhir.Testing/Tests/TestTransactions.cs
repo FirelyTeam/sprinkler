@@ -12,7 +12,7 @@ using Sprinkler.Framework;
 
 namespace Sprinkler.Tests
 {
-    [SprinklerTestModule("Transactions")]
+    [SprinklerModule("Transactions")]
     internal class TestTransactions : SprinklerTestClass
     {
         private ResourceEntry<Patient> entry;

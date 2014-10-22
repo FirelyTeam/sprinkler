@@ -16,7 +16,7 @@ using Sprinkler.Framework;
 
 namespace Sprinkler.Tests
 {
-    [SprinklerTestModule("Tags")]
+    [SprinklerModule("Tags")]
     public class TagTest : SprinklerTestClass
     {
         private const string NUTAG = "http://readtag.hl7.nl";

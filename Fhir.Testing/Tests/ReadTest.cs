@@ -14,7 +14,7 @@ using Sprinkler.Framework;
 
 namespace Sprinkler.Tests
 {
-    [SprinklerTestModule("Read")]
+    [SprinklerModule("Read")]
     public class ReadTest : SprinklerTestClass
     {
         public static Patient NewPatient(string family, params string[] given)

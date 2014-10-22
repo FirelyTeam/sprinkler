@@ -15,7 +15,7 @@ using Sprinkler.Framework;
 
 namespace Sprinkler.Tests
 {
-    [SprinklerTestModule("Bundle")]
+    [SprinklerModule("Bundle")]
     public class BundleTest : SprinklerTestClass
     {
         private BundleEntry _binDoc;

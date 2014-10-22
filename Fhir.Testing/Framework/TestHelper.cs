@@ -18,25 +18,6 @@ namespace Sprinkler.Framework
 {
     public static class TestHelper
     {
-        // A list of groups, each of them holds a list of tests
-        public static List<Tuple<string, List<Tuple<string, string>>>> GetTestModules()
-        {
-            List<Tuple<string, List<Tuple<string, string>>>> dictModulesCodes = new List<Tuple<string, List<Tuple<string, string>>>>();
-            var testclasses = TestHelper.GetTestClasses();
-
-            foreach (var testclass in testclasses)
-            {
-                var testmethods =
-                    TestHelper.GetTestMethods(testclass)
-                        .Select(SprinklerTestAttribute.AttributeOf)
-                        .Select(methodAttr => Tuple.Create(methodAttr.Code, methodAttr.Title))
-                        .OrderBy(el => el.Item1)
-                        .ToList();
-                var moduleAttr = SprinklerTestModuleAttribute.AttributeOf(testclass);
-                dictModulesCodes.Add(Tuple.Create<string, List<Tuple<string, string>>>(moduleAttr.Name, testmethods));
-            }
-            return dictModulesCodes;
-        }
 
         public static IEnumerable<MethodInfo> TestMethodsOf(SprinklerTestClass instance, IEnumerable<string> codes = null)
         {
@@ -44,54 +25,40 @@ namespace Sprinkler.Framework
             return methods.Where(m => IsProperTestMethod(m, codes));
         }
 
-        public static IEnumerable<Type> GetTestClasses()
+        public static IEnumerable<Type> GetModules()
         {
-            return Assembly.GetExecutingAssembly().GetTypesWithAttribute<SprinklerTestModuleAttribute>();
+            return Assembly.GetExecutingAssembly().GetTypesWithAttribute<SprinklerModule>();
         }
 
         public static IEnumerable<MethodInfo> GetTestMethods(Type testclass, string[] codes = null)
         {
-            return testclass.GetMethods().Where(method => IsProperTestMethod(method, codes));
+            IEnumerable<MethodInfo> methods = testclass.GetMethods();
+            if (codes != null)
+            {
+                return methods.Where(method => IsProperTestMethod(method, codes));
+            }
+            else
+            {
+                return methods.Where(method => IsProperTestMethod(method));
+            }
         }
 
         internal static string GetCategory(SprinklerTestClass instance)
         {
-            return SprinklerTestModuleAttribute.AttributeOf(instance.GetType()).Name;
+            return SprinklerModule.AttributeOf(instance.GetType()).Name;
         }
 
         private static bool IsProperTestMethod(MethodInfo method, IEnumerable<string> codes)
         {
-            return codes == null ? IsProperTestMethod(method, null as string) : codes.Any(code => IsProperTestMethod(method, code));
+            var attribute = SprinklerTest.AttributeOf(method);
+            return (attribute != null) && (codes.Contains(attribute.Code));
         }
 
-        private static bool IsProperTestMethod(MethodInfo method, string code)
+        private static bool IsProperTestMethod(MethodInfo method, string code = null)
         {
-            var testAttribute = SprinklerTestAttribute.AttributeOf(method);
-            return testAttribute != null && (code == null || code.Equals(testAttribute.Code, StringComparison.OrdinalIgnoreCase));
+            var attribute = SprinklerTest.AttributeOf(method);
+            return attribute != null && (code == null || code.Equals(attribute.Code, StringComparison.OrdinalIgnoreCase));
         }
-
-        public static IEnumerable<KeyValuePair<Type, List<MethodInfo>>> FilterTestsForCodeOrModule(
-            IEnumerable<Type> testclasses, string[] codesOrModules)
-        {
-            IDictionary<Type, List<MethodInfo>> methods = new Dictionary<Type, List<MethodInfo>>();
-            foreach (var testclass in testclasses)
-            {
-                var moduleAttr = SprinklerTestModuleAttribute.AttributeOf(testclass);
-                if (moduleAttr != null)
-                {
-                    if (codesOrModules == null || codesOrModules.Length == 0 || codesOrModules.Contains(moduleAttr.Name, StringComparer.OrdinalIgnoreCase))
-                    {
-                        methods.Add(testclass, TestHelper.GetTestMethods(testclass).ToList());
-
-                    }
-                    else
-                    {
-                        methods.Add(testclass, TestHelper.GetTestMethods(testclass, codesOrModules).ToList());
-                    }
-                }
-            }
-            return methods;
-        }
-
+  
     }
 }

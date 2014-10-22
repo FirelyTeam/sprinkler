@@ -16,63 +16,42 @@ using Sprinkler.Framework;
 
 namespace Sprinkler
 {
+    
+    public static class Options
+    {
+        //public const string OUTPUT = "-o";
+        public const string LIST = "-l";
+        //public const string FORMAT = "-f";
+    }
+
     public class Program
     {
-        public enum OutputFormat
-        {
-            Html,
-            Xml,
-            Raw
-        };
-
-        internal static class Params
-        {
-            public const string OUTPUT = "-o";
-            public const string LIST = "-l";
-            public const string FORMAT = "-f";
-        }
-
-        public static IDictionary<string, string> KnownPars = new Dictionary<string, string>
-        {
-            {Params.LIST, Texts.HelpForListParameter},
-            {Params.FORMAT, Texts.HelpForFormatParameter},
-            {Params.OUTPUT, Texts.HelpForOutputPararameter}
-        };
-
-        /**
-         * Parameters:
-         * -l                                    show options
-         * -f                                    output format [o:Html, o:Xml]
-         * -o:filepath                           output path+filename 
-         * [url]                                 fhir url
-         * [codes]                               space-separated list of test codes or test categories
-         */
+        static Parameters parameters;
 
         public static void Main(string[] args)
         {
-            var parameters = ReadArgs(args);
-            var opts = parameters.Item1;
-            var mandatoryPars = parameters.Item2;
-            Console.WriteLine(Texts.ProgramTitle);
+            parameters = new Parameters(args);    
+
+            Console.WriteLine(Resources.ProgramTitle);
             Console.WriteLine();
-            if (opts.ContainsKey(Params.LIST))
+
+            if (parameters.HasOption(Options.LIST))
             {
                 ShowModulesList();
             }
-            else if (!mandatoryPars.Any())
+            else if (parameters.Values.Any())
             {
                 ShowOptions();
             }
             else
             {
-                try
-                {
-                    RunTests(opts, mandatoryPars);
-                }
-                catch (Exception x)
-                {
-                    Console.Error.WriteLine(Texts.error, x.Message);
-                }
+                RunTests();
+            }
+
+            if (parameters.HasOption("-wait")) // mainly for debugging purposes
+            {
+                Console.WriteLine("Press any key...");
+                Console.ReadKey();
             }
         }
 
@@ -82,53 +61,31 @@ namespace Sprinkler
             Console.WriteLine("{0}[{1}]", designator.PadRight(80, '.'), result.Outcome);
         }
 
-        private static void RunTests(IDictionary<string, string> opts, IList<string> mandatoryPars)
+        private static void RunTests()
         {
-            var url = mandatoryPars[0];
-            
-            var outputFormat = GetOutputFormat(opts);
-            var outputFilename = GetOutputFilename(opts, outputFormat);
-            var outputWriter = outputFilename == null
-                ? Console.Out
-                : File.CreateText(GetOutputFilename(opts, outputFormat));
-            
-            if (outputFormat != OutputFormat.Raw) Console.Write(Texts.MessageTestStarted);
-            //var testSet = TestSet.NewInstance(url);
-            //testSet.Run(results, mandatoryPars.Skip(1).ToArray());
-
-            var tests = mandatoryPars.Skip(1).ToArray(); 
-
-            TestRunner runner = Test.CreateRunner(url, log);
-            
-            runner.Run(tests);
-
-            Console.WriteLine();
-        }
-
-        private static string GetOutputFilename(IDictionary<string, string> opts, OutputFormat outputFormat)
-        {
-            if (!opts.ContainsKey(Params.OUTPUT)) return null;
-            var outputFilename = opts[Params.OUTPUT];
-            if (String.Empty == outputFilename)
+            try
             {
-                throw new ArgumentException(string.Format(Texts.ErrorWrongValueForParameter, Params.OUTPUT, outputFilename));
+                var url = parameters.Values.First(); 
+                var tests = parameters.Values.Skip(1).ToArray(); 
+                TestRunner runner = Test.CreateRunner(url, log);
+                runner.Run(tests);
             }
-            var format = outputFormat.ToString().ToLowerInvariant();
-            return outputFilename.EndsWith(format, StringComparison.OrdinalIgnoreCase)
-                ? outputFilename
-                : outputFilename + "." + format;
+            catch (Exception x)
+            {
+                Console.Error.WriteLine(Resources.error, x.Message);
+            }
         }
-
+       
         private static void ShowModulesList()
         {
-            var list = TestHelper.GetTestModules();
-            Console.WriteLine(Texts.availableModules);
-            foreach (var module in list)
+            Console.WriteLine(Resources.availableModules);
+            foreach(Type type in TestHelper.GetModules())
             {
-                Console.WriteLine(module.Item1 + ":");
-                foreach (var method in module.Item2)
+                Console.WriteLine(SprinklerModule.AttributeOf(type).Name);
+                
+                foreach(SprinklerTest test in TestHelper.GetTestMethods(type).Select(SprinklerTest.AttributeOf))
                 {
-                    Console.WriteLine("\t{0} {1}", method.Item1, method.Item2);
+                    Console.WriteLine("{0}: {1}", test.Code, test.Title);
                 }
             }
         }
@@ -136,84 +93,13 @@ namespace Sprinkler
         private static void ShowOptions()
         {
             var executable = Path.GetFileNameWithoutExtension(Assembly.GetExecutingAssembly().Location);
-            Console.WriteLine(Texts.HelpForUsage, executable, Texts.HelpForSyntax);
-            Console.WriteLine(Texts.parameters);
-            Console.WriteLine(Texts.HelpForParameters);
-            Console.WriteLine(Texts.options);
-            foreach (var opt in KnownPars)
-            {
-                Console.WriteLine("\t{0}\t{1}", opt.Key, opt.Value);
-            }
+            Console.WriteLine(Resources.HelpForUsage, executable, Resources.HelpForSyntax);
+            Console.WriteLine(Resources.parameters);
+            Console.WriteLine(Resources.HelpForParameters);
+            Console.WriteLine(Resources.options);
+            
+            Console.WriteLine("\t{0}\t{1}", Options.LIST, Resources.HelpForListParameter);
         }
 
-        /*
-        private static void ProcessOutputOptions(TestResults results, TextWriter outputWriter, OutputFormat outputFormat)
-        {
-            if (outputFormat == OutputFormat.Raw) return; // nothing to do 
-            TextReader xslTransform = null;
-            //switch (outputFormat)
-            //{
-            //    case OutputFormat.Raw:
-            //        xslTransform = new StringReader(Resources.xmlToRaw);
-            //        break;
-            //    case OutputFormat.Html:
-            //        xslTransform = new StringReader(Resources.xmlToHtml);
-            //        break;
-            //    default:
-            //        xslTransform = null;
-            //        break;
-            //}
-            if (outputFormat == OutputFormat.Html)
-            {
-                xslTransform = new StringReader(Texts.xmlToHtml);
-            }
-            results.SerializeTo(outputWriter, xslTransform);
-            outputWriter.Close();
-        }
-        */
-
-        private static OutputFormat GetOutputFormat(IDictionary<string, string> opts)
-        {
-            var formatOpt = GetOptionValue(opts, Params.FORMAT, OutputFormat.Raw.ToString());
-            OutputFormat format;
-            if (!Enum.TryParse(formatOpt, true, out format))
-            {
-                throw new ArgumentException(string.Format(Texts.ErrorWrongValueForParameter, Params.FORMAT, formatOpt));
-            }
-            return format;
-        }
-
-        private static string GetOptionValue(IDictionary<string, string> opts, string optionKey,
-            string defaultIfNull = null)
-        {
-            string ret;
-            return opts.TryGetValue(optionKey, out ret) ? ret : defaultIfNull;
-        }
-
-        private static Tuple<IDictionary<string, string>, string[]> ReadArgs(string[] args)
-        {
-            IDictionary<string, string> options = new Dictionary<string, string>();
-            IList<string> nonOptions = new List<string>();
-            if (!args.Any()) return new Tuple<IDictionary<string, string>, string[]>(options, nonOptions.ToArray());
-            foreach (var arg in args)
-            {
-                if (arg.StartsWith("-"))
-                {
-                    var colon = arg.IndexOf(':');
-                    if (colon > -1)
-                    {
-                        var key = arg.Substring(0, colon);
-                        var value = arg.Substring(colon + 1);
-                        options.Add(key, value);
-                    }
-                    else
-                    {
-                        options.Add(arg, null);
-                    }
-                }
-                else nonOptions.Add(arg);
-            }
-            return new Tuple<IDictionary<string, string>, string[]>(options, nonOptions.ToArray());
-        }
     }
 }

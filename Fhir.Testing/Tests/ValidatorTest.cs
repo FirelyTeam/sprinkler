@@ -13,7 +13,7 @@ using Sprinkler.Framework;
 
 namespace Sprinkler.Tests
 {
-    [SprinklerTestModule("Validation")]
+    [SprinklerModule("Validation")]
     public class ValidatorTest : SprinklerTestClass
     {
         [SprinklerTest("V001", "Validate a valid resource")]

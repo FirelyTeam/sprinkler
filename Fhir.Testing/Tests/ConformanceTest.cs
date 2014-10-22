@@ -11,7 +11,7 @@ using Sprinkler.Framework;
 
 namespace Sprinkler.Tests
 {
-    [SprinklerTestModule("Conformance")]
+    [SprinklerModule("Conformance")]
     public class ConformanceTest : SprinklerTestClass
     {
         [SprinklerTest("C001", "Request conformance on /metadata")]
