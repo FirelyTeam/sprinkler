@@ -11,6 +11,9 @@ using System.Reflection;
 using Hl7.Fhir.Model;
 using Hl7.Fhir.Serialization;
 using Fhir.Testing.Properties;
+using System.Collections.Generic;
+using System.IO.Compression;
+using System;
 
 namespace Sprinkler.Framework
 {
@@ -117,10 +120,41 @@ namespace Sprinkler.Framework
         public static Patient GetDemoPatient()
         {
             string xml = GetDemoPatientXml();
-            var pat = (Patient) FhirParser.ParseResourceFromXml(xml);
+            var pat = (Patient)FhirParser.ParseResourceFromXml(xml);
             return pat;
         }
-    
-    }
 
+
+
+        public static List<Resource> GetListofResources()
+        {
+            const string ZIPFILEPATH = "example-resources.zip";
+            List<Resource> resources = new List<Resource>();
+           
+            createEmptyDir("ResourceExamples");
+
+            using (FileStream zipFileToOpen = new FileStream(ZIPFILEPATH, FileMode.Open))
+            using (ZipArchive archive = new ZipArchive(zipFileToOpen, ZipArchiveMode.Read))
+            {
+                archive.ExtractToDirectory("ResourceExamples");
+            }
+
+            IEnumerable<string> files = Directory.EnumerateFiles("ResourceExamples");
+            
+            foreach (string s in files)
+            {
+                string xml = File.ReadAllText(s);
+                Resource resource = FhirParser.ParseResourceFromXml(xml);
+                resources.Add(resource);
+            }
+            Directory.Delete("ResourceExamples", true);
+            return resources;            
+        }
+
+        private static void createEmptyDir(string baseTestPath)
+        {
+            if (Directory.Exists(baseTestPath)) Directory.Delete(baseTestPath, true);
+            Directory.CreateDirectory(baseTestPath);
+        }
+    }
 }
