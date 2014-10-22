@@ -39,7 +39,7 @@ namespace Sprinkler
             {
                 ShowModulesList();
             }
-            else if (parameters.Values.Any())
+            else if (!parameters.Values.Any())
             {
                 ShowOptions();
             }
