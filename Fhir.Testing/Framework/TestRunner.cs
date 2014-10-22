@@ -64,7 +64,7 @@ namespace Sprinkler.Framework
             return test;
         }
 
-        public void Run(string[] codes)
+        public void Run(params string[] codes)
         {
             foreach(Type type in TestHelper.GetModules())
             {
@@ -120,6 +120,5 @@ namespace Sprinkler.Framework
         }
         
     }
-
     
 } 
