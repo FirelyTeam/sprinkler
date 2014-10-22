@@ -47,7 +47,7 @@ namespace Sprinkler.Framework
                 test.Outcome = TestOutcome.Success;
                 test.Exception = null;
             }
-            catch (TargetInvocationException e)
+            catch (Exception e)
             {
                 if (e.InnerException is TestFailedException)
                 {

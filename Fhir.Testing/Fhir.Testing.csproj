@@ -39,9 +39,6 @@
     <Reference Include="Hl7.Fhir.Specification">
       <HintPath>..\packages\Hl7.Fhir.0.11.2-alpha1\lib\net45\Hl7.Fhir.Specification.dll</HintPath>
     </Reference>
-    <Reference Include="Ionic.Zip">
-      <HintPath>..\packages\DotNetZip.1.9.2\lib\net20\Ionic.Zip.dll</HintPath>
-    </Reference>
     <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\Newtonsoft.Json.6.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
@@ -51,6 +48,8 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.IO.Compression" />
+    <Reference Include="System.IO.Compression.FileSystem" />
     <Reference Include="System.Security" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
@@ -60,6 +59,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Framework\Test.cs" />
+    <Compile Include="Tests\AllResourcesTest.cs" />
     <Compile Include="Utilities\AttributeHelper.cs" />
     <Compile Include="Framework\DemoData.cs" />
     <Compile Include="Framework\Assert.cs" />
@@ -110,6 +110,9 @@
     <None Include="conn5-21-cid-example.xml" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="example-resources.zip">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="packages.config" />
     <None Include="patient-example.xml" />
   </ItemGroup>
