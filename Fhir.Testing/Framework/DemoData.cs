@@ -14,6 +14,7 @@ using Fhir.Testing.Properties;
 using System.Collections.Generic;
 using System.IO.Compression;
 using System;
+using System.Collections.ObjectModel;
 
 namespace Sprinkler.Framework
 {
@@ -124,37 +125,25 @@ namespace Sprinkler.Framework
             return pat;
         }
 
-
-
         public static List<Resource> GetListofResources()
         {
             const string ZIPFILEPATH = "example-resources.zip";
-            List<Resource> resources = new List<Resource>();
-           
-            createEmptyDir("ResourceExamples");
+            List<Resource> resources = new List<Resource>();     
 
             using (FileStream zipFileToOpen = new FileStream(ZIPFILEPATH, FileMode.Open))
+
             using (ZipArchive archive = new ZipArchive(zipFileToOpen, ZipArchiveMode.Read))
             {
-                archive.ExtractToDirectory("ResourceExamples");
+                ReadOnlyCollection<ZipArchiveEntry> entries = archive.Entries;
+                foreach (ZipArchiveEntry e in entries)
+                {
+                    StreamReader reader = new StreamReader(e.Open());                   
+                    Resource resource = FhirParser.ParseResourceFromXml(reader.ReadToEnd());
+                    resources.Add(resource);                    
+                }               
             }
-
-            IEnumerable<string> files = Directory.EnumerateFiles("ResourceExamples");
-            
-            foreach (string s in files)
-            {
-                string xml = File.ReadAllText(s);
-                Resource resource = FhirParser.ParseResourceFromXml(xml);
-                resources.Add(resource);
-            }
-            Directory.Delete("ResourceExamples", true);
-            return resources;            
+            return resources;        
         }
-
-        private static void createEmptyDir(string baseTestPath)
-        {
-            if (Directory.Exists(baseTestPath)) Directory.Delete(baseTestPath, true);
-            Directory.CreateDirectory(baseTestPath);
-        }
+       
     }
 }
