@@ -335,6 +335,7 @@ namespace Sprinkler.Tests
 
         private void TestSomeResource<T>() where T: Resource, new()
         {
+            errors.Clear();           
             string id = "sprink" + tempid++.ToString();
             Type type = typeof(T);
             Resource resource = GetFirstResourceOfType(type);
@@ -348,9 +349,7 @@ namespace Sprinkler.Tests
                 {
                     errormessage = errormessage + s + "\r\n";
                 }
-                Assert.Fail(errormessage);
-                errors.Clear();
-                errormessage = "";
+                Assert.Fail(errormessage);                
             }
         }
 
