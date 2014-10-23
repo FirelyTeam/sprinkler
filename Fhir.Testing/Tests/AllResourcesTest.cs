@@ -22,7 +22,6 @@ namespace Sprinkler.Tests
     [SprinklerModule("All Resources Test")]
     public class AllResourcesTest : SprinklerTestClass
     {
-        FhirClient client = new FhirClient("http://spark.furore.com/fhir");
         List<Resource> resources = DemoData.GetListofResources();
         int tempid = 0;
         List<String> errors = new List<string>();
@@ -49,7 +48,7 @@ namespace Sprinkler.Tests
             string location = resource.GetType().Name + "/" + id;
             try
             {
-                client.Delete(location);
+                Client.Delete(location);
                 Assert.Fails(Client, () => Client.Read<T>(location), HttpStatusCode.Gone);
             }
             catch(Exception e)
@@ -63,7 +62,7 @@ namespace Sprinkler.Tests
             string location = resource.GetType().Name + "/" + id;
             try
             {
-                client.Read<T>(location);
+                Client.Read<T>(location);
             }
             catch(Exception e)
             {
@@ -79,7 +78,7 @@ namespace Sprinkler.Tests
                 
                 try
                 {
-                     created = client.Create((T)resource, id);
+                     created = Client.Create((T)resource, id);
                      Uri createdid = created.Id;
                      CheckForCreation(createdid, id);                     
                 }
@@ -125,7 +124,7 @@ namespace Sprinkler.Tests
 
         private void CheckForCreation(Uri created, string id)
         {
-            var ep = new RestUrl(client.Endpoint);
+            var ep = new RestUrl(Client.Endpoint);
 
             if (!ep.IsEndpointFor(created))            
                 Assert.Fail("Location of created resource is not located within server endpoint");       
@@ -214,184 +213,208 @@ namespace Sprinkler.Tests
             TestSomeResource<DocumentManifest>();
         }
 
-        [SprinklerTest("AR14", "Create read update delete on Encounter")]
+        [SprinklerTest("AR14", "Create read update delete on Document Reference")]
+        public void TestDocumentReference()
+        {
+            TestSomeResource<DocumentReference>();
+        }
+
+        [SprinklerTest("AR15", "Create read update delete on Encounter")]
         public void TestEncounter()
         {
             TestSomeResource<Encounter>();
         }
 
-        [SprinklerTest("AR15", "Create read update delete on Family History")]
+        [SprinklerTest("AR16", "Create read update delete on Family History")]
         public void TestFamilyHistory()
         {
             TestSomeResource<FamilyHistory>();
         }
 
-        [SprinklerTest("AR16", "Create read update delete on Group")]
+        [SprinklerTest("AR17", "Create read update delete on Group")]
         public void TestGroup()
         {
             TestSomeResource<Group>();
         }
 
-        [SprinklerTest("AR17", "Create read update delete on Imaging Study")]
+        [SprinklerTest("AR18", "Create read update delete on Imaging Study")]
         public void TestImagingStudy()
         {
             TestSomeResource<ImagingStudy>();
         }
 
-        [SprinklerTest("AR18", "Create read update delete on Immunization")]
+        [SprinklerTest("AR19", "Create read update delete on Immunization")]
         public void TestImmunization()
         {
             TestSomeResource<Immunization>();
         }
 
-        [SprinklerTest("AR19", "Create read update delete on List")]
+        [SprinklerTest("AR20", "Create read update delete on Immunization Recommendation")]
+        public void TestImmunizationRecommendation()
+        {
+            TestSomeResource<ImmunizationRecommendation>();
+        }
+
+        [SprinklerTest("AR21", "Create read update delete on List")]
         public void TestList()
         {
             TestSomeResource<List>();
         }
 
-        [SprinklerTest("AR20", "Create read update delete on Location")]
+        [SprinklerTest("AR22", "Create read update delete on Location")]
         public void TestLocation()
         {
             TestSomeResource<Location>();
         }
 
-        [SprinklerTest("AR21", "Create read update delete on Media")]
+        [SprinklerTest("AR23", "Create read update delete on Media")]
         public void TestMedia()
         {
             TestSomeResource<Media>();
         }
 
-        [SprinklerTest("AR22", "Create read update delete on Medication")]
+        [SprinklerTest("AR24", "Create read update delete on Medication")]
         public void TestMedication()
         {
             TestSomeResource<Medication>();
         }
 
-        [SprinklerTest("AR23", "Create read update delete on Medication Administration")]
+        [SprinklerTest("AR25", "Create read update delete on Medication Administration")]
         public void TestMedicationAdministration()
         {
             TestSomeResource<MedicationAdministration>();
         }
 
-        [SprinklerTest("AR24", "Create read update delete on Medication Prescription")]
+        [SprinklerTest("AR26", "Create read update delete on Medication Dispense")]
+        public void TestMedicationDispense()
+        {
+            TestSomeResource<MedicationDispense>();
+        }
+
+        [SprinklerTest("AR27", "Create read update delete on Medication Prescription")]
         public void TestMedicationPrescription()
         {
             TestSomeResource<MedicationPrescription>();
         }
 
-        [SprinklerTest("AR25", "Create read update delete on Medication Statement")]
+        [SprinklerTest("AR28", "Create read update delete on Medication Statement")]
         public void TestMedicationStatement()
         {
             TestSomeResource<MedicationStatement>();
         }
 
-        [SprinklerTest("AR26", "Create read update delete on Message Header")]
+        [SprinklerTest("AR29", "Create read update delete on Message Header")]
         public void TestMessageHeader()
         {
             TestSomeResource<MessageHeader>();
         }
 
-        [SprinklerTest("AR27", "Create read update delete on Observation")]
+        [SprinklerTest("AR30", "Create read update delete on Observation")]
         public void TestObservation()
         {
             TestSomeResource<Observation>();
         }
 
-        [SprinklerTest("AR28", "Create read update delete on Operation Outcome")]
+        [SprinklerTest("AR31", "Create read update delete on Operation Outcome")]
         public void TestOperationOutcome()
         {
             TestSomeResource<OperationOutcome>();
         }
 
-        [SprinklerTest("AR29", "Create read update delete on Order")]
+        [SprinklerTest("AR32", "Create read update delete on Order")]
         public void TestOrder()
         {
             TestSomeResource<Order>();
         }
 
-        [SprinklerTest("AR30", "Create read update delete on Order Response")]
+        [SprinklerTest("AR33", "Create read update delete on Order Response")]
         public void TestOrderResponse()
         {
             TestSomeResource<OrderResponse>();
         }
 
-        [SprinklerTest("AR31", "Create read update delete on Organization")]
+        [SprinklerTest("AR34", "Create read update delete on Organization")]
         public void TestOrganization()
         {
             TestSomeResource<Organization>();
         }
 
-        [SprinklerTest("AR32", "Create read update delete on Other")]
+        [SprinklerTest("AR35", "Create read update delete on Other")]
         public void TestOther()
         {
             TestSomeResource<Other>();
         }
 
-        [SprinklerTest("AR33", "Create read update delete on Patient")]
+        [SprinklerTest("AR36", "Create read update delete on Patient")]
         public void TestPatient()
         {
             TestSomeResource<Patient>();
         }
 
-        [SprinklerTest("AR34", "Create read update delete on Practitioner")]
+        [SprinklerTest("AR37", "Create read update delete on Practitioner")]
         public void TestPractitioner()
         {
             TestSomeResource<Practitioner>();
         }
 
-        [SprinklerTest("AR35", "Create read update delete on Procedure")]
+        [SprinklerTest("AR38", "Create read update delete on Procedure")]
         public void TestProcedure()
         {
             TestSomeResource<Procedure>();
         }
 
-        [SprinklerTest("AR36", "Create read update delete on Profile")]
+        [SprinklerTest("AR39", "Create read update delete on Profile")]
         public void TestProfile()
         {
             TestSomeResource<Profile>();
         }
 
-        [SprinklerTest("AR37", "Create read update delete on Provenance")]
+        [SprinklerTest("AR40", "Create read update delete on Provenance")]
         public void TestProvenance()
         {
             TestSomeResource<Provenance>();
         }
 
-        [SprinklerTest("AR38", "Create read update delete on Query")]
+        [SprinklerTest("AR41", "Create read update delete on Query")]
         public void TestQuery()
         {
             TestSomeResource<Query>();
         }
 
-        [SprinklerTest("AR39", "Create read update delete on Questionnaire")]
+        [SprinklerTest("AR42", "Create read update delete on Questionnaire")]
         public void TestQuestionnaire()
         {
             TestSomeResource<Questionnaire>();
         }
 
-        [SprinklerTest("AR40", "Create read update delete on Related Person")]
+        [SprinklerTest("AR43", "Create read update delete on Related Person")]
         public void TestRelatedPerson()
         {
             TestSomeResource<RelatedPerson>();
         }
 
-        [SprinklerTest("AR41", "Create read update delete on Security Event")]
+        [SprinklerTest("AR44", "Create read update delete on Security Event")]
         public void TestSecurityEvent()
         {
             TestSomeResource<SecurityEvent>();
         }
 
-        [SprinklerTest("AR42", "Create read update delete on Specimen")]
+        [SprinklerTest("AR45", "Create read update delete on Specimen")]
         public void TestSpecimen()
         {
             TestSomeResource<Specimen>();
         }
 
-        [SprinklerTest("AR43", "Create read update delete on Supply")]
+        [SprinklerTest("AR46", "Create read update delete on Supply")]
         public void TestSupply()
         {
             TestSomeResource<Supply>();
+        }
+
+        [SprinklerTest("AR47", "Create read update delete on Value Set")]
+        public void TestValueSet()
+        {
+            TestSomeResource<ValueSet>();
         }
     }
 }
