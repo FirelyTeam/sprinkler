@@ -128,9 +128,10 @@ namespace Sprinkler.Framework
         public static List<Resource> GetListofResources()
         {
             const string ZIPFILEPATH = "example-resources.zip";
+            string file = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, ZIPFILEPATH);
             List<Resource> resources = new List<Resource>();     
 
-            using (FileStream zipFileToOpen = new FileStream(ZIPFILEPATH, FileMode.Open))
+            using (FileStream zipFileToOpen = new FileStream(file, FileMode.Open))
 
             using (ZipArchive archive = new ZipArchive(zipFileToOpen, ZipArchiveMode.Read))
             {

@@ -4,7 +4,7 @@
     <ProjectView>ProjectFiles</ProjectView>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
-    <StartArguments>-l</StartArguments>
+    <StartArguments>http://spark.furore.com/fhir AR -wait</StartArguments>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
     <StartArguments>http://spark.furore.com/fhir AR  -wait</StartArguments>
