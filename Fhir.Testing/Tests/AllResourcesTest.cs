@@ -27,6 +27,115 @@ namespace Sprinkler.Tests
         int tempid = 0;
         List<String> errors = new List<string>();
 
+        private void TryToUpdate<T>(Resource resource, string id) where T : Resource, new()
+        {
+            string location = resource.GetType().Name + "/" + id;
+            ResourceEntry<T> entry = Client.Read<T>(location);
+            Element element = new Code("unsure");
+            try
+            {
+                entry.Resource.AddExtension("http://furore.com/fhir/Profile/main#sprinkler", element);
+                Client.Update(entry);
+            }
+            catch(Exception e)
+            {
+                errors.Add("Update of " + resource.GetType().Name + " failed: " + e.Message);
+            }
+        }     
+
+
+        public void AndTryDelete<T>(Resource resource, string  id) where T : Resource, new()
+        {
+            string location = resource.GetType().Name + "/" + id;
+            try
+            {
+                client.Delete(location);
+                Assert.Fails(Client, () => Client.Read<T>(location), HttpStatusCode.Gone);
+            }
+            catch(Exception e)
+            {
+                errors.Add("Deletion of " + resource.GetType().Name + " failed: " + e.Message);
+            }           
+        }
+
+        private void TryToRead<T>(Resource resource, string id) where T : Resource, new()
+        {
+            string location = resource.GetType().Name + "/" + id;
+            try
+            {
+                client.Read<T>(location);
+            }
+            catch(Exception e)
+            {
+                errors.Add("Cannot read " + resource.GetType().Name + ": " + e.Message);
+            }           
+        }      
+
+        public void AttemptResource<T>(Resource resource, string id) where T: Resource, new()
+        {
+            if (typeof(T) == resource.GetType())
+            {         
+                ResourceEntry<T> created = null;
+                
+                try
+                {
+                     created = client.Create((T)resource, id);
+                     Uri createdid = created.Id;
+                     CheckForCreation(createdid, id);                     
+                }
+                catch(Exception e)
+                {
+                    errors.Add("Creation of " + resource.GetType().Name + " failed: " + e.Message);                    
+                }
+                TryToRead<T>(resource, id);
+                TryToUpdate<T>(resource, id);
+                AndTryDelete<T>(resource, id);                
+            }
+        }
+     
+        private void TestSomeResource<T>() where T: Resource, new()
+        {
+            errors.Clear();           
+            string id = "sprink" + tempid++.ToString();
+            Type type = typeof(T);
+            Resource resource = GetFirstResourceOfType(type);
+            T typedresource = (T)resource;
+            AttemptResource<T>(typedresource, id);
+
+            if (errors.Count() != 0)
+            {
+                string errormessage = "";
+                foreach (string s in errors)
+                {
+                    errormessage = errormessage + s + "\r\n";
+                }
+                Assert.Fail(errormessage);                
+            }
+        }
+
+        private Resource GetFirstResourceOfType(Type type)
+        {
+            string id = "sprink" + tempid++.ToString();
+            IEnumerable<Resource> resource = from r in resources
+                                            where r.GetType() == type
+                                            select r;
+            
+            return resource.First();
+        }
+
+        private void CheckForCreation(Uri created, string id)
+        {
+            var ep = new RestUrl(client.Endpoint);
+
+            if (!ep.IsEndpointFor(created))            
+                Assert.Fail("Location of created resource is not located within server endpoint");       
+
+            var rl = new ResourceIdentity(created);
+            if (rl.Id != id)
+                Assert.Fail("Server refused to honor client-assigned id");
+        }
+
+
         [SprinklerTest("AR01", "Create read update delete on Adverse Reaction")]
         public void TestAdversereaction()
         {
@@ -283,96 +392,6 @@ namespace Sprinkler.Tests
         public void TestSupply()
         {
             TestSomeResource<Supply>();
-        }
-
-        public void AndTryDelete<T>(Resource resource, string  id) where T : Resource, new()
-        {
-            string location = resource.GetType().Name + "/" + id;
-            try
-            {
-                client.Delete(location);
-                Assert.Fails(Client, () => Client.Read<T>(location), HttpStatusCode.Gone);
-            }
-            catch(Exception e)
-            {
-                errors.Add("Deletion of " + resource.GetType().Name + " failed: " + e.Message);
-            }           
-        }
-
-        private void TryToRead<T>(Resource resource, string id) where T : Resource, new()
-        {
-            string location = resource.GetType().Name + "/" + id;
-            try
-            {
-                client.Read<T>(location);
-            }
-            catch(Exception e)
-            {
-                errors.Add("Cannot read " + resource.GetType().Name + ": " + e.Message);
-            }           
-        }      
-
-        public void AttemptResource<T>(Resource resource, string id) where T: Resource, new()
-        {
-            if (typeof(T) == resource.GetType())
-            {         
-                ResourceEntry<T> created = null;
-                
-                try
-                {
-                     created = client.Create((T)resource, id);
-                     Uri createdid = created.Id;
-                     CheckForCreation(createdid, id);                     
-                }
-                catch(Exception e)
-                {
-                    errors.Add("Creation of " + resource.GetType().Name + " failed: " + e.Message);                    
-                }
-                TryToRead<T>(resource, id);
-                AndTryDelete<T>(resource, id);                
-            }
-        }     
-
-        private void TestSomeResource<T>() where T: Resource, new()
-        {
-            errors.Clear();           
-            string id = "sprink" + tempid++.ToString();
-            Type type = typeof(T);
-            Resource resource = GetFirstResourceOfType(type);
-            T typedresource = (T)resource;
-            AttemptResource<T>(typedresource, id);
-
-            if (errors.Count() != 0)
-            {
-                string errormessage = "";
-                foreach (string s in errors)
-                {
-                    errormessage = errormessage + s + "\r\n";
-                }
-                Assert.Fail(errormessage);                
-            }
-        }
-
-        private Resource GetFirstResourceOfType(Type type)
-        {
-            string id = "sprink" + tempid++.ToString();
-            IEnumerable<Resource> resource = from r in resources
-                                            where r.GetType() == type
-                                            select r;
-            
-            return resource.First();
-        }
-
-        private void CheckForCreation(Uri created, string id)
-        {
-            var ep = new RestUrl(client.Endpoint);
-
-            if (!ep.IsEndpointFor(created))            
-                Assert.Fail("Location of created resource is not located within server endpoint");       
-
-            var rl = new ResourceIdentity(created);
-            if (rl.Id != id)
-                Assert.Fail("Server refused to honor client-assigned id");
         }
     }
 }
