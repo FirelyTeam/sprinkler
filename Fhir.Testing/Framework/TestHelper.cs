@@ -35,7 +35,7 @@ namespace Sprinkler.Framework
         public static IEnumerable<MethodInfo> GetTestMethods(Type testclass, IEnumerable<string> codes = null)
         {
             IEnumerable<MethodInfo> methods = testclass.GetMethods();
-            if (codes == null || codes.Count() > 0)
+            if (codes != null && codes.Count() > 0)
             {
                 return methods.Where(method => IsProperTestMethod(method, codes));
             }
