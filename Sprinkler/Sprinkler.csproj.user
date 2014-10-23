@@ -7,6 +7,6 @@
     <StartArguments>http://spark.furore.com/fhir CR RD -wait</StartArguments>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
-    <StartArguments>http://spark.furore.com/fhir A001 -wait</StartArguments>
+    <StartArguments>http://spark.furore.com/fhir AR  -wait</StartArguments>
   </PropertyGroup>
 </Project>
