@@ -81,11 +81,11 @@ namespace Sprinkler
             Console.WriteLine(Resources.availableModules);
             foreach(Type type in TestHelper.GetModules())
             {
-                Console.WriteLine(SprinklerModule.AttributeOf(type).Name);
+                Console.WriteLine("{0}:", SprinklerModule.AttributeOf(type).Name);
                 
                 foreach(SprinklerTest test in TestHelper.GetTestMethods(type).Select(SprinklerTest.AttributeOf))
                 {
-                    Console.WriteLine("{0}: {1}", test.Code, test.Title);
+                    Console.WriteLine("\t{0}: {1}", test.Code, test.Title);
                 }
             }
         }
