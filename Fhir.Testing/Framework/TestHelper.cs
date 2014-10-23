@@ -13,6 +13,8 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using Furore.Attributes;
+using System.Text.RegularExpressions;
+
 
 namespace Sprinkler.Framework
 {
@@ -30,10 +32,10 @@ namespace Sprinkler.Framework
             return Assembly.GetExecutingAssembly().GetTypesWithAttribute<SprinklerModule>();
         }
 
-        public static IEnumerable<MethodInfo> GetTestMethods(Type testclass, string[] codes = null)
+        public static IEnumerable<MethodInfo> GetTestMethods(Type testclass, IEnumerable<string> codes = null)
         {
             IEnumerable<MethodInfo> methods = testclass.GetMethods();
-            if (codes != null)
+            if (codes == null || codes.Count() > 0)
             {
                 return methods.Where(method => IsProperTestMethod(method, codes));
             }
@@ -51,7 +53,7 @@ namespace Sprinkler.Framework
         private static bool IsProperTestMethod(MethodInfo method, IEnumerable<string> codes)
         {
             var attribute = SprinklerTest.AttributeOf(method);
-            return (attribute != null) && (codes.Contains(attribute.Code));
+            return (attribute != null) && (codes.HasMatchFor(attribute.Code));
         }
 
         private static bool IsProperTestMethod(MethodInfo method, string code = null)
@@ -60,5 +62,15 @@ namespace Sprinkler.Framework
             return attribute != null && (code == null || code.Equals(attribute.Code, StringComparison.OrdinalIgnoreCase));
         }
   
+    }
+
+    public static class MatchExtensions
+    {
+
+        public static bool HasMatchFor(this IEnumerable<string> matches, string code)
+        {
+            return matches.Any(m => code.StartsWith(m));
+
+        }
     }
 }

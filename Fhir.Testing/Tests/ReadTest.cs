@@ -32,7 +32,7 @@ namespace Sprinkler.Tests
             return p;
         }
 
-        [SprinklerTest("R001", "Result headers on normal read")]
+        [SprinklerTest("RD01", "Result headers on normal read")]
         public void GetTestDataPerson()
         {
             Patient p = NewPatient("Emerald", "Caro");
@@ -48,7 +48,7 @@ namespace Sprinkler.Tests
             Assert.ContentLocationPresentAndValid(Client);
         }
 
-        [SprinklerTest("R002", "Read unknown resource type")]
+        [SprinklerTest("RD02", "Read unknown resource type")]
         public void TryReadUnknownResourceType()
         {
             ResourceIdentity id = ResourceIdentity.Build(Client.Endpoint, "thisreallywondexist", "1");
@@ -58,13 +58,13 @@ namespace Sprinkler.Tests
             // "The given key was not present in the dictionary";
         }
 
-        [SprinklerTest("R003", "Read non-existing resource id")]
+        [SprinklerTest("RD03", "Read non-existing resource id")]
         public void TryReadNonExistingResource()
         {
             Assert.Fails(Client, () => Client.Read<Patient>("Patient/3141592unlikely"), HttpStatusCode.NotFound);
         }
 
-        [SprinklerTest("R004", "Read bad formatted resource id")]
+        [SprinklerTest("RD04", "Read bad formatted resource id")]
         public void TryReadBadFormattedResourceId()
         {
             //Test for Spark issue #7, https://github.com/furore-fhir/spark/issues/7
