@@ -3,3 +3,5 @@
 /*/obj
 *.suo
 *.v12.suo
+*.psess
+*.vsp
