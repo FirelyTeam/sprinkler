@@ -10,54 +10,158 @@ using System;
 using System.Collections.Generic;
 using Hl7.Fhir.Model;
 using Sprinkler.Framework;
+using Hl7.Fhir.Serialization;
+using Fhir.Testing.Properties;
+using System.Net;
+using System.IO;
+using System.Text;
+using Hl7.Fhir.Rest;
 
 namespace Sprinkler.Tests
 {
     [SprinklerModule("Validation")]
     public class ValidatorTest : SprinklerTestClass
     {
-        [SprinklerTest("V001", "Validate a valid resource")]
-        public void ValidateCreateResource()
+        [SprinklerTest("VA01", "Validate creation of a valid resource")]
+        public void CreateValidResource()
         {
-            Patient patient = DemoData.GetDemoPatient();
-
-            OperationOutcome oo;
-            if (!Client.TryValidateCreate(patient, out oo, null))
-                Assert.Fail("Validation incorrectly reported failure.");
+            string resource = Resources.patient_example;
+            string endpoint = "Patient";
+            
+            using (HttpWebResponse response = PostResource(resource, endpoint))
+            {
+                if (response.StatusCode != HttpStatusCode.Created)
+                    Assert.Fail("Server did not accepted valid resource /");
+            }
         }
 
-        [SprinklerTest("V002", "Validate an invalid resource")]
-        public void ValidateInvalidCreateResource()
+        [SprinklerTest("VA02", "Validate creation of an invalid resource (wrong name use)")]
+        public void CreateResourceValueError()
         {
-            Patient patient = DemoData.GetDemoPatient();
-            patient.Identifier = new List<Identifier> {new Identifier {System = "urn:oid:hallo" }};
+            string xml = Resources.Patient_ErrorUse;
+            string endpoint = "Patient";
 
-            OperationOutcome oo;
-            if (!Client.TryValidateCreate(patient, out oo, null))
-                Assert.Fail("Validation incorrectly reported failure.");
+            using (HttpWebResponse response = PostResource(xml, endpoint))
+            {
+                if (response.StatusCode == HttpStatusCode.Created)
+                    Assert.Fail("Server accepted invalid resource with 'unofficial' as a value for Patient.name.use /");
+            }
         }
 
-        [SprinklerTest("V003", "Validate a valid resource update")]
-        public void ValidateUpdateResource()
+        [SprinklerTest("VA03", "Validate creation of an invalid resource (cardinality minus)")]
+        public void CreateResourceCardinalityMinus()
         {
-            Patient patient = DemoData.GetDemoPatient();
-            ResourceEntry<Patient> result = Client.Create(patient);
+            string xml = Resources.Patient_CardinalityMinus;
+            string endpoint = "Patient";
 
-            OperationOutcome oo;
-            if (!Client.TryValidateUpdate(result, out oo))
-                Assert.Fail("Validation incorrectly reported failure.");
+            using (HttpWebResponse response = PostResource(xml, endpoint))
+            {
+                if (response.StatusCode == HttpStatusCode.Created)
+                    Assert.Fail("Server accepted invalid resource with text.status cardinality of 0, should be 1/");
+            }
         }
 
-        [SprinklerTest("V004", "Validate an invalid resource update")]
-        public void ValidateInvalidUpdateResource()
+        [SprinklerTest("VA04", "Validate creation of an invalid resource (cardinality plus)")]
+        public void CreateResourceCardinalityPlus()
         {
-            Patient patient = DemoData.GetDemoPatient();
-            ResourceEntry<Patient> result = Client.Create(patient);
-            patient.Identifier = new List<Identifier> {new Identifier {System = "urn:oid:hallo" }};
+            string xml = Resources.Patient_CardinalityPlus;
+            string endpoint = "Patient";
 
-            OperationOutcome oo;
-            if (!Client.TryValidateUpdate(result, out oo))
-                Assert.Fail("Validation incorrectly reported failure.");
+            using (HttpWebResponse response = PostResource(xml, endpoint))
+            {
+                if (response.StatusCode == HttpStatusCode.Created)
+                    Assert.Fail("Server accepted invalid resource with name.use cardinality of 2, should be 1/");
+            }
         }
+
+        [SprinklerTest("VA05", "Validate creation of an invalid resource (constraint error)")]
+        public void CreateResourceConstraintError()
+        {
+            string xml = Resources.Patient_ConstraintError;
+            string endpoint = "Patient";
+
+            using (HttpWebResponse response = PostResource(xml, endpoint))
+            {
+                if (response.StatusCode == HttpStatusCode.Created)
+                    Assert.Fail("Server accepted invalid resource with a constraint error/");
+            }
+        }
+
+        [SprinklerTest("VA06", "Validate creation of an invalid resource (invalid element)")]
+        public void CreateResourceInvalidElement()
+        {
+            string xml = Resources.Patient_InvalidElement;
+            string endpoint = "Patient";
+
+            using (HttpWebResponse response = PostResource(xml, endpoint))
+            {
+                if (response.StatusCode == HttpStatusCode.Created)
+                    Assert.Fail("Server accepted invalid resource with an invalid element/");
+            }
+        }
+
+        [SprinklerTest("VA07", "Validate creation of an invalid resource (wrong narrative)")]
+        public void CreateResourceWrongNarrative()
+        {
+            string xml = Resources.Patient_InvalidElement;
+            string endpoint = "Patient";
+
+            using (HttpWebResponse response = PostResource(xml, endpoint))
+            {
+                if (response.StatusCode == HttpStatusCode.Created)
+                    Assert.Fail("Server accepted invalid resource with wrong namespace on narrative/");
+            }
+        }
+
+
+        //[SprinklerTest("VA03", "Validate a resource against a custom profile")]
+        //public void ValidateResourceAgainstACustomProfile()
+        //{
+           
+        //}
+
+        private HttpWebResponse PostResource(string resource, string end)
+        {
+            Uri endpoint = new Uri("http://spark.furore.com/fhir/" + end);
+            WebRequest req = WebRequest.Create(endpoint);
+            req.ContentType = "application/xml+fhir";
+            req.Method = "POST";
+            Stream outStream = req.GetRequestStream();
+            var outStreamWriter = new StreamWriter(outStream, Encoding.UTF8);
+
+            outStreamWriter.Write(resource);
+            outStreamWriter.Flush();
+            outStreamWriter.Close();
+
+            var response = (HttpWebResponse)req.GetResponseNoEx();
+            return response;
+        }
+
+
+
+        //[SprinklerTest("V003", "Validate a valid resource update")]
+        //public void ValidateUpdateResource()
+        //{
+        //    Patient patient = DemoData.GetDemoPatient();
+        //    ResourceEntry<Patient> result = Client.Create(patient);
+
+        //    OperationOutcome oo;
+        //    if (!Client.TryValidateUpdate(result, out oo))
+        //        Assert.Fail("Validation incorrectly reported failure.");
+        //}
+
+        //[SprinklerTest("V004", "Validate an invalid resource update")]
+        //public void ValidateInvalidUpdateResource()
+        //{
+        //    Patient patient = DemoData.GetDemoPatient();
+        //    ResourceEntry<Patient> result = Client.Create(patient);
+        //    patient.Identifier = new List<Identifier> {new Identifier {System = "urn:oid:hallo" }};
+
+        //    OperationOutcome oo;
+        //    if (!Client.TryValidateUpdate(result, out oo))
+        //        Assert.Fail("Validation incorrectly reported failure.");
+        //}
+
+
     }
 }

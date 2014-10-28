@@ -96,6 +96,8 @@ namespace Sprinkler.Framework
             return Resources.patient_example;
         }
 
+     
+
         public static string GetDemoPatientJson()
         {
             Patient pat = GetDemoPatient();
@@ -123,7 +125,7 @@ namespace Sprinkler.Framework
             string xml = GetDemoPatientXml();
             var pat = (Patient)FhirParser.ParseResourceFromXml(xml);
             return pat;
-        }
+        }      
 
         public static List<Resource> GetListofResources()
         {
