@@ -122,7 +122,7 @@ namespace Sprinkler.Tests
 
         private HttpWebResponse PostResource(string resource, string end)
         {
-            Uri endpoint = new Uri("http://spark.furore.com/fhir/" + end);
+            Uri endpoint = new Uri(Client.Endpoint + end);
             WebRequest req = WebRequest.Create(endpoint);
             req.ContentType = "application/xml+fhir";
             req.Method = "POST";
