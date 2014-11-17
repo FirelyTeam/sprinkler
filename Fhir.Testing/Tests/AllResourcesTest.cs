@@ -98,11 +98,18 @@ namespace Sprinkler.Tests
             string id = "sprink" + tempid++.ToString();
             Type type = typeof(T);
 
-            Resource resource = GetFirstResourceOfType(type);
+            {
+                Resource resource = GetFirstResourceOfType(type);
             if (resource != null)
             {
                 T typedresource = (T)resource;
                 AttemptResource<T>(typedresource);
+            }
+            catch (Exception e)
+            {
+                errors.Add("Test failed: " + e.Message);
+            }
+           
 
                 if (errors.Count() != 0)
                 {

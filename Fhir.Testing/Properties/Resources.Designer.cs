@@ -109,6 +109,149 @@ namespace Fhir.Testing.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to &lt;feed xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot;
+        ///    xsi:schemaLocation=&quot;http://www.w3.org/2005/Atom ../../Documents/FHIR/Schemas/DSTU1_1/fhir-atom.xsd&quot;
+        ///    xmlns=&quot;http://www.w3.org/2005/Atom&quot;&gt;
+        ///    &lt;title&gt;A sample FHIR diagnostic report message&lt;/title&gt;
+        ///    &lt;id&gt;urn:uuid:612bee81-d973-4afe-b592-d39fe71e39&lt;/id&gt;
+        ///    &lt;updated&gt;2014-09-08T11:34:00+02:00&lt;/updated&gt; 
+        ///    &lt;author&gt;
+        ///        &lt;name&gt;Doctor Faustus&lt;/name&gt;
+        ///    &lt;/author&gt;
+        ///    &lt;category  term=&quot;http://hl7.org/fhir/tag/message&quot; scheme=&quot;http:// [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string message_false_SlicingRegularTestProfile {
+            get {
+                return ResourceManager.GetString("message_false_SlicingRegularTestProfile", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &lt;feed xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot;
+        /// xsi:schemaLocation=&quot;http://www.w3.org/2005/Atom ../../Documents/FHIR/Schemas/DSTU1_1/fhir-atom.xsd&quot;
+        /// xmlns=&quot;http://www.w3.org/2005/Atom&quot;&gt;
+        ///    &lt;title&gt;A sample FHIR diagnostic report message&lt;/title&gt;
+        ///    &lt;id&gt;urn:uuid:612bee81-d973-4afe-b592-d39fe71e39&lt;/id&gt;
+        ///    &lt;updated&gt;2014-09-08T11:34:00+02:00&lt;/updated&gt; 
+        ///    &lt;author&gt;
+        ///        &lt;name&gt;Doctor Faustus&lt;/name&gt;
+        ///    &lt;/author&gt;
+        ///    &lt;category  term=&quot;http://hl7.org/fhir/tag/message&quot; scheme=&quot;http://hl7.or [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string message_SlicingRegularTestProfile {
+            get {
+                return ResourceManager.GetString("message_SlicingRegularTestProfile", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot;?&gt;
+        ///&lt;Patient xmlns=&quot;http://hl7.org/fhir&quot;&gt;
+        ///  &lt;text&gt;
+        ///    &lt;!-- &lt;status value=&quot;generated&quot;/&gt; --&gt;
+        ///    &lt;!-- gives error: text.status cardinality should be 1, is zero --&gt;
+        ///    
+        ///    &lt;div xmlns=&quot;http://www.w3.org/1999/xhtml&quot;&gt;
+        ///      Everywoman, Eve. SSN:
+        ///      444222222
+        ///    &lt;/div&gt;
+        ///  &lt;/text&gt;
+        ///  &lt;contact&gt;
+        ///    &lt;name value=&quot;John&quot;/&gt;
+        ///  &lt;/contact&gt;
+        ///  &lt;identifier&gt;
+        ///    &lt;system value=&quot;http://hl7.org/fhir/sid/us-ssn&quot;/&gt;
+        ///    &lt;value value=&quot;444222222&quot;/&gt;
+        ///  &lt;/identifier&gt;
+        ///  &lt;name&gt;
+        ///     [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string Patient_CardinalityMinus {
+            get {
+                return ResourceManager.GetString("Patient_CardinalityMinus", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot;?&gt;
+        ///&lt;Patient xmlns=&quot;http://hl7.org/fhir&quot;&gt;
+        ///  &lt;text&gt;
+        ///    &lt;status value=&quot;generated&quot;/&gt;
+        ///    &lt;div xmlns=&quot;http://www.w3.org/1999/xhtml&quot;&gt;
+        ///      Everywoman, Eve. SSN:
+        ///      444222222
+        ///    &lt;/div&gt;
+        ///  &lt;/text&gt;
+        ///  &lt;contact&gt;
+        ///    &lt;name value=&quot;John&quot;/&gt;
+        ///  &lt;/contact&gt;
+        ///  &lt;identifier&gt;
+        ///    &lt;system value=&quot;http://hl7.org/fhir/sid/us-ssn&quot;/&gt;
+        ///    &lt;value value=&quot;444222222&quot;/&gt;
+        ///  &lt;/identifier&gt;
+        ///  &lt;name&gt;
+        ///    &lt;use value=&quot;official&quot;/&gt;
+        ///    &lt;family value=&quot;Everywoman&quot;/&gt;
+        ///    &lt;given value=&quot;Eve&quot;/&gt;
+        ///   [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string Patient_CardinalityPlus {
+            get {
+                return ResourceManager.GetString("Patient_CardinalityPlus", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot;?&gt;
+        ///&lt;Patient xmlns=&quot;http://hl7.org/fhir&quot;&gt;
+        ///  &lt;text&gt;
+        ///    &lt;status value=&quot;generated&quot;/&gt;     
+        ///    &lt;div xmlns=&quot;http://www.w3.org/1999/xhtml&quot;&gt;
+        ///      Everywoman, Eve. SSN:
+        ///      444222222
+        ///    &lt;/div&gt;
+        ///  &lt;/text&gt;
+        ///  &lt;contact&gt;
+        ///      &lt;!-- constraint: either name, telecom, address or organisation should be present --&gt;
+        ///  &lt;/contact&gt;
+        ///  &lt;identifier&gt;
+        ///    &lt;system value=&quot;http://hl7.org/fhir/sid/us-ssn&quot;/&gt;
+        ///    &lt;value value=&quot;444222222&quot;/&gt;
+        ///  &lt;/identifier&gt;
+        ///  &lt;name&gt;
+        ///    &lt;use value=&quot;offi [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string Patient_ConstraintError {
+            get {
+                return ResourceManager.GetString("Patient_ConstraintError", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot; ?&gt;
+        ///&lt;Patient xmlns=&quot;http://hl7.org/fhir&quot;&gt;
+        ///  &lt;text&gt;
+        ///    &lt;status value=&quot;generated&quot;/&gt;
+        ///    &lt;div xmlns=&quot;http://www.w3.org/1999/xhtml&quot;&gt;
+        ///      Everywoman, Eve. SSN: 444222222
+        ///    &lt;/div&gt;
+        ///  &lt;/text&gt; 
+        ///  &lt;identifier&gt;
+        ///    &lt;system value=&quot;http://hl7.org/fhir/sid/us-ssn&quot;/&gt;
+        ///    &lt;value value=&quot;444222222&quot;/&gt;
+        ///  &lt;/identifier&gt;
+        ///  &lt;name&gt;
+        ///    &lt;use value=&quot;unofficial&quot;/&gt; &lt;!-- this is a invalid value for use and should give an error --&gt;
+        ///    &lt;family value=&quot;Everywoman&quot;/&gt;
+        ///    &lt;given value=&quot; [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string Patient_ErrorUse {
+            get {
+                return ResourceManager.GetString("Patient_ErrorUse", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to &lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
         ///
         ///&lt;Patient xmlns=&quot;http://hl7.org/fhir&quot;&gt;
@@ -132,6 +275,58 @@ namespace Fhir.Testing.Properties {
         internal static string patient_example {
             get {
                 return ResourceManager.GetString("patient_example", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot;?&gt;
+        ///&lt;Patient xmlns=&quot;http://hl7.org/fhir&quot;&gt;
+        ///  &lt;text&gt;
+        ///    &lt;status value=&quot;generated&quot;/&gt;
+        ///    &lt;div xmlns=&quot;http://www.w3.org/1999/xhtml&quot;&gt;
+        ///      Everywoman, Eve. SSN:
+        ///      444222222
+        ///    &lt;/div&gt;
+        ///  &lt;/text&gt;
+        ///  &lt;contact&gt;
+        ///    &lt;name value=&quot;John&quot;/&gt;
+        ///  &lt;/contact&gt;
+        ///  &lt;identifier&gt;
+        ///    &lt;system value=&quot;http://hl7.org/fhir/sid/us-ssn&quot;/&gt;
+        ///    &lt;value value=&quot;444222222&quot;/&gt;
+        ///  &lt;/identifier&gt;
+        ///  &lt;name&gt;
+        ///    &lt;use value=&quot;official&quot;/&gt;
+        ///    &lt;family value=&quot;Everywoman&quot;/&gt;
+        ///    &lt;given value=&quot;Eve&quot;/&gt;
+        ///	  [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string Patient_InvalidElement {
+            get {
+                return ResourceManager.GetString("Patient_InvalidElement", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &lt;Profile xmlns=&quot;http://hl7.org/fhir&quot;&gt;
+        ///    &lt;text&gt;
+        ///        &lt;status value=&quot;empty&quot;/&gt;
+        ///        &lt;div xmlns=&quot;http://www.w3.org/1999/xhtml&quot;&gt;No narrative was supplied for this Profile&lt;/div&gt;
+        ///    &lt;/text&gt;
+        ///    &lt;identifier value=&quot;urn:hl7.org:lipid-profile:v1&quot;/&gt;
+        ///    &lt;version value=&quot;1.0.0&quot;/&gt;
+        ///    &lt;name value=&quot;Example Lipid Profile&quot;/&gt;
+        ///    &lt;publisher value=&quot;HL7 International&quot;/&gt;
+        ///    &lt;telecom&gt;
+        ///        &lt;system value=&quot;email&quot;/&gt;
+        ///        &lt;value value=&quot;e.kramer@furore.com&quot;/&gt;
+        ///    &lt;/telecom&gt;
+        ///    &lt;description
+        ///        value= [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string SlicingRegularTestProfile_expanded {
+            get {
+                return ResourceManager.GetString("SlicingRegularTestProfile_expanded", resourceCulture);
             }
         }
         
