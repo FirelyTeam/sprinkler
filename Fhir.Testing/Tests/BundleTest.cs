@@ -81,6 +81,8 @@ namespace Sprinkler.Tests
         [SprinklerTest("BU02", "fetch created resources")]
         public void FetchCreatedResources()
         {
+            Assert.SkipWhen(_connDoc == null);
+
             Client.Read<DocumentReference>(_connDoc.Id);
             Client.Read<Patient>(_patDoc.Id);
             Client.Read<Practitioner>(_prac1Doc.Id);
@@ -107,6 +109,8 @@ namespace Sprinkler.Tests
         [SprinklerTest("BU04", "post a bundle with updates")]
         public void PostBundleWithUpdates()
         {
+            if (_postResult == null) Assert.Skip();
+
             string newMasterId = "urn:oid:123.456.7.8.9";
             ResourceEntry<DocumentReference> doc =
                 _postResult.Entries.OfType<ResourceEntry<DocumentReference>>().First();

@@ -40,7 +40,7 @@ namespace Sprinkler.Tests
         [SprinklerTest("V003", "Validate a valid resource update")]
         public void ValidateUpdateResource()
         {
-            Patient patient = DemoData.GetDemoPatient();
+            Patient patient = DemoData.GetDemoPatient(); 
             ResourceEntry<Patient> result = Client.Create(patient);
 
             OperationOutcome oo;

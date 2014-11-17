@@ -20,12 +20,13 @@ using Sprinkler.Framework;
 
 namespace Sprinkler.Tests
 {
-    [SprinklerModule("DIGSIG")]
+    // Deprecated:
+    // [SprinklerModule("DIGSIG")]
     public class DigSigTest : SprinklerTestClass
     {
         private string _signedXml;
 
-        [SprinklerTest("DS01", "Posting a feed with a valid signature")]
+        // [SprinklerTest("DS01", "Posting a feed with a valid signature")]
         public void TestSigning()
         {
             var b = new Bundle();
@@ -65,7 +66,7 @@ namespace Sprinkler.Tests
             return certificate;
         }
 
-        [SprinklerTest("DS02", "Posting a feed with an invalid signature")]
+        // [SprinklerTest("DS02", "Posting a feed with an invalid signature")]
         public void TestSigningTampered()
         {
             string bundleSigned = _signedXml;

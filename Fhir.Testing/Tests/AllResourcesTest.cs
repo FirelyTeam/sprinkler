@@ -26,9 +26,8 @@ namespace Sprinkler.Tests
         int tempid = 0;
         List<String> errors = new List<string>();
 
-        private void TryToUpdate<T>(Resource resource, string id) where T : Resource, new()
+        private void TryToUpdate<T>(Resource resource, string location) where T : Resource, new()
         {
-            string location = resource.GetType().Name + "/" + id;
             ResourceEntry<T> entry = Client.Read<T>(location);
             Element element = new Code("unsure");
             try
@@ -43,9 +42,8 @@ namespace Sprinkler.Tests
         }     
 
 
-        public void AndTryDelete<T>(Resource resource, string  id) where T : Resource, new()
+        public void AndTryDelete<T>(Resource resource, string location) where T : Resource, new()
         {
-            string location = resource.GetType().Name + "/" + id;
             try
             {
                 Client.Delete(location);
@@ -57,9 +55,8 @@ namespace Sprinkler.Tests
             }           
         }
 
-        private void TryToRead<T>(Resource resource, string id) where T : Resource, new()
+        private void TryToRead<T>(Resource resource, string location) where T : Resource, new()
         {
-            string location = resource.GetType().Name + "/" + id;
             try
             {
                 Client.Read<T>(location);
@@ -70,25 +67,28 @@ namespace Sprinkler.Tests
             }           
         }      
 
-        public void AttemptResource<T>(Resource resource, string id) where T: Resource, new()
+        public void AttemptResource<T>(Resource resource) where T: Resource, new()
         {
+            string key = null;
+
             if (typeof(T) == resource.GetType())
             {         
                 ResourceEntry<T> created = null;
-                
                 try
                 {
-                     created = Client.Create((T)resource, id);
-                     Uri createdid = created.Id;
-                     CheckForCreation(createdid, id);                     
+                    created = Client.Create((T)resource);
+                    key = new ResourceIdentity(created.Id).OperationPath.ToString();
+                    if (key != null)
+                    {
+                        TryToRead<T>(resource, key);
+                        TryToUpdate<T>(resource, key);
+                        AndTryDelete<T>(resource, key);
+                    }
                 }
                 catch(Exception e)
                 {
                     errors.Add("Creation of " + resource.GetType().Name + " failed: " + e.Message);                    
                 }
-                TryToRead<T>(resource, id);
-                TryToUpdate<T>(resource, id);
-                AndTryDelete<T>(resource, id);                
             }
         }
      
@@ -97,43 +97,39 @@ namespace Sprinkler.Tests
             errors.Clear();           
             string id = "sprink" + tempid++.ToString();
             Type type = typeof(T);
-            Resource resource = GetFirstResourceOfType(type);
-            T typedresource = (T)resource;
-            AttemptResource<T>(typedresource, id);
 
-            if (errors.Count() != 0)
+            Resource resource = GetFirstResourceOfType(type);
+            if (resource != null)
             {
-                string errormessage = "";
-                foreach (string s in errors)
+                T typedresource = (T)resource;
+                AttemptResource<T>(typedresource);
+
+                if (errors.Count() != 0)
                 {
-                    errormessage = errormessage + s + "\r\n";
+                    string errormessage = "";
+                    foreach (string s in errors)
+                    {
+                        errormessage = errormessage + s + "\r\n";
+                    }
+                    Assert.Fail(errormessage);
                 }
-                Assert.Fail(errormessage);                
+            }
+            else
+            {
+                errors.Add("No test data for resource of type " + type.Name);
             }
         }
 
         private Resource GetFirstResourceOfType(Type type)
         {
-            string id = "sprink" + tempid++.ToString();
-            IEnumerable<Resource> resource = from r in resources
-                                            where r.GetType() == type
-                                            select r;
+            //string id = "sprink" + tempid++.ToString();
+            IEnumerable<Resource> resource = 
+                from r in resources
+                where r.GetType() == type
+                select r;
             
-            return resource.First();
+            return resource.FirstOrDefault();
         }
-
-        private void CheckForCreation(Uri created, string id)
-        {
-            var ep = new RestUrl(Client.Endpoint);
-
-            if (!ep.IsEndpointFor(created))            
-                Assert.Fail("Location of created resource is not located within server endpoint");       
-
-            var rl = new ResourceIdentity(created);
-            if (rl.Id != id)
-                Assert.Fail("Server refused to honor client-assigned id");
-        }
-
 
         [SprinklerTest("AR01", "Create read update delete on Adverse Reaction")]
         public void TestAdversereaction()

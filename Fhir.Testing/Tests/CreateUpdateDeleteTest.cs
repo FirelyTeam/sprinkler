@@ -16,7 +16,7 @@ using Sprinkler.Framework;
 
 namespace Sprinkler.Tests
 {
-    [SprinklerModule("Writing")]
+    [SprinklerModule("CRUD")]
     public class CreateUpdateDeleteTest : SprinklerTestClass
     {
         public CreateUpdateDeleteTest()
@@ -81,10 +81,10 @@ namespace Sprinkler.Tests
                 Assert.Fail("Resource extension was not persisted on created resource " + entry.GetBasicId());
         }
 
-        [SprinklerTest("UP01", "update that patient (no extensions altered)")]
+        [SprinklerTest("CR05", "update that patient (no extensions altered)")]
         public void UpdatePersonNoExt()
         {
-            if (CreateDate == null) TestResult.Skip();
+            Assert.SkipWhen(CreateDate == null);
             ResourceEntry<Patient> entry = Client.Read<Patient>(Location);
 
             entry.Resource.Telecom.Add(new Contact {System = Contact.ContactSystem.Url, Value = "http://www.nu.nl"});
@@ -100,10 +100,10 @@ namespace Sprinkler.Tests
             Versions.Add(entry.SelfLink);
         }
 
-        [SprinklerTest("UP02", "update that person again (alter extensions)")]
+        [SprinklerTest("CR06", "update that person again (alter extensions)")]
         public void UpdatePersonAndAddExtension()
         {
-            if (CreateDate == null) TestResult.Skip();
+            Assert.SkipWhen(CreateDate == null);
 
             ResourceEntry<Patient> entry = Client.Read<Patient>(Location);
 
@@ -132,17 +132,17 @@ namespace Sprinkler.Tests
             Versions.Add(entry.SelfLink);
         }
 
-        [SprinklerTest("DE01", "delete that person")]
+        [SprinklerTest("CR07", "delete that person")]
         public void DeletePerson()
         {
-            if (CreateDate == null) TestResult.Skip();
+            if (CreateDate == null) Assert.Skip();
             string location = "Patient/" + CrudId;
             Client.Delete(location);
 
             Assert.Fails(Client, () => Client.Read<Patient>(location), HttpStatusCode.Gone);
         }
 
-        [SprinklerTest("DE02", "deletion of a non-existing resource")]
+        [SprinklerTest("CR08", "deletion of a non-existing resource")]
         public void DeleteNonExistingPerson()
         {
             var rnd = new Random();

@@ -49,15 +49,7 @@ namespace Sprinkler.Framework
             }
             catch (Exception e)
             {
-                if (e.InnerException is TestFailedException)
-                {
-                    test.Outcome = (e.InnerException as TestFailedException).Outcome;
-                }
-                else
-                {
-                    test.Outcome = TestOutcome.Fail;
-                }
-
+                test.Outcome = TestOutcome.Fail;
                 test.Exception = e.InnerException;
             }
 

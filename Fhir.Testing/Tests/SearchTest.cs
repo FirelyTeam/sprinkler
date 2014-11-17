@@ -55,7 +55,7 @@ namespace Sprinkler.Tests
         [SprinklerTest("SE03", "Search patient resource on partial familyname")]
         public void SearchResourcesWithNameCriterium()
         {
-            if (allPatients == null) TestResult.Skip();
+            Assert.SkipWhen(allPatients == null);
             // First create a search argument: any family name present in the
             // previous unlimited search result that has at least 5 characters
             string name = allPatients.Entries.ByResourceType<Patient>()

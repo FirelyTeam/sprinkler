@@ -16,6 +16,8 @@ using Sprinkler.Framework;
 
 namespace Sprinkler
 {
+
+    // http://localhost.fiddler:1396/fhir TA -wait
     
     public static class Options
     {
@@ -59,6 +61,10 @@ namespace Sprinkler
         {
             string designator = string.Format("{0}/{1} {2}", result.Category, result.Code, result.Title);
             Console.WriteLine("{0}[{1}]", designator.PadRight(80, '.'), result.Outcome);
+            if (result.Outcome == TestOutcome.Fail)
+            {
+                Console.WriteLine("  - {0}\n", result.OperationOutcome());
+            }
         }
 
         private static void RunTests()

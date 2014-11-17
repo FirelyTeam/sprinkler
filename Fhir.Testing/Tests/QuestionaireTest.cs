@@ -41,9 +41,11 @@ namespace Sprinkler.Tests
 
             Questionnaire questionnaire = Client.Read<Questionnaire>(id).Resource;
             questionnaire.Status = Questionnaire.QuestionnaireStatus.Published;
-            Client.Create(questionnaire);
+            ResourceEntry<Questionnaire> entry = Client.Create(questionnaire);
+            Assert.IsTrue(entry != null, "Questionnaire was not created");
         }
 
+        /*
         private void DisplayAvailableStatusses()
         {
             Bundle bundle = Client.Search<Questionnaire>();
@@ -54,14 +56,20 @@ namespace Sprinkler.Tests
 
             foreach (string status in statusses.Distinct())
             {
-                Console.WriteLine("-" + status); // TODO (er): where do you want to write here?
+                Console.WriteLine("-" + status); 
             }
         }
+        */
 
         [SprinklerTest("QU03", "Download a template questionnaire")]
         public void DownloadTemplate()
         {
-            Bundle bundle = Client.Search<Questionnaire>(new[] {"status=published"});
+            // template: status = "published"
+            // http://www.hl7.org/implement/standards/fhir/questionnaire-status.html
+
+            Bundle bundle = Client.Search<Questionnaire>(new[] {"status=published"}); 
+            Assert.SkipWhen(bundle.Entries.Count == 0, "No published questionaires to test");
+                
             Uri id = bundle.Entries.First().Id;
 
             Questionnaire questionnaire = Client.Read<Questionnaire>(id).Resource;
@@ -71,6 +79,9 @@ namespace Sprinkler.Tests
         public void UploadATemplate()
         {
             Bundle bundle = Client.Search<Questionnaire>(new[] {"status=published"});
+            
+            Assert.SkipWhen(bundle.Entries.Count == 0, "No published questionaires to test");
+
             Uri id = bundle.Entries.First().Id;
 
             Questionnaire questionnaire = Client.Read<Questionnaire>(id).Resource;

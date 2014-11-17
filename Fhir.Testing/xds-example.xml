@@ -191,7 +191,7 @@
   </entry>
   <entry xmlns="http://www.w3.org/2005/Atom">
     <title>binary document</title>
-    <id>cid:bin_vid@hl7.org</id>
+    <id>cid:bin_id@hl7.org</id>
     <link href="cid:bin_vid@hl7.org" rel="self" />
     <updated>2013-07-01T13:11:33Z</updated>
     <content type="text/xml">

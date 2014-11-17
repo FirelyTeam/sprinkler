@@ -4,7 +4,8 @@
     <ProjectView>ProjectFiles</ProjectView>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
-    <StartArguments>http://spark.furore.com/fhir AR -wait</StartArguments>
+    <StartArguments>http://localhost:1396/fhir SE -wait</StartArguments>
+    <StartAction>Project</StartAction>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
     <StartArguments>http://spark.furore.com/fhir AR  -wait</StartArguments>

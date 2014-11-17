@@ -92,6 +92,16 @@ namespace Sprinkler.Framework
             }
         }
 
+        public static void Skip(string message = null)
+        {
+            throw new TestFailedException(TestOutcome.Skipped, message);
+        }
+
+        public static void SkipWhen(bool condition, string message = null)
+        {
+            if (condition) Skip(message);
+        }
+
         /// <summary>
         ///     Use this AssertFail if you want to examine the result afterwards (typically: an OperationOutcome).
         /// </summary>

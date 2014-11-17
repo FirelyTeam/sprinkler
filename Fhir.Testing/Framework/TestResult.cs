@@ -11,6 +11,8 @@ using System.Xml;
 using System.Xml.Schema;
 using System.Xml.Serialization;
 using Hl7.Fhir.Rest;
+using System.Linq;
+using System.Collections.Generic;
 
 namespace Sprinkler.Framework
 {
@@ -42,6 +44,11 @@ namespace Sprinkler.Framework
             Outcome = outcome;
         }
 
+        public TestFailedException(TestOutcome outcome, string message) : base(message ?? outcome.ToString())
+        {
+            Outcome = outcome;
+        }
+
         // overloaded ctor: message, inner exception
         public TestFailedException(string message, Exception inner) : base(message, inner)
         {
@@ -56,10 +63,22 @@ namespace Sprinkler.Framework
         public string Title { get; set; }
         public TestOutcome Outcome { get; set; }
         public Exception Exception { get; set; }
+    }
 
-        public static void Skip()
+    public static class ExceptionWriter
+    {
+        public static string OperationOutcome(this TestResult testresult)
         {
-            throw new TestFailedException(TestOutcome.Skipped);
+            Exception exception = testresult.Exception;
+            if (exception == null) return null;
+
+            if (exception is FhirOperationException)
+            {
+                IEnumerable<string> details = (exception as FhirOperationException).Outcome.Issue.Select(i => i.Details);
+                return string.Join(" - \n", details);
+            }
+            else return exception.Message;
+            
         }
     }
 
