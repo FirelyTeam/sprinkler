@@ -1,5 +1,4 @@
 ﻿<?xml version="1.0" encoding="UTF-8"?>
-
 <Patient xmlns="http://hl7.org/fhir">
   <text>
     <status value="generated" />

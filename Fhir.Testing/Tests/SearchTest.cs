@@ -134,24 +134,27 @@ namespace Sprinkler.Tests
 
             //We want a condition on a patient that has a name, for the last test in this method.
             ResourceIdentity patientRef = null;
-            ResourceEntry<Patient> patient = null;
+            ResourceEntry<Patient> entry = null;
             string patFirstName = "";
+
 
             foreach (var cond in conditionsForPatients)
             {
                 try
                 {
                     patientRef = new ResourceIdentity(cond.Resource.Subject.Url);
-                    patient = Client.Read<Patient>(patientRef);
-                    patFirstName = patient.Resource.Name[0].Family.First();
-                    break;
+                    entry = Client.Read<Patient>(patientRef);
+                    patFirstName = entry.Resource.Name[0].Family.First();
+                    if (!string.IsNullOrEmpty(patFirstName)) break;
+                    
                 }
                 catch (Exception)
                 {
                     // Apparently this patient has no name, try again.
                 }
             }
-            if (patient == null)
+
+            if (entry == null)
                 Assert.Fail("failed to find patient condition is referring to");
 
             IEnumerable<ResourceEntry<Condition>> allConditionsForThisPatient =
@@ -185,7 +188,8 @@ namespace Sprinkler.Tests
             if (result.Entries.Count() == 0)
                 Assert.Fail("failed to find any conditions (using subject.name)");
 
-            string identifier = patient.Resource.Identifier[0].Value;
+            
+            string identifier = entry.Resource.Identifier[0].Value;
             result = Client.Search<Condition>(new[] {"subject.identifier=" + identifier});
 
             if (result.Entries.Count() == 0)
@@ -210,9 +214,10 @@ namespace Sprinkler.Tests
             observation.Name = new CodeableConcept("http://loinc.org", "2164-2");
             observation.Value = new Quantity
             {
-                System = "http://unitofmeasure.org",
+                System = "http://unitsofmeasure.org",
                 Value = value,
-                Units = "mmol"
+                Code = "mg",
+                Units = "miligram"
             };
             observation.BodySite = new CodeableConcept("http://snomed.info/sct", "182756003");
 
@@ -227,7 +232,7 @@ namespace Sprinkler.Tests
             string id1 = createObservation(4.12346M);
             string id2 = createObservation(4.12349M);
 
-            Bundle bundle = Client.Search("Observation", new[] {"value-quantity=4.1234||mmol"});
+            Bundle bundle = Client.Search("Observation", new[] {"value-quantity=4.1234||mg"});
 
             Assert.IsTrue(bundle.Has(id0), "Search on quantity value 4.1234 should return 4.12345");
             Assert.IsTrue(!bundle.Has(id1), "Search on quantity value 4.1234 should not return 4.12346");
@@ -241,7 +246,7 @@ namespace Sprinkler.Tests
             string id1 = createObservation(5.12M);
             string id2 = createObservation(6.12M);
 
-            Bundle bundle = Client.Search("Observation", new[] {"value-quantity=>5||mmol"});
+            Bundle bundle = Client.Search("Observation", new[] {"value-quantity=>5||mg"});
 
             Assert.IsTrue(!bundle.Has(id0), "Search greater than quantity should not return lesser value.");
             Assert.IsTrue(bundle.Has(id1), "Search greater than quantity should return greater value");
@@ -272,16 +277,21 @@ namespace Sprinkler.Tests
         public void SearchPatientByNonExistingParameter()
         {
             int nrOfAllPatients = Client.Search<Patient>().Entries.ByResourceType<Patient>().Count();
-            Bundle actual = Client.Search("Patient", new[] {"bonkers=blabla"});
+            Bundle actual = Client.Search("Patient", new[] {"noparam=nonsense"});
                 //Obviously a non-existing search parameter
             int nrOfActualPatients = actual.Entries.ByResourceType<Patient>().Count();
             Assert.CorrectNumberOfResults(nrOfAllPatients, nrOfActualPatients,
                 "Expected all patients ({0}) since the only search parameter is non-existing, but got {1}.");
             IEnumerable<ResourceEntry<OperationOutcome>> outcomes = actual.Entries.ByResourceType<OperationOutcome>();
-            Assert.IsTrue(outcomes.Any(), "There should be an OperationOutcome.");
+            
+            //Assert.IsTrue(outcomes.Any(), "There should be an OperationOutcome.");
+            // mh: No there should not. Not in DSTU-1.
+
+            /*
             Assert.IsTrue(
                 outcomes.Any(o => o.Resource.Issue.Any(i => i.Severity == OperationOutcome.IssueSeverity.Warning)),
                 "With a warning in it.");
+            */
         }
 
         [SprinklerTest("SE25", "Search with malformed parameter.")]

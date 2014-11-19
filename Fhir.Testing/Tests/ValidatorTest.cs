@@ -25,91 +25,89 @@ namespace Sprinkler.Tests
         [SprinklerTest("VA01", "Validate creation of a valid resource")]
         public void CreateValidResource()
         {
-            string resource = Resources.patient_example;
-            string endpoint = "Patient";
+            Uri location = new Uri(Client.Endpoint + "Patient/_validate");
+            string resource = Resources.Patient_Valid;
             
-            using (HttpWebResponse response = PostResource(resource, endpoint))
+            using (HttpWebResponse response = PostResource(location, resource))
             {
                 if (response.StatusCode != HttpStatusCode.Created)
-                    Assert.Fail("Server did not accepted valid resource /");
+                    Assert.Fail("Server did not accept valid resource");
             }
         }
 
         [SprinklerTest("VA02", "Validate creation of an invalid resource (wrong name use)")]
         public void CreateResourceValueError()
         {
+            Uri location = new Uri(Client.Endpoint + "Patient/_validate");
             string xml = Resources.Patient_ErrorUse;
-            string endpoint = "Patient";
 
-            using (HttpWebResponse response = PostResource(xml, endpoint))
+            using (HttpWebResponse response = PostResource(location, xml))
             {
                 if (response.StatusCode == HttpStatusCode.Created)
-                    Assert.Fail("Server accepted invalid resource with 'unofficial' as a value for Patient.name.use /");
+                    Assert.Fail("Server accepted invalid resource with 'unofficial' as a value for Patient.name.use");
             }
         }
 
         [SprinklerTest("VA03", "Validate creation of an invalid resource (cardinality minus)")]
         public void CreateResourceCardinalityMinus()
         {
+            Uri location = new Uri(Client.Endpoint + "Patient/_validate");
             string xml = Resources.Patient_CardinalityMinus;
-            string endpoint = "Patient";
 
-            using (HttpWebResponse response = PostResource(xml, endpoint))
+            using (HttpWebResponse response = PostResource(location, xml))
             {
                 if (response.StatusCode == HttpStatusCode.Created)
-                    Assert.Fail("Server accepted invalid resource with text.status cardinality of 0, should be 1/");
+                    Assert.Fail("Server accepted invalid resource with text.status cardinality of 0, should be 1.");
             }
         }
 
         [SprinklerTest("VA04", "Validate creation of an invalid resource (cardinality plus)")]
         public void CreateResourceCardinalityPlus()
         {
+            Uri location = new Uri(Client.Endpoint + "Patient/_validate");
             string xml = Resources.Patient_CardinalityPlus;
-            string endpoint = "Patient";
 
-            using (HttpWebResponse response = PostResource(xml, endpoint))
+            using (HttpWebResponse response = PostResource(location, xml))
             {
                 if (response.StatusCode == HttpStatusCode.Created)
-                    Assert.Fail("Server accepted invalid resource with name.use cardinality of 2, should be 1/");
+                    Assert.Fail("Server accepted invalid resource with name.use cardinality of 2, should be 1.");
             }
         }
 
         [SprinklerTest("VA05", "Validate creation of an invalid resource (constraint error)")]
         public void CreateResourceConstraintError()
         {
+            Uri location = new Uri(Client.Endpoint + "Patient/_validate");
             string xml = Resources.Patient_ConstraintError;
-            string endpoint = "Patient";
-
-            using (HttpWebResponse response = PostResource(xml, endpoint))
+            using (HttpWebResponse response = PostResource(location, xml))
             {
                 if (response.StatusCode == HttpStatusCode.Created)
-                    Assert.Fail("Server accepted invalid resource with a constraint error/");
+                    Assert.Fail("Server accepted invalid resource with a constraint error");
             }
         }
 
         [SprinklerTest("VA06", "Validate creation of an invalid resource (invalid element)")]
         public void CreateResourceInvalidElement()
         {
+            Uri location = new Uri(Client.Endpoint + "Patient/_validate");
             string xml = Resources.Patient_InvalidElement;
-            string endpoint = "Patient";
-
-            using (HttpWebResponse response = PostResource(xml, endpoint))
+            
+            using (HttpWebResponse response = PostResource(location, xml))
             {
                 if (response.StatusCode == HttpStatusCode.Created)
-                    Assert.Fail("Server accepted invalid resource with an invalid element/");
+                    Assert.Fail("Server accepted invalid resource with an invalid element.");
             }
         }
 
         [SprinklerTest("VA07", "Validate creation of an invalid resource (wrong narrative)")]
         public void CreateResourceWrongNarrative()
         {
+            Uri location = new Uri(Client.Endpoint + "Patient/_validate");
             string xml = Resources.Patient_InvalidElement;
-            string endpoint = "Patient";
-
-            using (HttpWebResponse response = PostResource(xml, endpoint))
+            using (HttpWebResponse response = PostResource(location, xml))
             {
                 if (response.StatusCode == HttpStatusCode.Created)
-                    Assert.Fail("Server accepted invalid resource with wrong namespace on narrative/");
+                    Assert.Fail("Server accepted invalid resource with wrong namespace on narrative.");
             }
         }
 
@@ -120,16 +118,15 @@ namespace Sprinkler.Tests
            
         //}
 
-        private HttpWebResponse PostResource(string resource, string end)
+        private HttpWebResponse PostResource(Uri location, string content)
         {
-            Uri endpoint = new Uri(Client.Endpoint + end);
-            WebRequest req = WebRequest.Create(endpoint);
+            WebRequest req = WebRequest.Create(location);
             req.ContentType = "application/xml+fhir";
             req.Method = "POST";
             Stream outStream = req.GetRequestStream();
             var outStreamWriter = new StreamWriter(outStream, Encoding.UTF8);
 
-            outStreamWriter.Write(resource);
+            outStreamWriter.Write(content);
             outStreamWriter.Flush();
             outStreamWriter.Close();
 
