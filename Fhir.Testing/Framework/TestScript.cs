@@ -7,7 +7,11 @@ using System.Xml;
 using Hl7.Fhir.Model;
 using Hl7.Fhir.Serialization;
 using Hl7.Fhir.Rest;
+using Hl7.Fhir.Introspection;
 using System.Reflection;
+using Hl7.Fhir.Support;
+using System.Diagnostics;
+
 
 
 namespace Fhir.Testing.Framework
@@ -19,6 +23,10 @@ namespace Fhir.Testing.Framework
         public bool WantSetup { get; set; }
         public string Base { get; set; }
         public string Filename { get; set; }
+        public string TestId { get; set; }
+
+        private int total = 0;
+        private int fail = 0;
 
         public void execute()
         {
@@ -30,17 +38,25 @@ namespace Fhir.Testing.Framework
             if (root.NamespaceURI != "http://hl7.org/fhir" || root.Name != "TestScript")
                 throw new Exception("Unrecognised start to script: expected http://hl7.org/fhir :: TestScript");
             String name = readChildValue(root, "name");
-            Console.WriteLine("Execute Test Script: "+name);
+            Console.WriteLine("Execute Test Script: " + name);
+            Stopwatch stopWatch = new Stopwatch();
+            stopWatch.Start();
+
             var child = root.FirstChild;
             while (child != null)
             {
                 if (child.Name == "setup" && WantSetup)
-                    executeSetup((XmlElement) child);
+                    executeSetup((XmlElement)child);
                 if (child.Name == "suite")
-                    executeSuite((XmlElement) child);
+                    executeSuite((XmlElement)child);
                 child = child.NextSibling;
             }
-            Console.WriteLine("Finish Test Script. Elapsed time = todo");
+            stopWatch.Stop();
+            Console.WriteLine("Finish Test Script. Elapsed time = " + display(stopWatch));
+            Console.WriteLine("Summary: " + total + " tests, " + (total - fail) + " passed, " + fail + " failed");
+            Console.WriteLine("");
+            Console.WriteLine("Press Any Key to Close");
+            Console.ReadKey();
         }
 
         private string readChildValue(XmlElement element, string name)
@@ -87,8 +103,11 @@ namespace Fhir.Testing.Framework
             {
                 if (child.Name == "action")
                 {
-                    Console.WriteLine("  " + child.Attributes["id"].Value);
-                    executeSetupAction((XmlElement) child);
+                    Stopwatch stopWatch = new Stopwatch();
+                    stopWatch.Start();
+                    Console.Write("  " + readChildValue(child as XmlElement, "name"));
+                    executeSetupAction((XmlElement)child);
+                    Console.WriteLine(" (" + display(stopWatch) + ")");
                 }
                 else if (child.NodeType == XmlNodeType.Element)
                     throw new Exception("Unexpected content");
@@ -107,8 +126,8 @@ namespace Fhir.Testing.Framework
                 {
                     executeUpdate((XmlElement) child);
                 }
-                else if (child.NodeType == XmlNodeType.Element)
-                  throw new Exception("Unexpected content");
+                else if (child.NodeType == XmlNodeType.Element && child.Name != "name")
+                  throw new Exception("Unexpected content: "+child.Name);
                 child = child.NextSibling;
             }
 
@@ -135,7 +154,7 @@ namespace Fhir.Testing.Framework
                 {
                     executeTest((XmlElement)child);
                 }
-                else if (child.NodeType == XmlNodeType.Element && !(child.Name == "name"))
+                else if (child.NodeType == XmlNodeType.Element && !(child.Name == "name" || child.Name == "description"))
                     throw new Exception("Unexpected content: "+child.Name);
 
                 child = child.NextSibling;
@@ -146,25 +165,31 @@ namespace Fhir.Testing.Framework
         private void executeTest(XmlElement element)
         {
             String name = readChildValue(element, "name");
-            Console.Write("  Test " + name+": ");
-
-            var child = element.FirstChild;
-            while (child != null)
+            String id = element.Attributes["id"].Value;
+            if ((TestId == null) || (TestId == id))
             {
-                if (child.Name == "operation")
+                Console.Write("  Test " + name + (id != null ? "["+id+"]" : "") +": ");
+                total++;
+
+                var child = element.FirstChild;
+                while (child != null)
                 {
-                    executeOperation((XmlElement)child);
+                    if (child.Name == "operation")
+                    {
+                        executeOperation((XmlElement)child);
+                    }
+                    else if (child.NodeType == XmlNodeType.Element && !(child.Name == "name" || child.Name == "description"))
+                        throw new Exception("Unexpected content");
+
+                    child = child.NextSibling;
                 }
-                else if (child.NodeType == XmlNodeType.Element && !(child.Name == "name" || child.Name == "description"))
-                    throw new Exception("Unexpected content");
-
-                child = child.NextSibling;
             }
-
         }
 
         private void executeOperation(XmlElement element)
         {
+            Stopwatch stopWatch = new Stopwatch();
+            stopWatch.Start();
             try
             {
                 String url = readChildValue(element, "url");
@@ -187,6 +212,7 @@ namespace Fhir.Testing.Framework
                     else
                         throw;
                 }
+                stopWatch.Stop();
 
                 XmlElement output = findChild(element, "output");
                 XmlElement rules = findChild(output, "rules");
@@ -197,20 +223,32 @@ namespace Fhir.Testing.Framework
                 comp.Expected = expected;
                 comp.Observed = result;
                 if (comp.execute())
-                    Console.WriteLine("passed");
+                    Console.WriteLine("passed" + " (" + display(stopWatch) + ")");
                 else
                 {
-                    Console.WriteLine("failed");
+                    fail++;
+                    Console.WriteLine("failed" + " (" + display(stopWatch) + ")");
                     foreach (var s in comp.Errors)
-                        Console.WriteLine("  " + s);
+                        Console.WriteLine("    " + s);
                 }
             }
             catch (Exception e)
             {
-                Console.WriteLine("failed");
-                Console.WriteLine("  " + e.Message);
+                if (stopWatch.IsRunning)
+                    stopWatch.Stop();
+                Console.WriteLine("failed" + " (" + display(stopWatch) + ")");
+                Console.WriteLine("    " + e.Message);
+                fail++;
             }
 
+        }
+
+        private string display(Stopwatch stopWatch)
+        {
+            TimeSpan ts = stopWatch.Elapsed;
+
+
+            return ""+(ts.Hours * 3600 + ts.Minutes * 60 + ts.Seconds)+"."+ ts.Milliseconds+" sec";
         }
     }
 
@@ -259,6 +297,7 @@ namespace Fhir.Testing.Framework
         private bool CompareElementsMin(String path, Object Expected, Object Observed, bool reportErrors)
         {
             var ok = true;
+           
             // given that it's "min", then our task is 
             //  * iterate the expected
             //  * anything in that, find it in the observed
@@ -267,7 +306,8 @@ namespace Fhir.Testing.Framework
             foreach (PropertyInfo property in Expected.GetType().GetProperties())
             {
                 object source = property.GetValue(Expected, null);
-                if (source != null && source is Element)
+                string fhirName = getFhirPropertyName(property);
+                if (source != null && (source is Element || source is System.Collections.IList) && property.Name != "Extension")
                 {
                     object target = property.GetValue(Observed, null);
                     if (target == null)
@@ -282,107 +322,158 @@ namespace Fhir.Testing.Framework
                             Errors.Add("Element '" + path + "." + property.Name + ": expected " + source.GetType().ToString() + " but found " + target.GetType().ToString());
                         ok = false;
                     }
-                    else if (source is List<Element>)
-                    {
-                        List<Element> sl = (List<Element>)source;
-                        List<Element> tl = (List<Element>)target;
-                        if (sl.Count == 0)
-                        {
-                            if (tl.Count > 0)
-                            {
-                                if (reportErrors)
-                                    Errors.Add("Element '" + path + "." + property.Name + ": expected nothing but found something");
-                                ok = false;
-                            }
-                        }
-                        else
-                        {
-                            String rules = readCodeExtension(sl[0], "http://www.healthintersections.com.au/fhir/ExtensionDefinition/list-rules");
-                            if (rules == "exact-no-order")
-                            {
-                                if (tl.Count != sl.Count)
-                                {
-                                    if (reportErrors)
-                                        Errors.Add("Element '" + path + "." + property.Name + ": expected " + sl.Count.ToString() + " items but found " + tl.Count.ToString() + " items");
-                                    ok = false;
-                                }
-                                else
-                                {
-                                    // for each item in the source list, there must be an item in the target that has the same properties. 
-                                }
-
-                            }
-                            else if (rules == "open")
-                            {
-                                // nothing to check - the list is allowed to contain anything
-                                int count = readIntegerExtension(sl[0], "http://www.healthintersections.com.au/fhir/ExtensionDefinition/list-max");
-                                if (tl.Count > count)
-                                {
-                                    if (reportErrors)
-                                        Errors.Add("Element '" + path + "." + property.Name + ": expected at most " + count + " items but found " + tl.Count.ToString() + " items");
-                                    ok = false;
-                                }
-                            }
-                            else if (rules == "empty")
-                            {
-                                if (tl.Count > 0)
-                                {
-                                    if (reportErrors)
-                                        Errors.Add("Element '" + path + "." + property.Name + ": expected nothing but found something");
-                                    ok = false;
-                                }
-                            }
-                            else if (rules == "minimum-no-order")
-                            {
-                                // for each item in the source list, there must be an item in the target that has the same properties. 
-                            }
-                            else
-                                throw new Exception("Unknown list rule type '" + rules + "'");
-                        }
-
-                    }
+                    else if (source is System.Collections.IList)
+                        ok = compareLists(path, reportErrors, ok, property, source, target);
                     else if (source is Primitive)
-                    {
-                        String sourceValue = ((Primitive) source).GetValueAsString();
-                        String targetValue = ((Primitive) target).GetValueAsString();
-                        if (sourceValue == null)
-                        {
-                            String pattern = readStringExtension((Primitive)source, "http://www.healthintersections.com.au/fhir/ExtensionDefinition/pattern");
-                            if (pattern == null)
-                            {
-                                if (sourceValue != null)
-                                {
-                                    if (reportErrors)
-                                        Errors.Add("Element '" + path + "." + property.Name + ": value should be missing, but is '" + sourceValue + "'");
-                                    ok = false;
-                                }
-                            }
-                            else
-                            {
-                                if (!matchesPattern(pattern, targetValue))
-                                {
-                                    if (reportErrors)
-                                        Errors.Add("Element '" + path + "." + property.Name + ": value '" + targetValue + "' is not valid according to specified pattern '" + pattern + "'");
-                                    ok = false;
-                                }
-                            }
-                        }
-                        else
-                        {
-                            if (sourceValue != targetValue)
-                            {
-                                if (reportErrors)
-                                    Errors.Add("Element '" + path + "." + property.Name + ": expected value '" + sourceValue + "' but found '" + targetValue + "'");
-                                ok = false;
-                            }
-                        }
-                    }
+                        ok = comparePrimitives(path, reportErrors, ok, property, source, target);
                     else if (!CompareElementsMin(path + "." + property.Name, source, target, reportErrors))
                         ok = false;
 
                 }
             }
             return ok;
+        }
+
+        private bool comparePrimitives(String path, bool reportErrors, bool ok, PropertyInfo property, object source, object target)
+        {
+            String sourceValue = ((Primitive)source).GetValueAsString();
+            String targetValue = ((Primitive)target).GetValueAsString();
+            if (sourceValue == null)
+            {
+                String pattern = readStringExtension((Primitive)source, "http://www.healthintersections.com.au/fhir/ExtensionDefinition/pattern");
+                if (pattern == null)
+                {
+                    if (sourceValue != null)
+                    {
+                        if (reportErrors)
+                            Errors.Add("Element '" + path + "." + property.Name + ": value should be missing, but is '" + sourceValue + "'");
+                        ok = false;
+                    }
+                }
+                else
+                {
+                    if (!matchesPattern(pattern, targetValue))
+                    {
+                        if (reportErrors)
+                            Errors.Add("Element '" + path + "." + property.Name + ": value '" + targetValue + "' is not valid according to specified pattern '" + pattern + "'");
+                        ok = false;
+                    }
+                }
+            }
+            else
+            {
+                if (sourceValue != targetValue)
+                {
+                    if (reportErrors)
+                        Errors.Add("Element '" + path + "." + property.Name + ": expected value '" + sourceValue + "' but found '" + targetValue + "'");
+                    ok = false;
+                }
+            }
+            return ok;
+        }
+
+        private bool compareLists(String path, bool reportErrors, bool ok, PropertyInfo property, object source, object target)
+        {
+            System.Collections.IList sl = source as System.Collections.IList;
+            System.Collections.IList tl = target as System.Collections.IList;
+
+            //System.Collections.Generic.List<Element> sl = (List<Element>)source;
+            //System.Collections.Generic.List<Element> tl = (List<Element>)target;
+            if (sl.Count != 0)
+            {
+                String rules = readCodeExtension(sl[0] as Element, "http://www.healthintersections.com.au/fhir/ExtensionDefinition/list-rules");
+                if (rules == "exact-no-order")
+                {
+                    if (tl.Count != sl.Count)
+                    {
+                        if (reportErrors)
+                            Errors.Add("Element '" + path + "." + property.Name + ": expected " + sl.Count.ToString() + " items but found " + tl.Count.ToString() + " items");
+                        ok = false;
+                    }
+                    else
+                    {
+                        // for each item in the source list, there must be an item in the target that has the same properties. 
+                        int c = 0;
+                        foreach (Element es in sl)
+                        {
+                            var found = false;
+                            foreach (Element et in tl)
+                            {
+                                if (CompareElementsMin(path + "." + property.Name+"["+c+"]", es, et, false))
+                                    found = true;
+                            }
+                            if (!found)
+                            {
+                                if (reportErrors)
+                                    Errors.Add("Element '" + path + "." + property.Name + "[" + c + "] not found");
+                                ok = false;
+                            }
+                            c++;
+                        }
+                    }
+                }
+                else if (rules == "exact" || rules == null)
+                {
+                    if (tl.Count != sl.Count)
+                    {
+                        if (reportErrors)
+                            Errors.Add("Element '" + path + "." + property.Name + ": expected " + sl.Count.ToString() + " items but found " + tl.Count.ToString() + " items");
+                        ok = false;
+                    }
+                    else
+                    {
+                        // for each item in the source list, there must be an item in the target that has the same properties. 
+                        int c = 0;
+                        IEnumerator<Element> te = tl.GetEnumerator() as IEnumerator<Element>;
+                        foreach (Element es in sl)
+                        {
+                            te.MoveNext();
+                            if (!CompareElementsMin(path + "." + property.Name + "[" + c + "]", es, te.Current, true))
+                                ok = false;
+                            c++;
+                        }
+                    }
+                }
+                else if (rules == "open")
+                {
+                    // nothing to check - the list is allowed to contain anything
+                    int count = readIntegerExtension(sl[0] as Element, "http://www.healthintersections.com.au/fhir/ExtensionDefinition/list-max");
+                    if (tl.Count > count)
+                    {
+                        if (reportErrors)
+                            Errors.Add("Element '" + path + "." + property.Name + ": expected at most " + count + " items but found " + tl.Count.ToString() + " items");
+                        ok = false;
+                    }
+                }
+                else if (rules == "empty")
+                {
+                    if (tl.Count > 0)
+                    {
+                        if (reportErrors)
+                            Errors.Add("Element '" + path + "." + property.Name + ": expected nothing but found something");
+                        ok = false;
+                    }
+                }
+                else if (rules == "minimum-no-order")
+                {
+                    // for each item in the source list, there must be an item in the target that has the same properties. 
+                }
+                else
+                    throw new Exception("Unknown list rule type '" + rules + "' on Element '" + path + "." + property.Name);
+            }
+            return ok;
+        }
+
+
+        private string getFhirPropertyName(PropertyInfo property)
+        {
+            // why does this line (copied from elsewhere) not compile? Stupid....
+
+            //var ea = (FhirElementAttribute) Attribute.GetCustomAttribute(property, typeof(FhirElementAttribute));
+            //if (ea != null)
+            //    return ea.Name;
+            //else
+                return null;
         }
 
         private int readIntegerExtension(Element element, string url)
@@ -433,7 +524,7 @@ namespace Fhir.Testing.Framework
             }
             else if (pattern == "!")
             {
-                return (value == null) || (value == "");
+                return (value != null) || (value != "");
             }
             else if (pattern.StartsWith("!"))
             {
