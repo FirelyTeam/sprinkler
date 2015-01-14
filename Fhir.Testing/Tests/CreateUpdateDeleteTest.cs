@@ -65,20 +65,20 @@ namespace Sprinkler.Tests
 
             string qualifier = "http://hl7.org/fhir/Profile/iso-21090#qualifier";
             selena.Contact[0].Name.AddExtension(qualifier, new Code("AC"));
-            
 
-            ResourceEntry<Patient> entry = Client.Create(selena, null, false);
-            string id = entry.GetBasicId();
+
+            var resource = Client.Create(selena);
+            string id = resource.Id;
             //entry = null;
-            entry = Client.Read<Patient>(entry.GetBasicId());
+            resource = Client.Read<Patient>(resource.ResourceIdentity());
 
-            IEnumerable<Extension> extensions = entry.Resource.Contact[0].Name.GetExtensions(qualifier);
+            IEnumerable<Extension> extensions = resource.Contact[0].Name.GetExtensions(qualifier);
 
             if (extensions == null || extensions.Count() == 0)
                 Assert.Fail("Extensions have disappeared on resource " + Location);
 
             if (!extensions.Any(ext => ext.Value is Code && ((Code) ext.Value).Value == "AC"))
-                Assert.Fail("Resource extension was not persisted on created resource " + entry.GetBasicId());
+                Assert.Fail("Resource extension was not persisted on created resource " + resource.Id);
         }
 
         [SprinklerTest("CR05", "update that patient (no extensions altered)")]

@@ -33,18 +33,13 @@
     <StartupObject />
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Hl7.Fhir.Core">
-      <HintPath>..\packages\Hl7.Fhir.0.11.2-alpha1\lib\net45\Hl7.Fhir.Core.dll</HintPath>
-    </Reference>
-    <Reference Include="Hl7.Fhir.Specification">
-      <HintPath>..\packages\Hl7.Fhir.0.11.2-alpha1\lib\net45\Hl7.Fhir.Specification.dll</HintPath>
+    <Reference Include="Hl7.Fhir.Core, Version=0.20.1.28373, Culture=neutral, PublicKeyToken=d706911480550fc3, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Hl7.Fhir.DSTU2.0.20.1-alpha2\lib\net45\Hl7.Fhir.Core.dll</HintPath>
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\Newtonsoft.Json.6.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
-    </Reference>
-    <Reference Include="SharpCompress">
-      <HintPath>..\packages\p3-sharpcompress.0.10.5.2\lib\net40\SharpCompress.dll</HintPath>
+      <HintPath>..\packages\Newtonsoft.Json.6.0.7\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -60,7 +55,6 @@
   <ItemGroup>
     <Compile Include="Framework\Test.cs" />
     <Compile Include="Framework\TestScript.cs" />
-    <Compile Include="Tests\AllResourcesTest.cs" />
     <Compile Include="Utilities\AttributeHelper.cs" />
     <Compile Include="Framework\DemoData.cs" />
     <Compile Include="Framework\Assert.cs" />
@@ -79,28 +73,12 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <Compile Include="Tests\BinaryTest.cs" />
-    <Compile Include="Tests\BundleTest.cs" />
-    <Compile Include="Tests\ConformanceTest.cs" />
-    <Compile Include="Tests\CreateUpdateDeleteTest.cs" />
-    <Compile Include="Tests\DigSigTest.cs" />
-    <Compile Include="Tests\HistoryTest.cs" />
-    <Compile Include="Tests\MailboxTest.cs" />
-    <Compile Include="Tests\QuestionaireTest.cs" />
-    <Compile Include="Tests\ReadTest.cs" />
-    <Compile Include="Tests\RequestFormatTest.cs" />
-    <Compile Include="Tests\SearchTest.cs" />
-    <Compile Include="Tests\TagTest.cs" />
-    <Compile Include="Tests\TestTransactions.cs" />
-    <Compile Include="Tests\Utils.cs" />
-    <Compile Include="Tests\ValidatorTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <EmbeddedResource Include="Tests\spark.pfx" />
   </ItemGroup>
   <ItemGroup>
     <None Include="conn5-21-example.xml">
@@ -123,9 +101,6 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <None Include="validation.zip">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
     <None Include="xds-example.xml" />
   </ItemGroup>
   <ItemGroup>
@@ -159,6 +134,9 @@
     </Content>
     <Content Include="Patient.ErrorUse.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="automated-test-script.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

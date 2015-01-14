@@ -200,10 +200,11 @@ namespace Fhir.Testing.Framework
                     if (input != null)
                     {
                         Parameters paramlist = (Parameters)FhirParser.ParseResourceFromXml(input.InnerXml);
-                        result = client.Operation(url, paramlist);
+                        var name = readChildValue(element,"name");
+                        result = client.Operation(new ResourceIdentity(url), name, paramlist);
                     }
                     else
-                        result = client.Operation(url);
+                        result = client.Get(url);
                 }
                 catch (FhirOperationException e)
                 {
@@ -325,7 +326,7 @@ namespace Fhir.Testing.Framework
                     else if (source is System.Collections.IList)
                         ok = compareLists(path, reportErrors, ok, property, source, target);
                     else if (source is Primitive)
-                        ok = comparePrimitives(path, reportErrors, ok, property, source, target);
+                        ok = comparePrimitives(path, reportErrors, ok, property, (Primitive)source, (Primitive)target);
                     else if (!CompareElementsMin(path + "." + property.Name, source, target, reportErrors))
                         ok = false;
 
@@ -334,10 +335,11 @@ namespace Fhir.Testing.Framework
             return ok;
         }
 
-        private bool comparePrimitives(String path, bool reportErrors, bool ok, PropertyInfo property, object source, object target)
+        private bool comparePrimitives(String path, bool reportErrors, bool ok, PropertyInfo property, Primitive source, Primitive target)
         {
-            String sourceValue = ((Primitive)source).GetValueAsString();
-            String targetValue = ((Primitive)target).GetValueAsString();
+            String sourceValue = source == null ? null : source.GetValueAsString();
+            String targetValue = target == null ? null : target.GetValueAsString();
+
             if (sourceValue == null)
             {
                 String pattern = readStringExtension((Primitive)source, "http://www.healthintersections.com.au/fhir/ExtensionDefinition/pattern");

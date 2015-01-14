@@ -6,6 +6,7 @@
  * available at https://raw.github.com/furore-fhir/sprinkler/master/LICENSE
  */
 
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Hl7.Fhir.Model;
@@ -62,25 +63,15 @@ namespace Sprinkler.Tests
             return patient.Name.Exists(n => n.Given.Contains(given));
         }
 
-        public static string GetBasicId(this BundleEntry entry)
+        
+        public static bool Has(this Bundle bundle, Uri id)
         {
-            return new ResourceIdentity(entry.Id).OperationPath.ToString();
-        }
-
-        public static IEnumerable<string> GetBasicIds(this Bundle bundle)
-        {
-            return bundle.Entries.Select(be => be.GetBasicId()).ToArray();
-        }
-
-        public static bool Has(this Bundle bundle, string id)
-        {
-            return bundle.Entries.FirstOrDefault(e => e.GetBasicId() == id) != null;
+            return bundle.FindEntry(id).Any();
         }
 
         public static IEnumerable<T> ResourcesOf<T>(this Bundle bundle) where T : Resource, new()
         {
-            IEnumerable<ResourceEntry<T>> entries = bundle.Entries.ByResourceType<T>();
-            return entries.Select(e => e.Resource);
+            return bundle.Entry.ByResourceType<T>();
         }
     }
 }

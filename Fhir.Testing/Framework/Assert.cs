@@ -165,11 +165,11 @@ namespace Sprinkler.Framework
 
         public static void EntryIdsArePresentAndAbsoluteUrls(Bundle b)
         {
-            if (b.Entries.Any(e => e.Id == null || e.SelfLink == null))
-                Assert.Fail("Some id/selflinks in the bundle are null");
+            if (b.Entry.Any(e => e.Resource != null && (e.Resource.Id == null && e.Resource.VersionId == null) ))
+                Assert.Fail("Some id/versionId's in the bundle are null");
 
-            if (!b.Entries.All(e => e.Id.IsAbsoluteUri && e.SelfLink.IsAbsoluteUri))
-                Assert.Fail("Some id/selflinks in the bundle are relative");
+            if (!b.Entry.All(e => e.Resource != null && e.Resource.ResourceIdentity().IsAbsoluteUri ))
+                Assert.Fail("Some id/versionId's in the bundle are relative");
         }
 
         public static void CorrectNumberOfResults(int expected, int actual, string messageFormat = "")
@@ -197,9 +197,9 @@ namespace Sprinkler.Framework
 
         internal static void HasAllForwardNavigationLinks(Bundle history)
         {
-            if (history.Links.FirstLink == null ||
-                history.Links.NextLink == null ||
-                history.Links.LastLink == null)
+            if (history.FirstLink == null ||
+                history.NextLink == null ||
+                history.LastLink == null)
                 Assert.Fail("Expecting first, next and last link to be present");
         }
 

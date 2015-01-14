@@ -28,8 +28,7 @@ namespace Sprinkler.Framework
         public static Bundle GetDemoConn5ExampleBundle()
         {
             string xml = GetDemoConn5ExampleBundleXml();
-            Bundle bundle = FhirParser.ParseBundleFromXml(xml);
-            return bundle;
+            return (Bundle)FhirParser.ParseFromXml(xml);
         }
 
         public static string GetDemoConn5CidExampleBundleXml()
@@ -40,8 +39,7 @@ namespace Sprinkler.Framework
         public static Bundle GetDemoConn5CidExampleBundle()
         {
             string xml = GetDemoConn5CidExampleBundleXml();
-            Bundle bundle = FhirParser.ParseBundleFromXml(xml);
-            return bundle;
+            return (Bundle)FhirParser.ParseFromXml(xml);
         }
 
         public static string GetDemoXdsBundleXml()
@@ -52,8 +50,7 @@ namespace Sprinkler.Framework
         public static Bundle GetDemoXdsBundle()
         {
             string xml = GetDemoXdsBundleXml();
-            Bundle bundle = FhirParser.ParseBundleFromXml(xml);
-            return bundle;
+            return (Bundle)FhirParser.ParseFromXml(xml);
         }
 
         //public static string GetDemoCdaXml()
@@ -82,8 +79,7 @@ namespace Sprinkler.Framework
         public static Bundle GetDemoDocumentBundle()
         {
             string xml = GetDemoDocumentXml();
-            Bundle bundle = FhirParser.ParseBundleFromXml(xml);
-            return bundle;
+            return (Bundle)FhirParser.ParseFromXml(xml);
         }
 
         public static string GetDemoDocumentXml()

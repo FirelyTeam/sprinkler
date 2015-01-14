@@ -37,7 +37,12 @@ namespace Sprinkler
             Console.WriteLine(Resources.ProgramTitle);
             Console.WriteLine();
 
-            if (parameters.HasOption(Options.LIST))
+            if (true)
+            {
+                var ts = new Fhir.Testing.Framework.TestScript() { Base = "http://fhir-dev.healthintersections.com.au/open", WantSetup = true, Filename = "automated-test-script.xml" };
+                ts.execute();
+            }
+            else if (parameters.HasOption(Options.LIST))
             {
                 ShowModulesList();
             }
