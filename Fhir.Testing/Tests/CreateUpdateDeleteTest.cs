@@ -63,8 +63,9 @@ namespace Sprinkler.Tests
             Patient selena = Utils.NewPatient("Gomez", "Selena");
             selena.AddAddress("Cornett", "Amanda", "United States", "Texas", "Grand Prairie");
 
+ 
             string qualifier = "http://hl7.org/fhir/Profile/iso-21090#qualifier";
-            selena.Contact[0].Name.AddExtension(qualifier, new Code("AC"));
+            selena.Contact[0].Name.AddExtension(qualifier, new Code("AC")); 
 
 
             var resource = Client.Create(selena);
