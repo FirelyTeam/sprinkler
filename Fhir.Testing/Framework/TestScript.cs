@@ -513,6 +513,11 @@ namespace Fhir.Testing.Framework
             if (pattern == "%uuid")
             {
                 Guid guidOutput;
+                return Guid.TryParse(value, out guidOutput);
+            }
+            else if (pattern == "%urn:uuid")
+            {
+                Guid guidOutput;
                 return value.StartsWith("urn:uuid:") && Guid.TryParse(value.Substring(9), out guidOutput);
             }
             else if (pattern == "%now-ish")
