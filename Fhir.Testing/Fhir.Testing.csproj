@@ -55,6 +55,7 @@
   <ItemGroup>
     <Compile Include="Framework\Test.cs" />
     <Compile Include="Framework\TestScript.cs" />
+    <Compile Include="Tests\TestScriptRunner.cs" />
     <Compile Include="Utilities\AttributeHelper.cs" />
     <Compile Include="Framework\DemoData.cs" />
     <Compile Include="Framework\Assert.cs" />

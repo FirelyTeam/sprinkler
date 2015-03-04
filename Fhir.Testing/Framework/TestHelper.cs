@@ -29,7 +29,8 @@ namespace Sprinkler.Framework
 
         public static IEnumerable<Type> GetModules()
         {
-            return Assembly.GetExecutingAssembly().GetTypesWithAttribute<SprinklerModule>();
+            Assembly assembly = Assembly.GetExecutingAssembly();
+            return assembly.GetTypesWithAttribute<SprinklerModule>();
         }
 
         public static IEnumerable<MethodInfo> GetTestMethods(Type testclass, IEnumerable<string> codes = null)

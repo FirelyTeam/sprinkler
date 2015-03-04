@@ -9,13 +9,18 @@ namespace Sprinkler
 {
     public class Parameters
     {
-        
+        string _command;
         public List<string> Values = new List<string>();
         public Dictionary<string, string> Options = new Dictionary<string,string>();
 
         public Parameters(string[] args)
         {
             parse(args);
+        }
+
+        public bool Command(string cmd)
+        {
+            return string.Compare(cmd, _command, ignoreCase: true) == 0 ;
         }
 
         public bool HasOption(string option)
@@ -38,7 +43,8 @@ namespace Sprinkler
 
         private void parse(string[] args)
         {
-            foreach (var arg in args)
+            _command = args.FirstOrDefault();
+            foreach (var arg in args.Skip(1))
             {
                 if (arg.StartsWith("-"))
                 {

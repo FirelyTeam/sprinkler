@@ -11,6 +11,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using Hl7.Fhir.Rest;
+using Fhir.Testing.Framework;
 
 namespace Sprinkler.Framework
 {

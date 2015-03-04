@@ -17,14 +17,18 @@ using Sprinkler.Framework;
 namespace Sprinkler
 {
 
+    // commands: script, test, list
     // http://localhost.fiddler:1396/fhir TA -wait
+    // sprinkler script http://fhir-dev.healthintersections.com.au/open automated-test-script.xml
+    // 
+
+    // Parameter usage: 
+    // sprinkler script [url] [scripts]
+
+    // Example:
+    // sprinkler script http://fhir-dev.healthintersections.com.au/open automated-test-script.xml
+    // sprinkler script http://fhir-dev.healthintersections.com.au/open test*.xml pipo*.xml
     
-    public static class Options
-    {
-        //public const string OUTPUT = "-o";
-        public const string LIST = "-l";
-        //public const string FORMAT = "-f";
-    }
 
     public class Program
     {
@@ -32,27 +36,30 @@ namespace Sprinkler
 
         public static void Main(string[] args)
         {
+
             parameters = new Parameters(args);    
 
             Console.WriteLine(Resources.ProgramTitle);
             Console.WriteLine();
 
-            if (true)
+            
+            if (parameters.Command("script"))
             {
-                var ts = new Fhir.Testing.Framework.TestScript() { Base = "http://fhir-dev.healthintersections.com.au/open", WantSetup = true, Filename = "automated-test-script.xml" };
-                ts.execute();
+                //var ts = new Fhir.Testing.Framework.TestScript() { Base = "http://fhir-dev.healthintersections.com.au/open", WantSetup = true, Filename = "automated-test-script.xml" };
+                //ts.execute();
+                RunScripts();
             }
-            else if (parameters.HasOption(Options.LIST))
+            else if (parameters.Command("test"))
+            {
+                RunTests();
+            }
+            else if (parameters.Command("list"))
             {
                 ShowModulesList();
             }
             else if (!parameters.Values.Any())
             {
                 ShowOptions();
-            }
-            else
-            {
-                RunTests();
             }
 
             if (parameters.HasOption("-wait")) // mainly for debugging purposes
@@ -86,6 +93,32 @@ namespace Sprinkler
                 Console.Error.WriteLine(Resources.error, x.Message);
             }
         }
+
+        private static List<string> scriptlist()
+        {
+            var tests = parameters.Values.Skip(1);
+            List<string> scripts = new List<string>();
+            string dir = Directory.GetCurrentDirectory();
+            foreach (string path in tests)
+            {
+                scripts.AddRange(Directory.EnumerateFiles(dir, path));
+            }
+            return scripts;
+        }
+
+        private static void RunScripts()
+        {
+            var url = parameters.Values.First();
+            var scripts = scriptlist();
+            foreach(string script in scripts)
+            {
+                var ts = new Fhir.Testing.Framework.TestScript();
+                ts.Base = url;
+                ts.Filename = script;
+                ts.WantSetup = true; 
+                ts.execute();
+            }
+        }
        
         private static void ShowModulesList()
         {
@@ -109,7 +142,7 @@ namespace Sprinkler
             Console.WriteLine(Resources.HelpForParameters);
             Console.WriteLine(Resources.options);
             
-            Console.WriteLine("\t{0}\t{1}", Options.LIST, Resources.HelpForListParameter);
+            Console.WriteLine("\t{0}\t{1}", "LIST", Resources.HelpForListParameter);
         }
 
     }
