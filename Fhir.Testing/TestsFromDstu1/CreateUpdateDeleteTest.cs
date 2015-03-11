@@ -60,9 +60,19 @@ namespace Sprinkler.Tests
         [SprinklerTest("CR04", "Create a patient with an extension")]
         public void CreatePatientWithExtension()
         {
-            Patient selena = Utils.NewPatient("Gomez", "Selena");
-            selena.AddAddress("Cornett", "Amanda", "United States", "Texas", "Grand Prairie");
+            Patient selena = new Patient();
 
+            var name = new HumanName();
+            name.GivenElement.Add(new FhirString("selena"));
+            name.FamilyElement.Add(new FhirString("Gomez"));
+            selena.Name.Add(name);
+
+            var address = new Address();
+            address.LineElement.Add(new FhirString("Cornett"));
+            address.CityElement = new FhirString("Amanda");
+            address.CountryElement = new FhirString("United States");
+            address.StateElement = new FhirString("Texas");
+            selena.Address.Add(address);
  
             string qualifier = "http://hl7.org/fhir/Profile/iso-21090#qualifier";
             selena.Contact[0].Name.AddExtension(qualifier, new Code("AC")); 
@@ -86,19 +96,19 @@ namespace Sprinkler.Tests
         public void UpdatePersonNoExt()
         {
             Assert.SkipWhen(CreateDate == null);
-            ResourceEntry<Patient> entry = Client.Read<Patient>(Location);
+            Patient pat = Client.Read<Patient>(Location);
 
-            entry.Resource.Telecom.Add(new Contact {System = Contact.ContactSystem.Url, Value = "http://www.nu.nl"});
+            pat.Telecom.Add(new ContactPoint{System = ContactPoint.ContactPointSystem.Url, Value = "http://www.nu.nl"});           
 
-            Client.Update(entry);
+            Client.Update(pat);
 
-            entry = Client.Read<Patient>(Location);
+            pat = Client.Read<Patient>(Location);
 
-            if (!entry.Resource.Telecom.Any(
-                tel => tel.System == Contact.ContactSystem.Url && tel.Value == "http://www.nu.nl"))
+            if (!pat.Telecom.Any(
+                tel => tel.System == ContactPoint.ContactPointSystem.Url && tel.Value == "http://www.nu.nl"))
                 Assert.Fail(String.Format("Resource {0} unchanged after update", Location));
 
-            Versions.Add(entry.SelfLink);
+            Versions.Add(pat.ResourceBase);
         }
 
         [SprinklerTest("CR06", "update that person again (alter extensions)")]
@@ -106,20 +116,20 @@ namespace Sprinkler.Tests
         {
             Assert.SkipWhen(CreateDate == null);
 
-            ResourceEntry<Patient> entry = Client.Read<Patient>(Location);
+            Patient pat= Client.Read<Patient>(Location);
 
-            HumanName name = entry.Resource.Contact[0].Name;
+            HumanName name = pat.Contact[0].Name;
             string qualifier = "http://hl7.org/fhir/Profile/iso-21090#qualifier";
 
             Extension qExt1 = name.FamilyElement[0].GetExtension(qualifier);
             ((Code) qExt1.Value).Value = "NB";
             name.FamilyElement[0].AddExtension(qualifier, new Code("AC"));
 
-            Client.Update(entry);
+            Client.Update(pat);
 
-            entry = Client.Read<Patient>(Location);
+            pat = Client.Read<Patient>(Location);
 
-            IEnumerable<Extension> extensions = entry.Resource.Contact[0].Name.FamilyElement[0].GetExtensions(qualifier);
+            IEnumerable<Extension> extensions = pat.Contact[0].Name.FamilyElement[0].GetExtensions(qualifier);
 
             if (extensions == null || extensions.Count() == 0)
                 Assert.Fail("Extensions have disappeared on resource " + Location);
@@ -130,7 +140,7 @@ namespace Sprinkler.Tests
             if (!extensions.Any(ext => ext.Value is Code && ((Code) ext.Value).Value == "AC"))
                 Assert.Fail("Resource extension addition was not persisted on resource " + Location);
 
-            Versions.Add(entry.SelfLink);
+            Versions.Add(pat.ResourceBase);
         }
 
         [SprinklerTest("CR07", "delete that person")]
@@ -155,18 +165,13 @@ namespace Sprinkler.Tests
         private Uri TryCreatePatient(FhirClient client, ResourceFormat formatIn, string id = null)
         {
             client.PreferredFormat = formatIn;
-            ResourceEntry<Patient> created = null;
-
+            Patient created = null;
             Patient demopat = DemoData.GetDemoPatient();
+            demopat.Id = id;
+            Assert.Success(client, () => created = client.Create(demopat));
 
-            if (id == null)
+            if (demopat.Id != null)
             {
-                Assert.Success(client, () => created = client.Create(demopat));
-            }
-            else
-            {
-                Assert.Success(client, () => created = client.Create(demopat, id));
-
                 var ep = new RestUrl(client.Endpoint);
                 if (!ep.IsEndpointFor(created.Id))
                     Assert.Fail("Location of created resource is not located within server endpoint");
@@ -183,7 +188,7 @@ namespace Sprinkler.Tests
             // nog wel geupdate
             Assert.ContentLocationValidIfPresent(client);
 
-            return created.SelfLink;
+            return created.ResourceBase;
         }
     }
 }
