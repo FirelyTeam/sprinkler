@@ -33,9 +33,9 @@
     <StartupObject />
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Hl7.Fhir.Core, Version=0.20.1.31550, Culture=neutral, PublicKeyToken=d706911480550fc3, processorArchitecture=MSIL">
+    <Reference Include="Hl7.Fhir.Core, Version=0.20.2.26293, Culture=neutral, PublicKeyToken=d706911480550fc3, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\Hl7.Fhir.DSTU2.0.20.1-alpha3\lib\net45\Hl7.Fhir.Core.dll</HintPath>
+      <HintPath>..\packages\Hl7.Fhir.DSTU2.0.20.2-alpha2\lib\net45\Hl7.Fhir.Core.dll</HintPath>
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -55,6 +55,7 @@
   <ItemGroup>
     <Compile Include="Framework\Test.cs" />
     <Compile Include="Framework\TestScript.cs" />
+    <Compile Include="TestsFromDstu1\CreateUpdateDeleteTest.cs" />
     <Compile Include="Tests\TestScriptRunner.cs" />
     <Compile Include="Utilities\AttributeHelper.cs" />
     <Compile Include="Framework\DemoData.cs" />
