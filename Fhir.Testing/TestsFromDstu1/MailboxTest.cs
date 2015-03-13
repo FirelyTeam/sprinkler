@@ -28,9 +28,9 @@ namespace Sprinkler.Tests
 
             _deliveryResult = Client.DeliverToMailbox(xdsBundle);
 
-            if (_deliveryResult.Entries.Count != 12)
+            if (_deliveryResult.Entry.Count != 12)
                 Assert.Fail("Result bundle should contain exactly two resources");
-            if (_deliveryResult.Entries.ByResourceType<DocumentReference>().Count() != 1)
+            if (_deliveryResult.Entry.ByResourceType<DocumentReference>().Count() != 1)
                 Assert.Fail("Result bundle should contain one DocumentReference");
             if (_deliveryResult.Entries.ByResourceType<Binary>().Count() != 1)
                 Assert.Fail("Result bundle should contain one Binary");

@@ -31,20 +31,20 @@ namespace Sprinkler.Tests
         {
             var b = new Bundle();
 
-            b.Title = "Updates to resource 233";
-            b.Id = new Uri("urn:uuid:0d0dcca9-23b9-4149-8619-65002224c3");
-            b.LastUpdated = new DateTimeOffset(2012, 11, 2, 14, 17, 21, TimeSpan.Zero);
-            b.AuthorName = "Ewout Kramer";
+            b.Meta.LastUpdated = new DateTimeOffset(2012, 11, 2, 14, 17, 21, TimeSpan.Zero);
+            b.Id = "urn:uuid:0d0dcca9-23b9-4149-8619-65002224c3";
 
-            var p = new ResourceEntry<Patient>();
-            p.Id = new ResourceIdentity("http://test.com/fhir/Patient/233");
-            p.Resource = new Patient();
-            p.Resource.Name = new List<HumanName> {HumanName.ForFamily("Kramer").WithGiven("Ewout")};
-            b.Entries.Add(p);
+            var p = new Patient();
+            p.Id = "http://test.com/fhir/Patient/233";            
+            p.Name = new List<HumanName> {HumanName.ForFamily("Kramer").WithGiven("Ewout")};
+
+            var e = new Bundle.BundleEntryComponent();
+            e.Resource = p;
+            b.Entry.Add(e);
 
             X509Certificate2 certificate = GetCertificate();
 
-            byte[] bundleData = FhirSerializer.SerializeBundleToXmlBytes(b);
+            byte[] bundleData = FhirSerializer.SerializeResourceToXmlBytes(b);            
             string bundleXml = Encoding.UTF8.GetString(bundleData);
             string bundleSigned = XmlSignatureHelper.Sign(bundleXml, certificate);
             _signedXml = bundleSigned;

@@ -36,10 +36,10 @@ namespace Sprinkler.Tests
         public void GetTestDataPerson()
         {
             Patient p = NewPatient("Emerald", "Caro");
-            ResourceEntry<Patient> entry = Client.Create(p, null, false);
-            string id = entry.GetBasicId();
+            Patient entry = Client.Create(p);
+            string id = entry.Id;
 
-            ResourceEntry<Patient> pat = Client.Read<Patient>(id);
+            Patient pat = Client.Read<Patient>(id);
 
             Assert.HttpOk(Client);
 

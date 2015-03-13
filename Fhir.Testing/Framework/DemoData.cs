@@ -123,11 +123,11 @@ namespace Sprinkler.Framework
             return pat;
         }      
 
-        public static List<Resource> GetListofResources()
+        public static List<DomainResource> GetListofResources()
         {
             const string ZIPFILEPATH = "example-resources.zip";
             string file = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, ZIPFILEPATH);
-            List<Resource> resources = new List<Resource>();     
+            List<DomainResource> resources = new List<DomainResource>();     
 
             using (FileStream zipFileToOpen = new FileStream(file, FileMode.Open))
 
@@ -137,7 +137,7 @@ namespace Sprinkler.Framework
                 foreach (ZipArchiveEntry e in entries)
                 {
                     StreamReader reader = new StreamReader(e.Open());                   
-                    Resource resource = FhirParser.ParseResourceFromXml(reader.ReadToEnd());
+                    DomainResource resource = (DomainResource)FhirParser.ParseResourceFromXml(reader.ReadToEnd());
                     resources.Add(resource);                    
                 }               
             }

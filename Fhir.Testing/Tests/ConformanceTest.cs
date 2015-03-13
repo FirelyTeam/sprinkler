@@ -17,16 +17,17 @@ namespace Sprinkler.Tests
         [SprinklerTest("CN01", "Request conformance on /metadata")]
         public void GetConformanceUsingMetadata()
         {
-            ResourceEntry<Conformance> entry = Client.Conformance(useOptionsVerb: false);
+            //ResourceEntry<Conformance> entry = Client.Conformance(useOptionsVerb: false);
+            Conformance Conformance = Client.Conformance();
             CheckResultHeaders();
         }
 
-        [SprinklerTest("CN02", "Request conformance using OPTIONS")]
-        public void GetConformanceUsingOptions()
-        {
-            Client.Conformance(true);
-            CheckResultHeaders();
-        }
+        //[SprinklerTest("CN02", "Request conformance using OPTIONS")]
+        //public void GetConformanceUsingOptions()
+        //{
+        //    //Client.Conformance(true);
+        //    CheckResultHeaders();
+        //}
 
         private void CheckResultHeaders()
         {

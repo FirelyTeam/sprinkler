@@ -15,15 +15,16 @@ namespace Sprinkler.Tests
     [SprinklerModule("ContentType")]
     public class RequestFormatTest : SprinklerTestClass
     {
-        private ResourceEntry<Patient> entry;
+        private Patient entry;
         private string id;
 
         [SprinklerTest("CT05", "Adding a patient")]
         public void AddPatient()
         {
-            Patient patient = Utils.NewPatient("Bach", "Johan", "Sebastian");
-            entry = Client.Create(patient, null, true);
-            id = entry.GetBasicId();
+            var patient = new Patient();
+            patient.Name.Add(HumanName.ForFamily("Bach").WithGiven("Johan").WithGiven("Sebastian"));
+            entry = Client.Create(patient);
+            id = entry.Id;
         }
 
         [SprinklerTest("CT01", "request xml using accept")]

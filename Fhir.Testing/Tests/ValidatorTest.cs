@@ -25,7 +25,7 @@ namespace Sprinkler.Tests
         [SprinklerTest("VA01", "Validate creation of a valid resource")]
         public void CreateValidResource()
         {
-            Uri location = new Uri(Client.Endpoint + "Patient/_validate");
+            Uri location = new Uri(Client.Endpoint + "Patient/$validate");
             string resource = Resources.Patient_Valid;
             
             using (HttpWebResponse response = PostResource(location, resource))
@@ -38,7 +38,7 @@ namespace Sprinkler.Tests
         [SprinklerTest("VA02", "Validate creation of an invalid resource (wrong name use)")]
         public void CreateResourceValueError()
         {
-            Uri location = new Uri(Client.Endpoint + "Patient/_validate");
+            Uri location = new Uri(Client.Endpoint + "Patient/$validate");
             string xml = Resources.Patient_ErrorUse;
 
             using (HttpWebResponse response = PostResource(location, xml))
@@ -51,7 +51,7 @@ namespace Sprinkler.Tests
         [SprinklerTest("VA03", "Validate creation of an invalid resource (cardinality minus)")]
         public void CreateResourceCardinalityMinus()
         {
-            Uri location = new Uri(Client.Endpoint + "Patient/_validate");
+            Uri location = new Uri(Client.Endpoint + "Patient/$validate");
             string xml = Resources.Patient_CardinalityMinus;
 
             using (HttpWebResponse response = PostResource(location, xml))
@@ -64,7 +64,7 @@ namespace Sprinkler.Tests
         [SprinklerTest("VA04", "Validate creation of an invalid resource (cardinality plus)")]
         public void CreateResourceCardinalityPlus()
         {
-            Uri location = new Uri(Client.Endpoint + "Patient/_validate");
+            Uri location = new Uri(Client.Endpoint + "Patient/$validate");
             string xml = Resources.Patient_CardinalityPlus;
 
             using (HttpWebResponse response = PostResource(location, xml))
@@ -77,7 +77,7 @@ namespace Sprinkler.Tests
         [SprinklerTest("VA05", "Validate creation of an invalid resource (constraint error)")]
         public void CreateResourceConstraintError()
         {
-            Uri location = new Uri(Client.Endpoint + "Patient/_validate");
+            Uri location = new Uri(Client.Endpoint + "Patient/$validate");
             string xml = Resources.Patient_ConstraintError;
             using (HttpWebResponse response = PostResource(location, xml))
             {
@@ -89,7 +89,7 @@ namespace Sprinkler.Tests
         [SprinklerTest("VA06", "Validate creation of an invalid resource (invalid element)")]
         public void CreateResourceInvalidElement()
         {
-            Uri location = new Uri(Client.Endpoint + "Patient/_validate");
+            Uri location = new Uri(Client.Endpoint + "Patient/$validate");
             string xml = Resources.Patient_InvalidElement;
             
             using (HttpWebResponse response = PostResource(location, xml))
@@ -102,7 +102,7 @@ namespace Sprinkler.Tests
         [SprinklerTest("VA07", "Validate creation of an invalid resource (wrong narrative)")]
         public void CreateResourceWrongNarrative()
         {
-            Uri location = new Uri(Client.Endpoint + "Patient/_validate");
+            Uri location = new Uri(Client.Endpoint + "Patient/$validate");
             string xml = Resources.Patient_InvalidElement;
             using (HttpWebResponse response = PostResource(location, xml))
             {

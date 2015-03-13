@@ -55,7 +55,21 @@
   <ItemGroup>
     <Compile Include="Framework\Test.cs" />
     <Compile Include="Framework\TestScript.cs" />
-    <Compile Include="TestsFromDstu1\CreateUpdateDeleteTest.cs" />
+    <Compile Include="Tests\ValidatorTest.cs" />
+    <Compile Include="Tests\Utils.cs" />
+    <Compile Include="Tests\TestTransactions.cs" />
+    <Compile Include="Tests\RequestFormatTest.cs" />
+    <Compile Include="Tests\SearchTest.cs" />
+    <Compile Include="Tests\ReadTest.cs" />
+    <Compile Include="Tests\HistoryTest.cs" />
+    <Compile Include="Tests\BundleTest.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Tests\DigSigTest.cs" />
+    <Compile Include="Tests\ConformanceTest.cs" />
+    <Compile Include="Tests\BinaryTest.cs" />
+    <Compile Include="Tests\AllDomainResourcesTest.cs" />
+    <Compile Include="Tests\CreateUpdateDeleteTest.cs" />
     <Compile Include="Tests\TestScriptRunner.cs" />
     <Compile Include="Utilities\AttributeHelper.cs" />
     <Compile Include="Framework\DemoData.cs" />
@@ -107,6 +121,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Resources\" />
+    <Folder Include="TestsFromDstu1\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="message_false_SlicingRegularTestProfile.xml">

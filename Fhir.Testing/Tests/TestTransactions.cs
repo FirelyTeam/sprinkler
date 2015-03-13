@@ -15,38 +15,40 @@ namespace Sprinkler.Tests
     [SprinklerModule("Transactions")]
     internal class TestTransactions : SprinklerTestClass
     {
-        private ResourceEntry<Patient> entry;
+        private Patient entry;
 
         [SprinklerTest("TR01", "Adding a patient")]
         public void AddPatient()
         {
-            Patient patient = Utils.NewPatient("Bach", "Johan", "Sebastian");
-            entry = Client.Create(patient, null, true);
+            var patient = new Patient();
+            patient.Name.Add(HumanName.ForFamily("Bach").WithGiven("Johan").WithGiven("Sebastian"));
+            entry = Client.Create(patient);
 
-            Bundle bundle = Client.History(entry);
-            Assert.IsTrue((bundle.Entries.Count == 1), "History of patient is not valid");
+            Bundle bundle = Client.History(entry.Id);
+            
+            Assert.IsTrue((bundle.Entry.Count == 1), "History of patient is not valid");
         }
 
         [SprinklerTest("TR02", "Updating a patient")]
         public void Updating()
         {
             // Birthday of Bach on Gregorian calendar
-            entry.Resource.BirthDate = "1685-03-21";
+            entry.BirthDate = "1685-03-21";
             entry = Client.Update(entry, true);
 
-            Bundle bundle = Client.History(entry);
-            Assert.IsTrue((bundle.Entries.Count == 2), "History of patient is not valid");
+            Bundle bundle = Client.History(entry.Id);
+            Assert.IsTrue((bundle.Entry.Count == 2), "History of patient is not valid");
         }
 
         [SprinklerTest("TR03", "Reupdating a patient")]
         public void UpdatingAgain()
         {
             // Birthday of Bach on Julian calendar
-            entry.Resource.BirthDate = "1685-03-31";
+            entry.BirthDate = "1685-03-31";
             Client.Update(entry, true);
 
-            Bundle bundle = Client.History(entry);
-            Assert.IsTrue((bundle.Entries.Count == 3), "History of patient is not valid");
+            Bundle bundle = Client.History(entry.Id);
+            Assert.IsTrue((bundle.Entry.Count == 3), "History of patient is not valid");
         }
 
         [SprinklerTest("TR04", "Deleting record")]
@@ -54,8 +56,8 @@ namespace Sprinkler.Tests
         {
             Client.Delete(entry);
 
-            Bundle bundle = Client.History(entry);
-            Assert.IsTrue((bundle.Entries.Count == 4), "History of patient is not valid");
+            Bundle bundle = Client.History(entry.Id);
+            Assert.IsTrue((bundle.Entry.Count == 4), "History of patient is not valid");
         }
 
         //[SprinklerTest("TR10", "Failing data")]
@@ -68,7 +70,7 @@ namespace Sprinkler.Tests
             p.Identifier = new List<Identifier>();
             p.Identifier.Add(item);
             p.BirthDate = "1974-02-20";
-            ResourceEntry<Patient> r = Client.Create(p);
+            Patient r = Client.Create(p);
         }
     }
 }

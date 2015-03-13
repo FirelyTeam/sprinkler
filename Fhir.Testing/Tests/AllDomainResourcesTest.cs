@@ -19,21 +19,21 @@ using System.Threading.Tasks;
 
 namespace Sprinkler.Tests
 {
-    [SprinklerModule("All Resources Test")]
-    public class AllResourcesTest : SprinklerTestClass
+    [SprinklerModule("All DomainResources Test")]
+    public class AllDomainResourcesTest : SprinklerTestClass
     {
-        List<Resource> resources = DemoData.GetListofResources();
+        List<DomainResource> resources = DemoData.GetListofResources();
         int tempid = 0;
         List<String> errors = new List<string>();
 
-        private void TryToUpdate<T>(Resource resource, string location) where T : Resource, new()
+        private void TryToUpdate<T>(DomainResource resource, string location) where T : DomainResource, new()
         {
-            ResourceEntry<T> entry = Client.Read<T>(location);
+            DomainResource res = Client.Read<T>(location);
             Element element = new Code("unsure");
             try
             {
-                entry.Resource.AddExtension("http://furore.com/fhir/Profile/main#sprinkler", element);
-                Client.Update(entry);
+                res.AddExtension("http://furore.com/fhir/Profile/main#sprinkler", element);
+                Client.Update(res);
             }
             catch(Exception e)
             {
@@ -42,7 +42,7 @@ namespace Sprinkler.Tests
         }     
 
 
-        public void AndTryDelete<T>(Resource resource, string location) where T : Resource, new()
+        public void AndTryDelete<T>(DomainResource resource, string location) where T : DomainResource, new()
         {
             try
             {
@@ -55,7 +55,7 @@ namespace Sprinkler.Tests
             }           
         }
 
-        private void TryToRead<T>(Resource resource, string location) where T : Resource, new()
+        private void TryToRead<T>(DomainResource resource, string location) where T : DomainResource, new()
         {
             try
             {
@@ -67,17 +67,18 @@ namespace Sprinkler.Tests
             }           
         }      
 
-        public void AttemptResource<T>(Resource resource) where T: Resource, new()
+        public void AttemptResource<T>(DomainResource resource) where T: DomainResource, new()
         {
             string key = null;
 
             if (typeof(T) == resource.GetType())
             {         
-                ResourceEntry<T> created = null;
+                DomainResource created = null;
                 try
                 {
                     created = Client.Create((T)resource);
-                    key = new ResourceIdentity(created.Id).OperationPath.ToString();
+                    key = new ResourceIdentity(created.Id).MakeRelative().ToString(); //relative or absolute?
+                    // key = new ResourceIdentity(created.Id).AbsolutePath; 
                     if (key != null)
                     {
                         TryToRead<T>(resource, key);
@@ -92,13 +93,13 @@ namespace Sprinkler.Tests
             }
         }
      
-        private void TestSomeResource<T>() where T: Resource, new()
+        private void TestSomeResource<T>() where T: DomainResource, new()
         {
             errors.Clear();           
             string id = "sprink" + tempid++.ToString();
             Type type = typeof(T);
 
-            Resource resource = GetFirstResourceOfType(type);
+            DomainResource resource = GetFirstResourceOfType(type);
             if (resource != null)
             {
                 T typedresource = (T)resource;
@@ -120,10 +121,10 @@ namespace Sprinkler.Tests
             }
         }
 
-        private Resource GetFirstResourceOfType(Type type)
+        private DomainResource GetFirstResourceOfType(Type type)
         {
             //string id = "sprink" + tempid++.ToString();
-            IEnumerable<Resource> resource = 
+            IEnumerable<DomainResource> resource = 
                 from r in resources
                 where r.GetType() == type
                 select r;
@@ -131,11 +132,11 @@ namespace Sprinkler.Tests
             return resource.FirstOrDefault();
         }
 
-        [SprinklerTest("AR01", "Create read update delete on Adverse Reaction")]
-        public void TestAdversereaction()
-        {
-            TestSomeResource<AdverseReaction>();
-        }
+        //[SprinklerTest("AR01", "Create read update delete on Adverse Reaction")]
+        //public void TestAdversereaction()
+        //{
+        //    TestSomeResource<AdverseReaction>();
+        //}
 
         [SprinklerTest("AR02", "Create read update delete on Alert")]
         public void TestAlert()
@@ -185,11 +186,11 @@ namespace Sprinkler.Tests
             TestSomeResource<Device>();
         }
 
-        [SprinklerTest("AR10", "Create read update delete on Device Observation Report")]
-        public void TestDeviceObservationReport()
-        {
-            TestSomeResource<DeviceObservationReport>();
-        }
+        //[SprinklerTest("AR10", "Create read update delete on Device Observation Report")]
+        //public void TestDeviceObservationReport()
+        //{
+        //    TestSomeResource<DeviceObservationReport>();
+        //}
 
         [SprinklerTest("AR11", "Create read update delete on Diagnostic Order")]
         public void TestDiagnosticOrdert()
@@ -359,11 +360,11 @@ namespace Sprinkler.Tests
             TestSomeResource<Procedure>();
         }
 
-        [SprinklerTest("AR39", "Create read update delete on Profile")]
-        public void TestProfile()
-        {
-            TestSomeResource<Profile>();
-        }
+        //[SprinklerTest("AR39", "Create read update delete on Profile")]
+        //public void TestProfile()
+        //{
+        //    TestSomeResource<Profile>();
+        //}
 
         [SprinklerTest("AR40", "Create read update delete on Provenance")]
         public void TestProvenance()
@@ -371,11 +372,11 @@ namespace Sprinkler.Tests
             TestSomeResource<Provenance>();
         }
 
-        [SprinklerTest("AR41", "Create read update delete on Query")]
-        public void TestQuery()
-        {
-            TestSomeResource<Query>();
-        }
+        //[SprinklerTest("AR41", "Create read update delete on Query")]
+        //public void TestQuery()
+        //{
+        //    TestSomeResource<Query>();
+        //}
 
         [SprinklerTest("AR42", "Create read update delete on Questionnaire")]
         public void TestQuestionnaire()
@@ -389,11 +390,11 @@ namespace Sprinkler.Tests
             TestSomeResource<RelatedPerson>();
         }
 
-        [SprinklerTest("AR44", "Create read update delete on Security Event")]
-        public void TestSecurityEvent()
-        {
-            TestSomeResource<SecurityEvent>();
-        }
+        //[SprinklerTest("AR44", "Create read update delete on Security Event")]
+        //public void TestSecurityEvent()
+        //{
+        //    TestSomeResource<SecurityEvent>();
+        //}
 
         [SprinklerTest("AR45", "Create read update delete on Specimen")]
         public void TestSpecimen()

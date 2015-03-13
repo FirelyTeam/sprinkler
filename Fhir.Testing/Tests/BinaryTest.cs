@@ -17,29 +17,30 @@ namespace Sprinkler.Tests
     [SprinklerModule("Binary")]
     public class BinaryTest : SprinklerTestClass
     {
-        private Uri _binaryId;
+        private string _binaryId;
 
 
         [SprinklerTest("BI01", "create a binary")]
         public void CreateBinary()
         {
             Binary bin = DemoData.GetDemoBinary();
-            ResourceEntry<Binary> received = null;
+            Binary received = null;
             Assert.Success(Client, () => received = Client.Create(bin));
 
             Assert.LocationPresentAndValid(Client);
 
-            ResourceEntry<Binary> binResult = Client.Read<Binary>(received.Id);
+            Binary binResult = Client.Read<Binary>(received.Id);
 
-            if (binResult.Resource.ContentType != bin.ContentType)
+            if (binResult.ContentType != bin.ContentType)
                 Assert.Fail("Created binary of type " + bin.ContentType +
-                                "but received " + Client.LastResponseDetails.ContentType);
+                                "but received " + binResult.ContentType);
 
             Assert.ContentLocationValidIfPresent(Client);
 
             CompareData(bin.Content, binResult);
 
             _binaryId = received.Id;
+            
         }
 
         [SprinklerTest("BI02", "retrieve & update that binary")]
@@ -47,12 +48,12 @@ namespace Sprinkler.Tests
         {
             if (_binaryId == null) Assert.Skip();
 
-            ResourceEntry<Binary> received = Client.Read<Binary>(_binaryId);
+            Binary received = Client.Read<Binary>(_binaryId);
             CompareData(DemoData.GetDemoBinary().Content, received);
 
             byte[] data = DemoData.GetDemoBinary().Content.Reverse().ToArray();
 
-            received.Resource.Content = data;
+            received.Content = data;
             Client.Update(received);
 
             received = Client.Read<Binary>(_binaryId);
@@ -70,12 +71,12 @@ namespace Sprinkler.Tests
         }
 
 
-        private static void CompareData(byte[] data, ResourceEntry<Binary> received)
+        private static void CompareData(byte[] data, Binary received)
         {
-            if (data.Length != received.Resource.Content.Length)
+            if (data.Length != received.Content.Length)
                 Assert.Fail("Binary data returned has a different size");
             for (int pos = 0; pos < data.Length; pos++)
-                if (data[pos] != received.Resource.Content[pos])
+                if (data[pos] != received.Content[pos])
                     Assert.Fail("Binary data returned differs from original");
         }
     }

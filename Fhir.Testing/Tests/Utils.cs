@@ -61,17 +61,34 @@ namespace Sprinkler.Tests
         public static bool HasGiven(this Patient patient, string given)
         {
             return patient.Name.Exists(n => n.Given.Contains(given));
-        }
-
-        
-        public static bool Has(this Bundle bundle, Uri id)
-        {
-            return bundle.FindEntry(id).Any();
-        }
+        }       
 
         public static IEnumerable<T> ResourcesOf<T>(this Bundle bundle) where T : Resource, new()
         {
             return bundle.Entry.ByResourceType<T>();
+        }
+
+        public static bool IsDeleted(this Bundle.BundleEntryComponent entry)
+        {
+            if (entry.Transaction == null) return false;
+            return (entry.Transaction.Method == Bundle.HTTPVerb.DELETE);
+        }
+
+        public static IEnumerable<Bundle.BundleEntryComponent> GetDeleted(this IEnumerable<Bundle.BundleEntryComponent> entries)
+        {
+            //return entries.Where(entry => entry.IsDeleted());
+            return entries.Where(IsDeleted);
+
+        }
+
+        public static bool ContainsResource(this Bundle bundle, string id)
+        {
+            var entries = from ent in bundle.Entry
+                          where ent.Resource.Id == id
+                          select ent;
+
+            return entries.Count() > 0;
+
         }
     }
 }

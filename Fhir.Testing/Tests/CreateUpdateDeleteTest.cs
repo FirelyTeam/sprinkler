@@ -21,7 +21,7 @@ namespace Sprinkler.Tests
     {
         public CreateUpdateDeleteTest()
         {
-            Versions = new List<Uri>();
+            Versions = new List<string>();
         }
 
         public string CrudId { get; private set; }
@@ -31,7 +31,7 @@ namespace Sprinkler.Tests
             get { return "Patient/" + CrudId; }
         }
 
-        public List<Uri> Versions { get; private set; }
+        public List<string> Versions { get; private set; }
         public DateTimeOffset? CreateDate { get; private set; }
 
         [SprinklerTest("CR01", "create a patient using xml")]
@@ -52,8 +52,8 @@ namespace Sprinkler.Tests
             var rnd = new Random();
             CrudId = "sprink" + rnd.Next();
 
-            Versions.Add(TryCreatePatient(Client, ResourceFormat.Xml, CrudId));
-
+            Versions.Add(TryCreatePatient(Client, ResourceFormat.Xml, CrudId).ToString());
+            
             CreateDate = DateTimeOffset.Now;
         }
 
@@ -108,7 +108,7 @@ namespace Sprinkler.Tests
                 tel => tel.System == ContactPoint.ContactPointSystem.Url && tel.Value == "http://www.nu.nl"))
                 Assert.Fail(String.Format("Resource {0} unchanged after update", Location));
 
-            Versions.Add(pat.ResourceBase);
+            Versions.Add(pat.VersionId);
         }
 
         [SprinklerTest("CR06", "update that person again (alter extensions)")]
@@ -140,7 +140,7 @@ namespace Sprinkler.Tests
             if (!extensions.Any(ext => ext.Value is Code && ((Code) ext.Value).Value == "AC"))
                 Assert.Fail("Resource extension addition was not persisted on resource " + Location);
 
-            Versions.Add(pat.ResourceBase);
+            Versions.Add(pat.VersionId);
         }
 
         [SprinklerTest("CR07", "delete that person")]
@@ -162,7 +162,7 @@ namespace Sprinkler.Tests
             Assert.Fails(Client, () => Client.Delete(location), HttpStatusCode.NotFound);
         }
 
-        private Uri TryCreatePatient(FhirClient client, ResourceFormat formatIn, string id = null)
+        private string TryCreatePatient(FhirClient client, ResourceFormat formatIn, string id = null)
         {
             client.PreferredFormat = formatIn;
             Patient created = null;
@@ -188,7 +188,7 @@ namespace Sprinkler.Tests
             // nog wel geupdate
             Assert.ContentLocationValidIfPresent(client);
 
-            return created.ResourceBase;
+            return created.VersionId;
         }
     }
 }
