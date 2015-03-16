@@ -105,12 +105,6 @@
     <None Include="conn5-21-cid-example.xml" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="example-resources.zip">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="example-resources.zip">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
     <None Include="packages.config" />
     <None Include="patient-example.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
