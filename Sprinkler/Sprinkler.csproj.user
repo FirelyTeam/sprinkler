@@ -16,6 +16,6 @@
     <StartAction>Project</StartAction>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
-    <StartArguments>http://spark.furore.com/fhir VA  -wait</StartArguments>
+    <StartArguments>test http://fhirlab.apphb.com/fhir RD -wait</StartArguments>
   </PropertyGroup>
 </Project>

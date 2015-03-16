@@ -125,7 +125,7 @@ namespace Sprinkler.Tests
                     Assert.Fail("Optional Content-Location contains an invalid version-specific url");
             }
 
-            foreach (var ent in (BundleExtensions.GetDeleted(_history.Entry)))
+            foreach (var ent in (Utils.GetDeleted(_history.Entry)))
             {
                 var identity = new ResourceIdentity(ent.Resource.VersionId);
                 Assert.Fails(Client, () => Client.Read<Patient>(identity), HttpStatusCode.Gone);
