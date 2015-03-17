@@ -16,6 +16,6 @@
     <StartAction>Project</StartAction>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
-    <StartArguments>test http://fhir-dev.healthintersections.com.au/open AR -wait</StartArguments>
+    <StartArguments>test http://fhirlab.apphb.com/fhir RD -wait</StartArguments>
   </PropertyGroup>
 </Project>

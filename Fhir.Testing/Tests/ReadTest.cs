@@ -37,7 +37,7 @@ namespace Sprinkler.Tests
         {
             Patient p = NewPatient("Emerald", "Caro");
             Patient entry = Client.Create(p);
-            string id = entry.Id;
+            string id = entry.ResourceIdentity().MakeRelative().ToString();
 
             Patient pat = Client.Read<Patient>(id);
 
