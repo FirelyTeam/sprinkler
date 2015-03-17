@@ -124,9 +124,6 @@
   <data name="conn5_21_example" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\conn5-21-example.xml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
   </data>
-  <data name="example_resources" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\example-resources.zip;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
   <data name="message_false_SlicingRegularTestProfile" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\message_false_slicingregulartestprofile.xml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
   </data>
@@ -159,5 +156,8 @@
   </data>
   <data name="Patient_Valid" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\patient.valid.xml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  </data>
+  <data name="examples" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\examples.zip;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
 </root>

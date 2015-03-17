@@ -125,7 +125,7 @@ namespace Sprinkler.Framework
 
         public static List<DomainResource> GetListofResources()
         {
-            const string ZIPFILEPATH = "example-resources.zip";
+            const string ZIPFILEPATH = "examples.zip";
             string file = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, ZIPFILEPATH);
             List<DomainResource> resources = new List<DomainResource>();     
 
@@ -136,9 +136,14 @@ namespace Sprinkler.Framework
                 ReadOnlyCollection<ZipArchiveEntry> entries = archive.Entries;
                 foreach (ZipArchiveEntry e in entries)
                 {
-                    StreamReader reader = new StreamReader(e.Open());                   
-                    DomainResource resource = (DomainResource)FhirParser.ParseResourceFromXml(reader.ReadToEnd());
-                    resources.Add(resource);                    
+                    StreamReader reader = new StreamReader(e.Open());   
+                    Resource resource = FhirParser.ParseResourceFromXml(reader.ReadToEnd());
+                    if (resource is DomainResource)
+                    //if (resource.ResourceType == ResourceType.DomainResource)
+                    {
+                         DomainResource domresource = (DomainResource)resource;
+                         resources.Add(domresource); 
+                    }                                       
                 }               
             }
             return resources;        

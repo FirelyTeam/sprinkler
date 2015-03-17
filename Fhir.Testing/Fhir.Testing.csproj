@@ -33,7 +33,7 @@
     <StartupObject />
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Hl7.Fhir.Core, Version=0.20.2.26523, Culture=neutral, PublicKeyToken=d706911480550fc3, processorArchitecture=MSIL">
+    <Reference Include="Hl7.Fhir.Core, Version=0.20.2.41893, Culture=neutral, PublicKeyToken=d706911480550fc3, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\Hl7.Fhir.DSTU2.0.20.2-alpha3\lib\net45\Hl7.Fhir.Core.dll</HintPath>
     </Reference>
@@ -105,6 +105,9 @@
     <None Include="conn5-21-cid-example.xml" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="examples.zip">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="packages.config" />
     <None Include="patient-example.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
