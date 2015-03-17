@@ -77,13 +77,14 @@ namespace Sprinkler.Tests
                 try
                 {
                     created = Client.Create((T)resource);
-                    key = new ResourceIdentity(created.Id).MakeRelative().ToString(); //relative or absolute?
+                    key = created.ResourceIdentity().ToString(); //relative or absolute?
                     // key = new ResourceIdentity(created.Id).AbsolutePath; 
+                    //new ResourceIdentity(created.Id).MakeRelative().ToString()
                     if (key != null)
                     {
                         TryToRead<T>(resource, key);
                         TryToUpdate<T>(resource, key);
-                        AndTryDelete<T>(resource, key);
+                        AndTryDelete<T>(resource, created.ResourceIdentity().MakeRelative().ToString());
                     }
                 }
                 catch(Exception e)
