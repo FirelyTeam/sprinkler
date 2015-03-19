@@ -24,7 +24,7 @@ namespace Sprinkler.Tests
             var patient = new Patient();
             patient.Name.Add(HumanName.ForFamily("Bach").WithGiven("Johan").WithGiven("Sebastian"));
             entry = Client.Create(patient);
-            id = entry.Id;
+            id = entry.ResourceIdentity().MakeRelative().ToString();
         }
 
         [SprinklerTest("CT01", "request xml using accept")]

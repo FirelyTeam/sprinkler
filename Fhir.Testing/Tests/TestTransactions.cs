@@ -9,6 +9,7 @@
 using System.Collections.Generic;
 using Hl7.Fhir.Model;
 using Sprinkler.Framework;
+using Hl7.Fhir.Rest;
 
 namespace Sprinkler.Tests
 {
@@ -16,6 +17,7 @@ namespace Sprinkler.Tests
     internal class TestTransactions : SprinklerTestClass
     {
         private Patient entry;
+        private ResourceIdentity id; 
 
         [SprinklerTest("TR01", "Adding a patient")]
         public void AddPatient()
@@ -23,8 +25,8 @@ namespace Sprinkler.Tests
             var patient = new Patient();
             patient.Name.Add(HumanName.ForFamily("Bach").WithGiven("Johan").WithGiven("Sebastian"));
             entry = Client.Create(patient);
-
-            Bundle bundle = Client.History(entry.Id);
+            id = entry.ResourceIdentity().MakeRelative().WithoutVersion();
+            Bundle bundle = Client.History(id);
             
             Assert.IsTrue((bundle.Entry.Count == 1), "History of patient is not valid");
         }
@@ -36,7 +38,7 @@ namespace Sprinkler.Tests
             entry.BirthDate = "1685-03-21";
             entry = Client.Update(entry, true);
 
-            Bundle bundle = Client.History(entry.Id);
+            Bundle bundle = Client.History(id);
             Assert.IsTrue((bundle.Entry.Count == 2), "History of patient is not valid");
         }
 
@@ -47,7 +49,7 @@ namespace Sprinkler.Tests
             entry.BirthDate = "1685-03-31";
             Client.Update(entry, true);
 
-            Bundle bundle = Client.History(entry.Id);
+            Bundle bundle = Client.History(id);
             Assert.IsTrue((bundle.Entry.Count == 3), "History of patient is not valid");
         }
 
@@ -56,7 +58,7 @@ namespace Sprinkler.Tests
         {
             Client.Delete(entry);
 
-            Bundle bundle = Client.History(entry.Id);
+            Bundle bundle = Client.History(id);
             Assert.IsTrue((bundle.Entry.Count == 4), "History of patient is not valid");
         }
 

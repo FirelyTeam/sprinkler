@@ -139,9 +139,6 @@
   <data name="SlicingRegularTestProfile_expanded" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\slicingregulartestprofile_expanded.xml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
   </data>
-  <data name="xds_example" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\xds-example.xml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
-  </data>
   <data name="Patient_CardinalityMinus" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\patient.cardinalityminus.xml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
   </data>
@@ -159,5 +156,8 @@
   </data>
   <data name="examples" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\examples.zip;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="xds_example" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\xds_example.xml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
   </data>
 </root>

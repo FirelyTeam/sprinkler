@@ -323,17 +323,19 @@ namespace Fhir.Testing.Properties {
         
         /// <summary>
         ///   Looks up a localized string similar to &lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
-        ///&lt;Bundle xmlns=&quot;http://hl7.org/fhir&quot;
-        ///    xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot;
-        ///    xsi:schemaLocation=&quot;http://hl7.org/fhir file:/C:/Users/Marten/OneDrive/FHIR/Schemas/DSTU2/bundle.xsd&quot;&gt;
-        ///  &lt;type value=&quot;collection&quot;/&gt;
+        ///&lt;Bundle xmlns=&quot;http://hl7.org/fhir&quot;&gt;
+        ///  &lt;id value=&quot;xds&quot;/&gt;
+        ///  &lt;meta&gt;
+        ///    &lt;lastUpdated value=&quot;2013-07-01T13:11:33Z&quot;/&gt;
+        ///  &lt;/meta&gt;
+        ///  &lt;type value=&quot;transaction&quot;/&gt;
+        ///  &lt;base value=&quot;cid:123@healthintersections.com.au&quot;/&gt;
         ///  &lt;entry&gt;
+        ///    &lt;!--  although the resource has an id - which it might need so it can referred to 
+        ///      from within this transaction, the server is to treat it as a new resource (see transaction below)  --&gt;
         ///    &lt;resource&gt;
-        ///      &lt;DocumentReference xmlns=&quot;http://hl7.org/fhir&quot;&gt;
-        ///        &lt;extension url=&quot;http://hl7.org/fhir/xds#practiceSettingCode&quot;&gt;
-        ///          &lt;valueCodeableConcept&gt;
-        ///            &lt;coding&gt;
-        ///              &lt;system value=&quot; [rest of string was truncated]&quot;;.
+        ///      &lt;DocumentReference&gt;
+        ///       [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string xds_example {
             get {

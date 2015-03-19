@@ -75,15 +75,21 @@ namespace Sprinkler.Tests
             selena.Address.Add(address);
  
             string qualifier = "http://hl7.org/fhir/Profile/iso-21090#qualifier";
-            selena.Contact[0].Name.AddExtension(qualifier, new Code("AC")); 
-
-
+            var contact = new Patient.ContactComponent();
+            var contactname = new HumanName();
+            contactname.AddExtension(qualifier, new Code("AC"));
+            contact.Name = contactname;
+            selena.Contact.Add(contact);
+            
             var resource = Client.Create(selena);
             string id = resource.Id;
             //entry = null;
             resource = Client.Read<Patient>(resource.ResourceIdentity());
 
-            IEnumerable<Extension> extensions = resource.Contact[0].Name.GetExtensions(qualifier);
+            IEnumerable<Extension> extensions = from contacts in resource.Contact
+                                                where contacts.Name.GetExtension(qualifier) != null
+                                                select contacts.Name.GetExtension(qualifier);
+                                                
 
             if (extensions == null || extensions.Count() == 0)
                 Assert.Fail("Extensions have disappeared on resource " + Location);
@@ -167,16 +173,17 @@ namespace Sprinkler.Tests
             client.PreferredFormat = formatIn;
             Patient created = null;
             Patient demopat = DemoData.GetDemoPatient();
-            demopat.Id = id;
+            demopat.Id = "23";
+            var resourceid = demopat.ResourceIdentity();
             Assert.Success(client, () => created = client.Create(demopat));
 
             if (demopat.Id != null)
             {
                 var ep = new RestUrl(client.Endpoint);
-                if (!ep.IsEndpointFor(created.Id))
+                if (!ep.IsEndpointFor(created.ResourceIdentity()))
                     Assert.Fail("Location of created resource is not located within server endpoint");
 
-                var rl = new ResourceIdentity(created.Id);
+                var rl = new ResourceIdentity(created.ResourceIdentity());
                 if (rl.Id != id)
                     Assert.Fail("Server refused to honor client-assigned id");
             }
