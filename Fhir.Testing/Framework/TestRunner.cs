@@ -61,11 +61,14 @@ namespace Sprinkler.Framework
         {
             foreach(Type type in TestHelper.GetModules())
             {
-                var module = GetInstanceOf(type);
                 var tests = TestHelper.GetTestMethods(type, codes);
-                foreach (var test in tests)
+                if (tests.Count() > 0)
                 {
-                    Run(module, test);
+                    var module = GetInstanceOf(type);
+                    foreach (var test in tests)
+                    {
+                        Run(module, test);
+                    }
                 }
             }
         }

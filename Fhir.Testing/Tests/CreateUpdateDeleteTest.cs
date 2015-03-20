@@ -57,7 +57,61 @@ namespace Sprinkler.Tests
             CreateDate = DateTimeOffset.Now;
         }
 
-        [SprinklerTest("CR04", "Create a patient with an extension")]
+        [SprinklerTest("CR04", "Create a patient with manually assigned attributes")]
+        public void CreatePatientWithAttributes()
+        {
+            Patient selena = new Patient();
+
+            var name = new HumanName();
+            name.GivenElement.Add(new FhirString("Selena"));
+            name.FamilyElement.Add(new FhirString("Gomez"));
+            selena.Name.Add(name);
+
+            var address = new Address();
+            address.LineElement.Add(new FhirString("Cornett"));
+            address.CityElement = new FhirString("Amanda");
+            address.CountryElement = new FhirString("United States");
+            address.StateElement = new FhirString("Texas");
+            selena.Address.Add(address);
+           
+            var contact = new Patient.ContactComponent();
+            var contactname = new HumanName();
+            contactname.GivenElement.Add(new FhirString("Martijn"));
+            contactname.FamilyElement.Add(new FhirString("Harthoorn"));
+            contact.Name = contactname;
+            selena.Contact.Add(contact);
+
+            selena.Gender = AdministrativeGender.Female;
+
+            var contactpoint = new ContactPoint();
+            contactpoint.System = ContactPoint.ContactPointSystem.Email;
+            contactpoint.Value = "selena_the_best@hotmail.com";
+            selena.Telecom.Add(contactpoint);
+
+            var resource = Client.Create(selena);
+
+            if (resource.Address.Count() != 1)
+            {
+                Assert.Fail("Address component has disappeared on resource");
+            }
+
+            if (resource.Name.Count() != 1)
+            {
+                Assert.Fail("Name component has disappeared on resource");
+            }
+
+            if (resource.Contact.Count() != 1)
+            {
+                Assert.Fail("Contact component has disappeared on resource");
+            }
+
+            if (resource.Telecom.Count() != 1)
+            {
+                Assert.Fail("Telecom component has disappeared on resource");
+            }
+        }
+
+        [SprinklerTest("CR05", "Create a patient with an extension")]
         public void CreatePatientWithExtension()
         {
             Patient selena = new Patient();
@@ -77,13 +131,14 @@ namespace Sprinkler.Tests
             string qualifier = "http://hl7.org/fhir/Profile/iso-21090#qualifier";
             var contact = new Patient.ContactComponent();
             var contactname = new HumanName();
+            contactname.GivenElement.Add(new FhirString("Martijn"));
+            contactname.FamilyElement.Add(new FhirString("Harthoorn"));
             contactname.AddExtension(qualifier, new Code("AC"));
             contact.Name = contactname;
             selena.Contact.Add(contact);
             
             var resource = Client.Create(selena);
-            string id = resource.Id;
-            //entry = null;
+
             resource = Client.Read<Patient>(resource.ResourceIdentity());
 
             IEnumerable<Extension> extensions = from contacts in resource.Contact
@@ -98,7 +153,7 @@ namespace Sprinkler.Tests
                 Assert.Fail("Resource extension was not persisted on created resource " + resource.Id);
         }
 
-        [SprinklerTest("CR05", "update that patient (no extensions altered)")]
+        [SprinklerTest("CR06", "update that patient (no extensions altered)")]
         public void UpdatePersonNoExt()
         {
             Assert.SkipWhen(CreateDate == null);
@@ -117,7 +172,7 @@ namespace Sprinkler.Tests
             Versions.Add(pat.VersionId);
         }
 
-        [SprinklerTest("CR06", "update that person again (alter extensions)")]
+        [SprinklerTest("CR07", "update that person again (alter extensions)")]
         public void UpdatePersonAndAddExtension()
         {
             Assert.SkipWhen(CreateDate == null);
@@ -128,6 +183,12 @@ namespace Sprinkler.Tests
             string qualifier = "http://hl7.org/fhir/Profile/iso-21090#qualifier";
 
             Extension qExt1 = name.FamilyElement[0].GetExtension(qualifier);
+
+            if(qExt1 == null)
+            {
+                Assert.Fail("The extension to be updated was not present on resource " + Location);
+            }
+            
             ((Code) qExt1.Value).Value = "NB";
             name.FamilyElement[0].AddExtension(qualifier, new Code("AC"));
 
@@ -149,7 +210,7 @@ namespace Sprinkler.Tests
             Versions.Add(pat.VersionId);
         }
 
-        [SprinklerTest("CR07", "delete that person")]
+        [SprinklerTest("CR08", "delete that person")]
         public void DeletePerson()
         {
             if (CreateDate == null) Assert.Skip();
@@ -159,7 +220,7 @@ namespace Sprinkler.Tests
             Assert.Fails(Client, () => Client.Read<Patient>(location), HttpStatusCode.Gone);
         }
 
-        [SprinklerTest("CR08", "deletion of a non-existing resource")]
+        [SprinklerTest("CR09", "deletion of a non-existing resource")]
         public void DeleteNonExistingPerson()
         {
             var rnd = new Random();
@@ -173,12 +234,12 @@ namespace Sprinkler.Tests
             client.PreferredFormat = formatIn;
             Patient created = null;
             Patient demopat = DemoData.GetDemoPatient();
-            demopat.Id = "23";
-            var resourceid = demopat.ResourceIdentity();
-            Assert.Success(client, () => created = client.Create(demopat));
+            demopat.Id = id;
+            var resourceid = demopat.ResourceIdentity();           
 
             if (demopat.Id != null)
             {
+                Assert.Success(client, () => created = client.Update(demopat));
                 var ep = new RestUrl(client.Endpoint);
                 if (!ep.IsEndpointFor(created.ResourceIdentity()))
                     Assert.Fail("Location of created resource is not located within server endpoint");
@@ -187,6 +248,8 @@ namespace Sprinkler.Tests
                 if (rl.Id != id)
                     Assert.Fail("Server refused to honor client-assigned id");
             }
+
+            Assert.Success(client, () => created = client.Create(demopat));
 
             Assert.LocationPresentAndValid(client);
 
