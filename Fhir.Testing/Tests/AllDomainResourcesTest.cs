@@ -32,7 +32,7 @@ namespace Sprinkler.Tests
             Element element = new Code("unsure");
             try
             {
-                res.AddExtension("http://furore.com/fhir/Profile/main#sprinkler", element);
+                res.AddExtension("http://fhir.furore.com/extensions/sprinkler", element);
                 Client.Update(res);
             }
             catch(Exception e)
@@ -40,7 +40,6 @@ namespace Sprinkler.Tests
                 errors.Add("Update of " + resource.GetType().Name + " failed: " + e.Message);
             }
         }     
-
 
         public void AndTryDelete<T>(DomainResource resource, string location) where T : DomainResource, new()
         {
@@ -137,11 +136,11 @@ namespace Sprinkler.Tests
         //    TestSomeResource<AdverseReaction>();
         //}
 
-        [SprinklerTest("AR02", "Create read update delete on Alert")]
-        public void TestAlert()
-        {
-            TestSomeResource<Alert>();
-        }
+        //[SprinklerTest("AR02", "Create read update delete on Alert")]
+        //public void TestAlert()
+        //{
+        //    TestSomeResource<Alert>();
+        //}
 
         [SprinklerTest("AR03", "Create read update delete on Allergy Intolerance")]
         public void TestAllergyIntolerancet()
@@ -224,7 +223,8 @@ namespace Sprinkler.Tests
         [SprinklerTest("AR16", "Create read update delete on Family History")]
         public void TestFamilyHistory()
         {
-            TestSomeResource<FamilyHistory>();
+            
+            TestSomeResource<FamilyMemberHistory>();
         }
 
         [SprinklerTest("AR17", "Create read update delete on Group")]
@@ -335,11 +335,11 @@ namespace Sprinkler.Tests
             TestSomeResource<Organization>();
         }
 
-        [SprinklerTest("AR35", "Create read update delete on Other")]
-        public void TestOther()
-        {
-            TestSomeResource<Other>();
-        }
+        //[SprinklerTest("AR35", "Create read update delete on Other")]
+        //public void TestOther()
+        //{
+        //    TestSomeResource<Base>();
+        //}
 
         [SprinklerTest("AR36", "Create read update delete on Patient")]
         public void TestPatient()

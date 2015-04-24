@@ -33,9 +33,9 @@
     <StartupObject />
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Hl7.Fhir.Core, Version=0.20.2.41893, Culture=neutral, PublicKeyToken=d706911480550fc3, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\Hl7.Fhir.DSTU2.0.20.2-alpha3\lib\net45\Hl7.Fhir.Core.dll</HintPath>
+    <Reference Include="Hl7.Fhir.Core, Version=0.50.1.28104, Culture=neutral, PublicKeyToken=d706911480550fc3, processorArchitecture=MSIL">
+      <HintPath>..\packages\Hl7.Fhir.DSTU2.0.50.1\lib\net45\Hl7.Fhir.Core.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=7.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>

@@ -28,7 +28,6 @@ namespace Sprinkler
     // Example:
     // sprinkler script http://fhir-dev.healthintersections.com.au/open automated-test-script.xml
     // sprinkler script http://fhir-dev.healthintersections.com.au/open test*.xml pipo*.xml
-    
 
     public class Program
     {

@@ -20,38 +20,36 @@ namespace Sprinkler.Tests
     public class HistoryTest : SprinklerTestClass
     {
         //private CreateUpdateDeleteTest crudTests;
-        private readonly List<string> Versions = new List<string>();
+        private IList<string> versions = new List<string>();
         private DateTimeOffset? _createDate;
         private int _forwardCount = -1;
-        private Bundle _history;
+        private Bundle history;
 
         private string _id;
         private Bundle _lastPage;
         private string _location;
         private Bundle _systemHistory;
-        private Bundle _typeHistory;
+        private Bundle referenceBundle;
 
         private void Initialize()
         {
-            _id = "sprink" + new Random().Next();
+            
+            Patient patient = DemoData.GetDemoPatient();
+            patient = Client.Create(patient);
+
+            _id = patient.Id;
             _location = "Patient/" + _id;
             _createDate = DateTimeOffset.Now;
-
-            Patient patient = DemoData.GetDemoPatient();
-            patient.Id = _id;
-
-            patient = Client.Create(patient);
-            Versions.Add(patient.VersionId);
+            
+            versions.Add(patient.VersionId);
 
             patient.Telecom.Add(new ContactPoint {System = ContactPoint.ContactPointSystem.Email, Value = "info@furore.com"});
 
             patient = Client.Update(patient, true);
-            Versions.Add(patient.VersionId);
-
-            
+            versions.Add(patient.VersionId);
 
             patient = Client.Update(patient, true);
-            Versions.Add(patient.VersionId);
+            versions.Add(patient.VersionId);
 
             Client.Delete(_location);
         }
@@ -63,25 +61,21 @@ namespace Sprinkler.Tests
             Initialize();
             Assert.SkipWhen(_createDate == null);
 
-            _history = Client.History(_location);
-            Assert.EntryIdsArePresentAndAbsoluteUrls(_history);
+            history = Client.History(_location);
+            Assert.EntryIdsArePresentAndAbsoluteUrls(history);
 
             // There's one version less here, because we don't have the deletion
-            int expected = Versions.Count + 1;
+            int expected = versions.Count + 1;
 
-            if (_history.Entry.Count != expected)
-                Assert.Fail(String.Format("{0} versions expected after crud test, found {1}", expected,
-                    _history.Entry.Count));
+            if (history.Entry.Count != expected)
+            {
+                Assert.Fail("{0} versions expected after crud test, found {1}", expected, history.Entry.Count);
+            }
 
-            if (!_history.Entry.OfType<Resource>()
-                .All(ent => Versions.Contains(ent.VersionId)))
-                Assert.Fail("Selflinks on returned versions do not match links returned on creation" +
-                                _history.Entry.Count);
-
-
-            CheckSortOrder(_history);
+            CheckTransactionElements(history);
+            CheckVersionIds(history);
+            CheckSortOrder(history);
         }
-
 
         [SprinklerTest("HI02", "Request the full history for a resource with _since")]
         public void HistoryForSpecificResourceId()
@@ -93,11 +87,17 @@ namespace Sprinkler.Tests
 
             Bundle history = Client.History(_location, before);
             Assert.EntryIdsArePresentAndAbsoluteUrls(history);
+            
+            CheckTransactionElements(history);
+            CheckVersionIds(history);
             CheckSortOrder(history);
-            string [] historySl = history.Entry.Select(entry => entry.Resource.VersionId).ToArray();
 
-            if (!history.Entry.All(entry => historySl.Contains(entry.Resource.VersionId)))
-                Assert.Fail("history with _since does not contain all versions of instance");
+            var versionIds = history.VersionIds();
+
+            if (!versions.AreAllFoundIn(versionIds))
+            {
+                Assert.Fail("history with _since does not contain all versions");
+            }
 
             history = Client.History(_location, after);
             if (history.Entry.Count != 0)
@@ -108,15 +108,19 @@ namespace Sprinkler.Tests
         [SprinklerTest("HI03", "Request individual history versions from a resource")]
         public void VReadVersions()
         {
-            foreach (Resource ent in _history.Entry.OfType<Resource>())
+            foreach (string version in versions)
             {
-                var identity = new ResourceIdentity(ent.VersionId);
+                var location = ResourceIdentity.Build("Patient", this._id, version);
+                Patient patient = Client.Read<Patient>(location);
 
-                Patient version = Client.Read<Patient>(identity);
+                if (patient == null)
+                {
+                    Assert.Fail("Cannot find version that was present in history");
+                }
 
-                if (version == null) Assert.Fail("Cannot find version that was present in history");
+                Assert.ContentLocationPresentAndValid(this.Client);
 
-                Assert.ContentLocationPresentAndValid(Client);
+                var identity = patient.ResourceIdentity();
                 //var selfLink = new ResourceIdentity(Client.LastResponseDetails.ContentLocation);
                 //if (String.IsNullOrEmpty(selfLink.Id) || String.IsNullOrEmpty(selfLink.VersionId))
                 //    Assert.Fail("Optional Content-Location contains an invalid version-specific url");
@@ -125,9 +129,9 @@ namespace Sprinkler.Tests
                     Assert.Fail("Optional Content-Location contains an invalid version-specific url");
             }
 
-            foreach (var ent in (Utils.GetDeleted(_history.Entry)))
+            foreach (var ent in (Utils.GetDeleted(history.Entry)))
             {
-                var identity = new ResourceIdentity(ent.Resource.VersionId);
+                var identity = new ResourceIdentity(ent.Transaction.Url);
                 Assert.Fails(Client, () => Client.Read<Patient>(identity), HttpStatusCode.Gone);
             }
         }
@@ -151,13 +155,15 @@ namespace Sprinkler.Tests
             Bundle history = Client.TypeHistory("Patient", before);
             
             Assert.EntryIdsArePresentAndAbsoluteUrls(history);
-            _typeHistory = history;
+            referenceBundle = history;
+
             CheckSortOrder(history);
 
-            string[] historyLinks = history.Entry.Select(be => be.Resource.VersionId).ToArray();
-
-            if (!history.Entry.All(ent => historyLinks.Contains(ent.Resource.VersionId)))
+            var _versions = history.VersionIds();
+            if (!versions.AreAllFoundIn(_versions))
+            {
                 Assert.Fail("history with _since does not contain all versions of instance");
+            }
 
             history = Client.History(_location, DateTimeOffset.Now.AddMinutes(1));
 
@@ -177,14 +183,21 @@ namespace Sprinkler.Tests
             history = Client.WholeSystemHistory(before);
             Assert.EntryIdsArePresentAndAbsoluteUrls(history);
 
-            Assert.HasAllForwardNavigationLinks(history); // Assumption: system has more history than pagesize
+            // Assert.HasAllForwardNavigationLinks(history); // Assumption: system has more history than pagesize
+            if (history.FirstLink == null || history.LastLink == null)
+            {
+                Assert.Fail("Expecting first, last link to be present");
+            }
+
             _systemHistory = history;
             CheckSortOrder(history);
 
-            string [] historyLinks = history.Entry.Select(be => be.Resource.VersionId).ToArray();
+            var historyLinks = history.VersionIds();
 
-            if (!Versions.All(sl => historyLinks.Contains(sl)))
+            if (!versions.AreAllFoundIn(historyLinks))
+            { 
                 Assert.Fail("history with _since does not contain all versions of instance");
+            }
 
             history = Client.History(_location, DateTimeOffset.Now.AddMinutes(1));
 
@@ -253,27 +266,88 @@ namespace Sprinkler.Tests
         }
 
 
+        // =================================================================================
+        // Static tests
+
+        private static void CheckTransactionElements(Bundle history)
+        {
+            if (!history.Entry.All(e => e.Transaction != null))
+            {
+                Assert.Fail("Not all history results have a transaction component");
+
+            }
+        }
+
+        private static void CheckVersionIds(Bundle history)
+        {
+            if (!history.Entry.Select(e => e.Transaction).All(t => new ResourceIdentity(t.Url).HasVersion))
+            {
+                Assert.Fail("Not all history entries have a versioned url");
+                //Assert.Fail("Selflinks on returned versions do not match links returned on creation" +
+                // Versions.Contains(ent.VersionId)))
+            }
+        }
+
         private static void CheckSortOrder(Bundle bundle)
         {
             DateTimeOffset maxDate = DateTimeOffset.MaxValue;
 
-            foreach (Bundle.BundleEntryComponent be in bundle.Entry)
+            foreach (var resource in bundle.GetResources())
             {
-                //DateTimeOffset? lastUpdate = be is ResourceEntry
-                //    ? ((be as ResourceEntry).LastUpdated)
-                //    : ((be as DeletedEntry).When);
+                if (resource.Meta == null)
+                {
+                    Assert.Fail("Resource with id {0} does not contain a meta element", resource.Id);
+                }
 
-                var lastUpdate = be.Resource.Meta.LastUpdated;
+                var lastUpdate = resource.Meta.LastUpdated;
 
                 if (lastUpdate == null)
-                    Assert.Fail(String.Format("Result contains entry with no LastUpdate (id: {0})", be.Resource.VersionId));
+                {
+                    Assert.Fail(String.Format("Result contains entry with no LastUpdate (id: {0})", resource.VersionId));
+                }
 
                 if (lastUpdate > maxDate)
-                    Assert.Fail("Result is not ordered on LastUpdate, first out of order has id " + be.Resource.VersionId);
+                {
+                    Assert.Fail("Result is not ordered on LastUpdate, first out of order has id " + resource.VersionId);
+                }
 
                 maxDate = lastUpdate.Value;
             }
         }       
+
+    }
+
+    
+
+    public static class BundleExtensions
+    {
+        // API
+        public static IEnumerable<Resource> GetResources(this Bundle bundle)
+        {
+            foreach(var entry in bundle.Entry)
+            {
+                if (entry.Resource != null) yield return entry.Resource;
+            }
+        }
+
+        public static IEnumerable<string> VersionIds(this Bundle bundle)
+        {
+            return bundle.Entry.Select(entry => new ResourceIdentity(entry.Transaction.Url).VersionId);
+        }
+
+        public static bool HasSameElements<T>(this IEnumerable<T> list1, IEnumerable<T> list2)
+        {
+            return list1.AreAllFoundIn(list2) && list2.AreAllFoundIn(list1);
+        }
+
+        public static bool AreAllFoundIn<T>(this IEnumerable<T> list1, IEnumerable<T> list2)
+        {
+            foreach (T item in list1)
+            {
+                if (!list2.Contains(item)) return false;
+            }
+            return true;
+        }
 
     }
 

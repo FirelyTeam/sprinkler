@@ -151,8 +151,5 @@ namespace Sprinkler.Tests
         }
     }
 
-    public static class BundleExtensions
-    {
-        
-    }
+
 }

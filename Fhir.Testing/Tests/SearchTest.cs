@@ -5,7 +5,6 @@
  * This file is licensed under the BSD 3-Clause license
  * available at https://raw.github.com/furore-fhir/sprinkler/master/LICENSE
  */
-
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -93,7 +92,6 @@ namespace Sprinkler.Tests
                 Assert.Fail("search result contains patients that do not match the criterium");
         }
 
-
         [SprinklerTest("SE04", "Search patient resource on given name")]
         public void SearchPatientOnGiven()
         {
@@ -123,7 +121,7 @@ namespace Sprinkler.Tests
                     Assert.Fail("no patients found - cannot run test");
                 var newCondition = new Condition
                 {
-                    Subject = new ResourceReference
+                    Patient = new ResourceReference
                     {
                         Reference = patients.Entry[0].Resource.Id
                     }
@@ -134,7 +132,7 @@ namespace Sprinkler.Tests
             IEnumerable<Condition> conditionsForPatients = conditions.Entry.ByResourceType<Condition>()
                 .Where(
                     c =>
-                        c.Subject != null && new ResourceIdentity(c.Subject.Url).ResourceType == "Patient");
+                        c.Patient != null && new ResourceIdentity(c.Patient.Url).ResourceType == "Patient");
 
             //We want a condition on a patient that has a name, for the last test in this method.
             ResourceIdentity patientRef = null;
@@ -146,7 +144,7 @@ namespace Sprinkler.Tests
             {
                 try
                 {
-                    patientRef = new ResourceIdentity(cond.Subject.Url);
+                    patientRef = new ResourceIdentity(cond.Patient.Url);
                     entry = Client.Read<Patient>(patientRef);
                     patFirstName = entry.Name[0].Family.First();
                     if (!string.IsNullOrEmpty(patFirstName)) break;
@@ -162,7 +160,7 @@ namespace Sprinkler.Tests
                 Assert.Fail("failed to find patient condition is referring to");
 
             IEnumerable<Condition> allConditionsForThisPatient =
-                conditionsForPatients.Where(c => c.Subject != null && c.Subject.Url == patientRef);
+                conditionsForPatients.Where(c => c.Patient != null && c.Patient.Url == patientRef);
             int nrOfConditionsForThisPatient = allConditionsForThisPatient.Count();
 
             Bundle result = Client.Search<Condition>(new[] {"subject=" + patientRef});

@@ -67,7 +67,7 @@ namespace Sprinkler.Tests
         {
             var p = new Patient();
             var item = new Identifier();
-            item.Label = "hl7v2";
+            //item.Type = "hl7v2";
             item.Value = "PID-55101";
             p.Identifier = new List<Identifier>();
             p.Identifier.Add(item);
