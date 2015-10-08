@@ -212,14 +212,13 @@ namespace Sprinkler.Tests
         {
             var observation = new Observation();
             observation.Status = Observation.ObservationStatus.Preliminary;
-            observation.Reliability = Observation.ObservationReliability.Questionable;
             observation.Code = new CodeableConcept("http://loinc.org", "2164-2");
             observation.Value = new Quantity
             {
                 System = "http://unitsofmeasure.org",
                 Value = value,
                 Code = "mg",
-                Units = "miligram"
+                Unit = "miligram"
             };
             observation.BodySite = new CodeableConcept("http://snomed.info/sct", "182756003");
 

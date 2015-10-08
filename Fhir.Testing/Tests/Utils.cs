@@ -70,8 +70,8 @@ namespace Sprinkler.Tests
 
         public static bool IsDeleted(this Bundle.BundleEntryComponent entry)
         {
-            if (entry.Transaction == null) return false;
-            return (entry.Transaction.Method == Bundle.HTTPVerb.DELETE);
+            if (entry.Request == null) return false;
+            return (entry.Request.Method == Bundle.HTTPVerb.DELETE);
         }
 
         public static IEnumerable<Bundle.BundleEntryComponent> GetDeleted(this IEnumerable<Bundle.BundleEntryComponent> entries)

@@ -131,7 +131,7 @@ namespace Sprinkler.Tests
 
             foreach (var ent in (Utils.GetDeleted(history.Entry)))
             {
-                var identity = new ResourceIdentity(ent.Transaction.Url);
+                var identity = new ResourceIdentity(ent.Request.Url);
                 Assert.Fails(Client, () => Client.Read<Patient>(identity), HttpStatusCode.Gone);
             }
         }
@@ -271,7 +271,7 @@ namespace Sprinkler.Tests
 
         private static void CheckTransactionElements(Bundle history)
         {
-            if (!history.Entry.All(e => e.Transaction != null))
+            if (history.Entry.Any(e => e.Request == null))
             {
                 Assert.Fail("Not all history results have a transaction component");
 
@@ -280,7 +280,7 @@ namespace Sprinkler.Tests
 
         private static void CheckVersionIds(Bundle history)
         {
-            if (!history.Entry.Select(e => e.Transaction).All(t => new ResourceIdentity(t.Url).HasVersion))
+            if (!history.Entry.Select(e => e.Request).All(t => new ResourceIdentity(t.Url).HasVersion))
             {
                 Assert.Fail("Not all history entries have a versioned url");
                 //Assert.Fail("Selflinks on returned versions do not match links returned on creation" +
@@ -332,7 +332,7 @@ namespace Sprinkler.Tests
 
         public static IEnumerable<string> VersionIds(this Bundle bundle)
         {
-            return bundle.Entry.Select(entry => new ResourceIdentity(entry.Transaction.Url).VersionId);
+            return bundle.Entry.Select(entry => new ResourceIdentity(entry.Request.Url).VersionId);
         }
 
         public static bool HasSameElements<T>(this IEnumerable<T> list1, IEnumerable<T> list2)

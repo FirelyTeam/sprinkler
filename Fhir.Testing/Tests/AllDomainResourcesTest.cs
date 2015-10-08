@@ -290,7 +290,7 @@ namespace Sprinkler.Tests
         [SprinklerTest("AR27", "Create read update delete on Medication Prescription")]
         public void TestMedicationPrescription()
         {
-            TestSomeResource<MedicationPrescription>();
+            TestSomeResource<MedicationOrder>();
         }
 
         [SprinklerTest("AR28", "Create read update delete on Medication Statement")]
@@ -401,10 +401,16 @@ namespace Sprinkler.Tests
             TestSomeResource<Specimen>();
         }
 
-        [SprinklerTest("AR46", "Create read update delete on Supply")]
-        public void TestSupply()
+        [SprinklerTest("AR46", "Create read update delete on SupplyRequest")]
+        public void TestSupplyRequest()
         {
-            TestSomeResource<Supply>();
+            TestSomeResource<SupplyRequest>();
+        }
+
+        [SprinklerTest("AR46", "Create read update delete on SupplyRequest")]
+        public void TestSupplyDelivery()
+        {
+            TestSomeResource<SupplyRequest>();
         }
 
         [SprinklerTest("AR47", "Create read update delete on Value Set")]

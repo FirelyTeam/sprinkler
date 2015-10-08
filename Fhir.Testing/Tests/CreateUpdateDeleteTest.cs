@@ -159,14 +159,14 @@ namespace Sprinkler.Tests
             Assert.SkipWhen(CreateDate == null);
             Patient pat = Client.Read<Patient>(Location);
 
-            pat.Telecom.Add(new ContactPoint{System = ContactPoint.ContactPointSystem.Url, Value = "http://www.nu.nl"});           
+            pat.Telecom.Add(new ContactPoint{System = ContactPoint.ContactPointSystem.Other, Value = "http://www.nu.nl"});           
 
             Client.Update(pat);
 
             pat = Client.Read<Patient>(Location);
 
             if (!pat.Telecom.Any(
-                tel => tel.System == ContactPoint.ContactPointSystem.Url && tel.Value == "http://www.nu.nl"))
+                tel => tel.System == ContactPoint.ContactPointSystem.Other && tel.Value == "http://www.nu.nl"))
                 Assert.Fail(String.Format("Resource {0} unchanged after update", Location));
 
             Versions.Add(pat.VersionId);

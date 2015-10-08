@@ -74,7 +74,7 @@ namespace Sprinkler.Framework
 
             if (exception is FhirOperationException)
             {
-                IEnumerable<string> details = (exception as FhirOperationException).Outcome.Issue.Select(i => i.Details);
+                IEnumerable<string> details = (exception as FhirOperationException).Outcome.Issue.Select(i => i.Diagnostics);
                 return string.Join(" - \n", details);
             }
             else return exception.Message;
