@@ -6,16 +6,12 @@
  * available at https://raw.github.com/furore-fhir/sprinkler/master/LICENSE
  */
 
-using Hl7.Fhir.Model;
-using Hl7.Fhir.Rest;
-using Hl7.Fhir.Serialization;
-using Sprinkler.Framework;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Net;
-using System.Threading.Tasks;
+using Hl7.Fhir.Model;
+using Sprinkler.Framework;
 
 namespace Sprinkler.Tests
 {
@@ -25,7 +21,7 @@ namespace Sprinkler.Tests
         List<DomainResource> resources = DemoData.GetListofResources();
         int tempid = 0;
         List<String> errors = new List<string>();
-
+      
         private void TryToUpdate<T>(DomainResource resource, string location) where T : DomainResource, new()
         {
             DomainResource res = Client.Read<T>(location);
@@ -35,11 +31,11 @@ namespace Sprinkler.Tests
                 res.AddExtension("http://fhir.furore.com/extensions/sprinkler", element);
                 Client.Update(res);
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 errors.Add("Update of " + resource.GetType().Name + " failed: " + e.Message);
             }
-        }     
+        }
 
         public void AndTryDelete<T>(DomainResource resource, string location) where T : DomainResource, new()
         {
@@ -48,10 +44,10 @@ namespace Sprinkler.Tests
                 Client.Delete(location);
                 Assert.Fails(Client, () => Client.Read<T>(location), HttpStatusCode.Gone);
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 errors.Add("Deletion of " + resource.GetType().Name + " failed: " + e.Message);
-            }           
+            }
         }
 
         private void TryToRead<T>(DomainResource resource, string location) where T : DomainResource, new()
@@ -60,23 +56,23 @@ namespace Sprinkler.Tests
             {
                 Client.Read<T>(location);
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 errors.Add("Cannot read " + resource.GetType().Name + ": " + e.Message);
-            }           
-        }      
+            }
+        }
 
-        public void AttemptResource<T>(DomainResource resource) where T: DomainResource, new()
+        public void AttemptResource<T>(DomainResource resource) where T : DomainResource, new()
         {
             string key = null;
 
             if (typeof(T) == resource.GetType())
-            {         
+            {
                 DomainResource created = null;
                 try
                 {
                     created = Client.Create((T)resource);
-                    key = created.ResourceIdentity().WithoutVersion().MakeRelative().ToString();               
+                    key = created.ResourceIdentity().WithoutVersion().MakeRelative().ToString();
                     if (key != null)
                     {
                         TryToRead<T>(resource, key);
@@ -84,16 +80,16 @@ namespace Sprinkler.Tests
                         AndTryDelete<T>(resource, key);
                     }
                 }
-                catch(Exception e)
+                catch (Exception e)
                 {
-                    errors.Add("Creation of " + resource.GetType().Name + " failed: " + e.Message);                    
+                    errors.Add("Creation of " + resource.GetType().Name + " failed: " + e.Message);
                 }
             }
         }
-     
-        private void TestSomeResource<T>() where T: DomainResource, new()
+
+        private void TestSomeResource<T>() where T : DomainResource, new()
         {
-            errors.Clear();           
+            errors.Clear();
             string id = "sprink" + tempid++.ToString();
             Type type = typeof(T);
 
@@ -122,11 +118,11 @@ namespace Sprinkler.Tests
         private DomainResource GetFirstResourceOfType(Type type)
         {
             //string id = "sprink" + tempid++.ToString();
-            IEnumerable<DomainResource> resource = 
+            IEnumerable<DomainResource> resource =
                 from r in resources
                 where r.GetType() == type
                 select r;
-            
+
             return resource.FirstOrDefault();
         }
 
@@ -223,7 +219,7 @@ namespace Sprinkler.Tests
         [SprinklerTest("AR16", "Create read update delete on Family History")]
         public void TestFamilyHistory()
         {
-            
+
             TestSomeResource<FamilyMemberHistory>();
         }
 
@@ -407,16 +403,339 @@ namespace Sprinkler.Tests
             TestSomeResource<SupplyRequest>();
         }
 
-        [SprinklerTest("AR46", "Create read update delete on SupplyRequest")]
+        [SprinklerTest("AR46", "Create read update delete on SupplyDelivery")]
         public void TestSupplyDelivery()
         {
-            TestSomeResource<SupplyRequest>();
+            TestSomeResource<SupplyDelivery>();
         }
 
         [SprinklerTest("AR47", "Create read update delete on Value Set")]
         public void TestValueSet()
         {
             TestSomeResource<ValueSet>();
+        }
+
+        [SprinklerTest("AR48", "Create read update delete on Account")]
+        public void TestAccount()
+        {
+            TestSomeResource<Account>();
+        }
+
+        [SprinklerTest("AR49", "Create read update delete on DetectedIssue")]
+        public void TestDetectedIssue()
+        {
+            TestSomeResource<DetectedIssue>();
+        }
+
+
+        [SprinklerTest("AR50", "Create read update delete on ImplementationGuide")]
+        public void TestImplementationGuide()
+        {
+            TestSomeResource<ImplementationGuide>();
+        }
+
+        [SprinklerTest("AR51", "Create read update delete on QuestionnaireResponse")]
+        public void TestQuestionnaireResponse()
+        {
+            TestSomeResource<QuestionnaireResponse>();
+        }
+
+        [SprinklerTest("AR52", "Create read update delete on TestScript")]
+        public void TestTestScript()
+        {
+            TestSomeResource<TestScript>();
+        }
+
+        [SprinklerTest("AR53", "Create read update delete on StructureDefinition")]
+        public void TestStructureDefinition()
+        {
+            TestSomeResource<StructureDefinition>();
+        }
+
+        [SprinklerTest("AR54", "Create read update delete on AppointmentResponse")]
+        public void TestAppointmentResponse()
+        {
+            TestSomeResource<AppointmentResponse>();
+        }
+
+        [SprinklerTest("AR55", "Create read update delete on Appointment")]
+        public void TestAppointment()
+        {
+            TestSomeResource<Appointment>();
+        }
+
+        [SprinklerTest("AR56", "Create read update delete on AuditEvent")]
+        public void TestAuditEvent()
+        {
+            TestSomeResource<AuditEvent>();
+        }
+
+        [SprinklerTest("AR57", "Create read update delete on Basic")]
+        public void TestBasic()
+        {
+            TestSomeResource<Basic>();
+        }
+
+        [SprinklerTest("AR58", "Create read update delete on BodySite")]
+        public void TestBodySite()
+        {
+            TestSomeResource<BodySite>();
+        }
+
+        [SprinklerTest("AR59", "Create read update delete on Claim")]
+        public void TestClaim()
+        {
+            TestSomeResource<Claim>();
+        }
+
+        [SprinklerTest("AR60", "Create read update delete on ClaimResponse")]
+        public void TestClaimResponse()
+        {
+            TestSomeResource<ClaimResponse>();
+        }
+
+        [SprinklerTest("AR61", "Create read update delete on ClinicalImpression")]
+        public void TestClinicalImpression()
+        {
+            TestSomeResource<ClinicalImpression>();
+        }
+
+        [SprinklerTest("AR62", "Create read update delete on Communication")]
+        public void TestCommunication()
+        {
+            TestSomeResource<Communication>();
+        }
+
+        [SprinklerTest("AR63", "Create read update delete on CommunicationRequest")]
+        public void TestCommunicationRequest()
+        {
+            TestSomeResource<CommunicationRequest>();
+        }
+
+        [SprinklerTest("AR64", "Create read update delete on Contract")]
+        public void TestContract()
+        {
+            TestSomeResource<Contract>();
+        }
+
+        [SprinklerTest("AR65", "Create read update delete on Coverage")]
+        public void TestCoverage()
+        {
+            TestSomeResource<Coverage>();
+        }
+
+        [SprinklerTest("AR66", "Create read update delete on DataElement")]
+        public void TestDataElement()
+        {
+            TestSomeResource<DataElement>();
+        }
+
+        [SprinklerTest("AR67", "Create read update delete on DeviceComponent")]
+        public void TestDeviceComponent()
+        {
+            TestSomeResource<DeviceComponent>();
+        }
+
+        [SprinklerTest("AR68", "Create read update delete on DeviceMetric")]
+        public void TestDeviceMetric()
+        {
+            TestSomeResource<DeviceMetric>();
+        }
+
+        [SprinklerTest("AR69", "Create read update delete on DeviceUseRequest")]
+        public void TestDeviceUseRequest()
+        {
+            TestSomeResource<DeviceUseRequest>();
+        }
+
+        [SprinklerTest("AR70", "Create read update delete on DeviceUseStatement")]
+        public void TestCDeviceUseStatement()
+        {
+            TestSomeResource<DeviceUseStatement>();
+        }
+
+        [SprinklerTest("AR71", "Create read update delete on EligibilityRequest")]
+        public void TestEligibilityRequest()
+        {
+            TestSomeResource<EligibilityRequest>();
+        }
+
+        [SprinklerTest("AR72", "Create read update delete on EligibilityResponse")]
+        public void TestEligibilityResponse()
+        {
+            TestSomeResource<EligibilityResponse>();
+        }
+
+
+        [SprinklerTest("AR73", "Create read update delete on EnrollmentRequest")]
+        public void TestEnrollmentRequest()
+        {
+            TestSomeResource<EnrollmentRequest>();
+        }
+
+
+        [SprinklerTest("AR74", "Create read update delete on EnrollmentResponse")]
+        public void TestEnrollmentResponse()
+        {
+            TestSomeResource<EnrollmentResponse>();
+        }
+
+
+        [SprinklerTest("AR75", "Create read update delete on EpisodeOfCare")]
+        public void TestEpisodeOfCare()
+        {
+            TestSomeResource<EpisodeOfCare>();
+        }
+
+
+        [SprinklerTest("AR76", "Create read update delete on ExplanationOfBenefit")]
+        public void TestExplanationOfBenefit()
+        {
+            TestSomeResource<ExplanationOfBenefit>();
+        }
+
+
+        [SprinklerTest("AR77", "Create read update delete on Flag")]
+        public void TestFlag()
+        {
+            TestSomeResource<Flag>();
+        }
+
+
+        [SprinklerTest("AR78", "Create read update delete on Goal")]
+        public void TestGoal()
+        {
+            TestSomeResource<Goal>();
+        }
+
+
+        [SprinklerTest("AR79", "Create read update delete on HealthcareService")]
+        public void TestHealthcareService()
+        {
+            TestSomeResource<HealthcareService>();
+        }
+
+
+        [SprinklerTest("AR80", "Create read update delete on ImagingObjectSelection")]
+        public void TestImagingObjectSelection()
+        {
+            TestSomeResource<ImagingObjectSelection>();
+        }
+
+
+        [SprinklerTest("AR81", "Create read update delete on NamingSystem")]
+        public void TestNamingSystem()
+        {
+            TestSomeResource<NamingSystem>();
+        }
+
+
+        [SprinklerTest("AR82", "Create read update delete on NutritionOrder")]
+        public void TestNutritionOrder()
+        {
+            TestSomeResource<NutritionOrder>();
+        }
+
+
+        [SprinklerTest("AR83", "Create read update delete on OperationDefinition")]
+        public void TestOperationDefinition()
+        {
+            TestSomeResource<OperationDefinition>();
+        }
+
+
+        [SprinklerTest("AR84", "Create read update delete on PaymentNotice")]
+        public void TestPaymentNotice()
+        {
+            TestSomeResource<PaymentNotice>();
+        }
+
+
+        [SprinklerTest("AR85", "Create read update delete on PaymentReconciliation")]
+        public void TestPaymentReconciliation()
+        {
+            TestSomeResource<PaymentReconciliation>();
+        }
+
+
+        [SprinklerTest("AR86", "Create read update delete on Person")]
+        public void TestPerson()
+        {
+            TestSomeResource<Person>();
+        }
+
+
+        [SprinklerTest("AR87", "Create read update delete on ProcedureRequest")]
+        public void TestProcedureRequest()
+        {
+            TestSomeResource<ProcedureRequest>();
+        }
+
+
+        [SprinklerTest("AR88", "Create read update delete on ProcessRequest")]
+        public void TestProcessRequest()
+        {
+            TestSomeResource<ProcessRequest>();
+        }
+
+
+        [SprinklerTest("AR89", "Create read update delete on ProcessResponse")]
+        public void TestProcessResponse()
+        {
+            TestSomeResource<ProcessResponse>();
+        }
+
+
+        [SprinklerTest("AR90", "Create read update delete on ReferralRequest")]
+        public void TestReferralRequest()
+        {
+            TestSomeResource<ReferralRequest>();
+        }
+
+
+        [SprinklerTest("AR91", "Create read update delete on RiskAssessment")]
+        public void TestRiskAssessment()
+        {
+            TestSomeResource<RiskAssessment>();
+        }
+
+        [SprinklerTest("AR92", "Create read update delete on Schedule")]
+        public void TestSchedule()
+        {
+            TestSomeResource<Schedule>();
+        }
+
+
+        [SprinklerTest("AR93", "Create read update delete on SearchParameter")]
+        public void TestSearchParameter()
+        {
+            TestSomeResource<SearchParameter>();
+        }
+
+
+        [SprinklerTest("AR94", "Create read update delete on Slot")]
+        public void TestSlot()
+        {
+            TestSomeResource<Slot>();
+        }
+
+
+        [SprinklerTest("AR95", "Create read update delete on Subscription")]
+        public void TestSubscription()
+        {
+            TestSomeResource<Subscription>();
+        }
+
+        [SprinklerTest("AR96", "Create read update delete on SupplyDelivery")]
+        public void TestSubstance()
+        {
+            TestSomeResource<Substance>();
+        }
+
+        [SprinklerTest("AR97", "Create read update delete on VisionPrescription")]
+        public void TestVisionPrescription()
+        {
+            TestSomeResource<VisionPrescription>();
         }
     }
 }

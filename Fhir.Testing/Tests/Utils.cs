@@ -90,5 +90,20 @@ namespace Sprinkler.Tests
             return entries.Count() > 0;
 
         }
+
+        public static Patient GetNewPatient(string family = "Adams" , params string[] given)
+        {
+            var p = new Patient();
+            var n = new HumanName();
+            foreach (string g in given)
+            {
+                n.WithGiven(g);
+            }
+
+            n.AndFamily(family);
+            p.Name = new List<HumanName>();
+            p.Name.Add(n);
+            return p;
+        }
     }
 }

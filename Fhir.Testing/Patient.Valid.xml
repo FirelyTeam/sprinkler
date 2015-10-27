@@ -1,37 +1,64 @@
 ﻿<?xml version="1.0" encoding="UTF-8"?>
-<Patient xmlns="http://hl7.org/fhir" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://hl7.org/fhir file:/C:/Users/Marten/OneDrive/FHIR/Schemas/DSTU2/patient.xsd">
+<Patient xmlns="http://hl7.org/fhir">
+  <id value="example"/>
   <text>
     <status value="generated"/>
     <div xmlns="http://www.w3.org/1999/xhtml">
+
       <table>
+
         <tbody>
+
           <tr>
+
             <td>Name</td>
+
             <td>
-              Peter James <b>Chalmers</b> (&quot;Jim&quot;)
+              Peter James
+              <b>Chalmers</b> (&quot;Jim&quot;)
             </td>
+
           </tr>
+
           <tr>
+
             <td>Address</td>
+
             <td>534 Erewhon, Pleasantville, Vic, 3999</td>
+
           </tr>
+
           <tr>
+
             <td>Contacts</td>
+
             <td>Home: unknown. Work: (03) 5555 6473</td>
+
           </tr>
+
           <tr>
+
             <td>Id</td>
+
             <td>MRN: 12345 (Acme Healthcare)</td>
+
           </tr>
+
         </tbody>
+
       </table>
+
     </div>
   </text>
-  <!--  MRN assigned by ACME healthcare on 6-May 2001  -->
+  <!--   MRN assigned by ACME healthcare on 6-May 2001   -->
   <identifier>
     <use value="usual"/>
-    <label value="MRN"/>
+    <type>
+      <coding>
+        <system value="http://hl7.org/fhir/v2/0203"/>
+        <code value="MR"/>
+      </coding>
+    </type>
     <system value="urn:oid:1.2.36.146.595.217.0.1"/>
     <value value="12345"/>
     <period>
@@ -41,7 +68,8 @@
       <display value="Acme Healthcare"/>
     </assigner>
   </identifier>
-  <!--  Peter James Chalmers, but called "Jim"  -->
+  <active value="true"/>
+  <!--   Peter James Chalmers, but called "Jim"   -->
   <name>
     <use value="official"/>
     <family value="Chalmers"/>
@@ -54,30 +82,33 @@
   </name>
   <telecom>
     <use value="home"/>
-    <!--  home communication details aren't known  -->
+    <!--   home communication details aren't known   -->
   </telecom>
   <telecom>
     <system value="phone"/>
     <value value="(03) 5555 6473"/>
     <use value="work"/>
-  </telecom> 
+  </telecom>
+  <!--   use FHIR code system for male / female   -->
   <gender value="male"/>
-  <birthDate value="1974-12-25"/>
+  <birthDate value="1974-12-25">
+    <extension url="http://hl7.org/fhir/StructureDefinition/patient-birthTime">
+      <valueDateTime value="1974-12-25T14:35:45-05:00"/>
+    </extension>
+  </birthDate>
   <deceasedBoolean value="false"/>
-
   <address>
     <use value="home"/>
+    <type value="both"/>
     <line value="534 Erewhon St"/>
     <city value="PleasantVille"/>
+    <district value="Rainbow"/>
     <state value="Vic"/>
     <postalCode value="3999"/>
+    <period>
+      <start value="1974-12-25"/>
+    </period>
   </address>
-  <photo>
-    <contentType value="image/gif"/>
-    <data
-        value="R0lGODlhEwARAPcAAAAAAAAA/+9aAO+1AP/WAP/eAP/eCP/eEP/eGP/nAP/nCP/nEP/nIf/nKf/nUv/nWv/vAP/vCP/vEP/vGP/vIf/vKf/vMf/vOf/vWv/vY//va//vjP/3c//3lP/3nP//tf//vf///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////yH5BAEAAAEALAAAAAATABEAAAi+AAMIDDCgYMGBCBMSvMCQ4QCFCQcwDBGCA4cLDyEGECDxAoAQHjxwyKhQAMeGIUOSJJjRpIAGDS5wCDly4AALFlYOgHlBwwOSNydM0AmzwYGjBi8IHWoTgQYORg8QIGDAwAKhESI8HIDgwQaRDI1WXXAhK9MBBzZ8/XDxQoUFZC9IiCBh6wEHGz6IbNuwQoSpWxEgyLCXL8O/gAnylNlW6AUEBRIL7Og3KwQIiCXb9HsZQoIEUzUjNEiaNMKAAAA7"
-        />
-  </photo>
   <contact>
     <relationship>
       <coding>
@@ -87,8 +118,8 @@
     </relationship>
     <name>
       <family value="du">
-        <!--  the "du" part is a family name prefix (VV in iso 21090)  -->
-        <extension url="http://hl7.org/fhir/Profile/iso-21090#qualifier">
+        <!--   the "du" part is a family name prefix (VV in iso 21090)   -->
+        <extension url="http://hl7.org/fhir/StructureDefinition/iso21090-EN-qualifier">
           <valueCode value="VV"/>
         </extension>
       </family>
@@ -99,9 +130,13 @@
       <system value="phone"/>
       <value value="+33 (237) 998327"/>
     </telecom>
+    <gender value="female"/>
+    <period>
+      <!--   The contact relationship started in 2012   -->
+      <start value="2012"/>
+    </period>
   </contact>
   <managingOrganization>
     <reference value="Organization/1"/>
   </managingOrganization>
-  <active value="true"/>
 </Patient>

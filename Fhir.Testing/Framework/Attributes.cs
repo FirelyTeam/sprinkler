@@ -7,8 +7,10 @@
  */
 
 using System;
+using System.Globalization;
 using System.Linq;
 using System.Reflection;
+using Fhir.Testing.Framework;
 
 namespace Sprinkler.Framework
 {
@@ -33,6 +35,25 @@ namespace Sprinkler.Framework
         }
     }
 
+    [AttributeUsage(AttributeTargets.Class, Inherited = false, AllowMultiple = false)]
+    public sealed class SprinklerDynamicModule : Attribute
+    {
+        public SprinklerDynamicModule(Type dynamicTestGenerator)
+        {
+            DynamicTestGenerator = dynamicTestGenerator;
+        }
+
+        public Type DynamicTestGenerator { get; set; }
+
+
+        /** given the testclass type, return its SprinklerTestModuleAttribute when it exists or null if it does not. */
+
+        public static SprinklerDynamicModule AttributeOf(Type testclass)
+        {
+            return testclass.GetCustomAttributes(typeof(SprinklerDynamicModule), false).FirstOrDefault() as SprinklerDynamicModule;
+        }
+    }
+
     [AttributeUsage(AttributeTargets.Method, Inherited = false, AllowMultiple = false)]
     public sealed class SprinklerTest : Attribute
     {
@@ -48,6 +69,38 @@ namespace Sprinkler.Framework
         public static SprinklerTest AttributeOf(MethodInfo method)
         {
             return method.GetCustomAttributes(typeof(SprinklerTest), false).FirstOrDefault() as SprinklerTest;
+        }
+    }
+
+    public sealed class ModuleInitializeAttribute : Attribute
+    {
+    }
+
+    [AttributeUsage(AttributeTargets.Method, Inherited = false, AllowMultiple = false)]
+    public sealed class SprinklerDynamicTest : Attribute
+    {
+        private string code;
+        private string title;
+
+        public SprinklerDynamicTest(string code, string title)
+        {
+            this.code = code;
+            this.title = title;
+        }
+
+        public string GetCode(MethodInfo methodInfo)
+        {
+            return string.Format(CultureInfo.InvariantCulture, code, methodInfo.GetGenericArguments().Select(t => t.Name).ToArray());
+        }
+
+        public string GetTitle(MethodInfo methodInfo)
+        {
+            return string.Format(CultureInfo.InvariantCulture, title, methodInfo.GetGenericArguments().Select(t => t.Name).ToArray());
+        }
+
+        public static SprinklerDynamicTest AttributeOf(MethodInfo method)
+        {
+            return method.GetCustomAttributes(typeof(SprinklerDynamicTest), false).FirstOrDefault() as SprinklerDynamicTest;
         }
     }
 }

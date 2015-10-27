@@ -9,7 +9,6 @@
 using System;
 using System.Linq;
 using System.Net;
-using System.Text;
 using Hl7.Fhir.Model;
 using Hl7.Fhir.Rest;
 
@@ -20,7 +19,7 @@ namespace Sprinkler.Framework
         public static void ContentTypePresent(FhirClient client)
         {
             if (String.IsNullOrEmpty( client.LastResult.GetHeader("Content-Type").FirstOrDefault()))                
-                Assert.Fail("Mandatory Content-Type header missing");
+                Fail("Mandatory Content-Type header missing");
         }
 
         public static void ResourceResponseConformsTo(FhirClient client, ResourceFormat format)
@@ -28,6 +27,9 @@ namespace Sprinkler.Framework
             ValidResourceContentTypePresent(client);
 
             string type = client.LastResult.GetHeader("Content-Type").FirstOrDefault();
+            //TODO: temporary hack. Must be removed when ContentType.GetResourceFormatFromContentType will correctly treat the charset element.
+            int charsetFormat = type.IndexOf(";", 0, StringComparison.Ordinal);
+            type = type.Substring(0, charsetFormat);
             if (ContentType.GetResourceFormatFromContentType(type) != format)
                 Assert.Fail(String.Format("{0} is not acceptable when expecting {1}", type, format));
         }
@@ -35,19 +37,19 @@ namespace Sprinkler.Framework
         public static void BodyNotEmpty(FhirClient client)
         {
             if (client.LastResult.GetBody() == null)
-                Assert.Fail("Body is empty");
+                Fail("Body is empty");
         }
 
         public static void LastModifiedPresent(FhirClient client)
         {
             if (client.LastResult.LastModified == null)
-                Assert.Fail("Mandatory Last-Modified header missing");
+                Fail("Mandatory Last-Modified header missing");
         }
 
         public static void ContentLocationPresentAndValid(FhirClient client)
         {
             if (String.IsNullOrEmpty(client.LastResult.GetHeader("Content-Location").FirstOrDefault()))
-                Assert.Fail("Mandatory Content-Location header missing");
+                Fail("Mandatory Content-Location header missing");
 
             ContentLocationValidIfPresent(client);
         }
@@ -59,25 +61,25 @@ namespace Sprinkler.Framework
                 var rl = new ResourceIdentity(client.LastResult.GetHeader("Content-Location").FirstOrDefault());
 
                 if (rl.Id == null)
-                    Assert.Fail("Content-Location does not have an id in it");
+                    Fail("Content-Location does not have an id in it");
 
                 if (rl.VersionId == null)
-                    Assert.Fail("Content-Location is not a version-specific url");
+                    Fail("Content-Location is not a version-specific url");
             }
         }
 
         public static void LocationPresentAndValid(FhirClient client)
         {
             if (String.IsNullOrEmpty(client.LastResult.Location))
-                Assert.Fail("Mandatory Location header missing");
+                Fail("Mandatory Location header missing");
 
             var rl = new ResourceIdentity(client.LastResult.Location);
 
             if (rl.Id == null)
-                Assert.Fail("Location does not have an id in it");
+                Fail("Location does not have an id in it");
 
             if (rl.VersionId == null)
-                Assert.Fail("Location is not a version-specific url");
+                Fail("Location is not a version-specific url");
         }
 
         public static void Success(FhirClient client, Action action)
@@ -88,7 +90,7 @@ namespace Sprinkler.Framework
             }
             catch (FhirOperationException foe)
             {
-                Assert.Fail(foe, String.Format("Call failed (http result {0})", client.LastResult.Status));
+                Fail(foe, String.Format("Call failed (http result {0})", client.LastResult.Status));
             }
         }
 
@@ -116,13 +118,13 @@ namespace Sprinkler.Framework
             try
             {
                 result = action();
-                Assert.Fail("Unexpected success result (" + client.LastResult.Status + ")");
+                Fail("Unexpected success result (" + client.LastResult.Status + ")");
             }
             catch (FhirOperationException)
             {
                 result = default(TOut);
-                if (expected != null && client.LastResult.Status != expected.ToString())
-                    Assert.Fail("Expected http result {0} but got {1}", expected, client.LastResult.Status);
+                if (expected != null && client.LastResult.Status != ((int)expected).ToString())
+                    Fail("Expected http result {0} but got {1}", expected, client.LastResult.Status);
             }
         }
 
@@ -131,11 +133,11 @@ namespace Sprinkler.Framework
             try
             {
                 action();
-                Assert.Fail("Unexpected success result (" + client.LastResult.Status + ")");
+                Fail("Unexpected success result (" + client.LastResult.Status + ")");
             }
             catch (FhirOperationException)
             {
-                if (expected != null && client.LastResult.Status != expected.ToString()) //HttpStatusCode To String???
+                if (expected != null && client.LastResult.Status != ((int)expected).ToString()) //HttpStatusCode To String???
                     Assert.Fail(String.Format("Expected http result {0} but got {1}", expected,
                          client.LastResult.Status));
             }
@@ -146,7 +148,7 @@ namespace Sprinkler.Framework
             ContentTypePresent(client);
 
             if (!ContentType.IsValidResourceContentType(client.LastResult.GetHeader("Content-Type").FirstOrDefault()))
-                Assert.Fail("expected xml or json content type, but received " +
+                Fail("expected xml or json content type, but received " +
                                 client.LastResult.GetHeader("Content-Type").FirstOrDefault());
             //if (client.LastResponseDetails.CharacterEncoding != Encoding.UTF8)
             //    Assert.Fail("content type does not specify UTF8");
@@ -157,7 +159,7 @@ namespace Sprinkler.Framework
             ContentTypePresent(client);
 
             if (!ContentType.IsValidBundleContentType(client.LastResult.GetHeader("Content-Type").FirstOrDefault()))
-                Assert.Fail("expected Atom xml or json bundle content type, but received " +
+                Fail("expected Atom xml or json bundle content type, but received " +
                                 client.LastResult.GetHeader("Content-Type").FirstOrDefault());
             //if (client.LastResponseDetails.CharacterEncoding != Encoding.UTF8)
             //    Assert.Fail("content type does not specify UTF8");
@@ -166,7 +168,7 @@ namespace Sprinkler.Framework
         public static void EntryIdsArePresentAndAbsoluteUrls(Bundle b)
         {
             if (b.Entry.Any(e => e.Resource != null && (e.Resource.Id == null && e.Resource.VersionId == null) ))
-                Assert.Fail("Some id/versionId's in the bundle are null");
+                Fail("Some id/versionId's in the bundle are null");
 
             // todo: DSTU2 this no longer works in DSTU2
             //if (!b.Entry. All(e => (e.Resource != null && e.Resource.ResourceIdentity().IsAbsoluteUri ))
@@ -179,10 +181,10 @@ namespace Sprinkler.Framework
             switch (actual.CompareTo(expected))
             {
                 case -1:
-                    Assert.Fail("Too little results: " + formattedMessage);
+                    Fail("Too little results: " + formattedMessage);
                     return;
                 case 1:
-                    Assert.Fail("Too many results: " + formattedMessage);
+                    Fail("Too many results: " + formattedMessage);
                     return;
                 default:
                     return;
@@ -191,8 +193,8 @@ namespace Sprinkler.Framework
 
         internal static void HttpOk(FhirClient client)
         {
-            if (client.LastResult.Status != HttpStatusCode.OK.ToString())
-                Assert.Fail("Got status code " + client.LastResult.Status +
+            if (client.LastResult.Status != ((int)HttpStatusCode.OK).ToString())
+                Fail("Got status code " + client.LastResult.Status +
                                 ". Did you install the standard test-set?");
         }
 
@@ -201,13 +203,13 @@ namespace Sprinkler.Framework
             if (history.FirstLink == null ||
                 history.NextLink == null ||
                 history.LastLink == null)
-                Assert.Fail("Expecting first, next and last link to be present");
+                Fail("Expecting first, next and last link to be present");
         }
 
         public static void IsTrue(bool assertion, string message)
         {
             if (!assertion)
-                Assert.Fail(message);
+                Fail(message);
         }
 
         public static void Fail(string message)

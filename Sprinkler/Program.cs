@@ -71,18 +71,24 @@ namespace Sprinkler
         private static void log(TestResult result)
         {
             string designator = string.Format("{0}/{1} {2}", result.Category, result.Code, result.Title);
-            Console.WriteLine("{0}[{1}]", designator.PadRight(80, '.'), result.Outcome);
+            Console.WriteLine(designator);
+            Console.ForegroundColor = result.Outcome == TestOutcome.Success ? ConsoleColor.Green : ConsoleColor.Red;
+            Console.WriteLine("{0}", result.Outcome);
             if (result.Outcome == TestOutcome.Fail)
             {
                 Console.WriteLine("  - {0}\n", result.OperationOutcome());
+                //Console.ResetColor();
+                //Console.WriteLine("Press any key...");
+                //Console.ReadKey();
             }
+            Console.ResetColor();
         }
 
         private static void RunTests()
         {
             try
             {
-                var url = parameters.Values.First(); 
+                var url = parameters.Values.First();
                 var tests = parameters.Values.Skip(1).ToArray(); 
                 TestRunner runner = Test.CreateRunner(url, log);
                 runner.Run(tests);

@@ -53,8 +53,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Framework\BundleAssert.cs" />
+    <Compile Include="Framework\IDynamicTestGenerator.cs" />
     <Compile Include="Framework\Test.cs" />
     <Compile Include="Framework\TestScript.cs" />
+    <Compile Include="Tests\AllDomainResourcesDynamicTest.cs" />
+    <Compile Include="Tests\AllDomainResourcesTestGenerator.cs" />
     <Compile Include="Tests\ValidatorTest.cs" />
     <Compile Include="Tests\Utils.cs" />
     <Compile Include="Tests\TestTransactions.cs" />
@@ -70,7 +74,6 @@
     <Compile Include="Tests\BinaryTest.cs" />
     <Compile Include="Tests\AllDomainResourcesTest.cs" />
     <Compile Include="Tests\CreateUpdateDeleteTest.cs" />
-    <Compile Include="Tests\TestScriptRunner.cs" />
     <Compile Include="Utilities\AttributeHelper.cs" />
     <Compile Include="Framework\DemoData.cs" />
     <Compile Include="Framework\Assert.cs" />
@@ -107,7 +110,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="examples.zip">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="packages.config" />
     <None Include="patient-example.xml">

@@ -23,6 +23,7 @@ namespace Sprinkler.Tests
         {
             var patient = new Patient();
             patient.Name.Add(HumanName.ForFamily("Bach").WithGiven("Johan").WithGiven("Sebastian"));
+            Client.ReturnFullResource = true;
             entry = Client.Create(patient);
             id = entry.ResourceIdentity().MakeRelative().ToString();
         }

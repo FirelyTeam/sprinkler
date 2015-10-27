@@ -14,6 +14,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Furore.Attributes;
 using System.Text.RegularExpressions;
+using Fhir.Testing.Framework;
 
 
 namespace Sprinkler.Framework
@@ -33,9 +34,27 @@ namespace Sprinkler.Framework
             return assembly.GetTypesWithAttribute<SprinklerModule>();
         }
 
+        public static MethodInfo GetInitializationMethod(Type testclass)
+        {
+            return testclass
+                .GetMethods()
+                .FirstOrDefault(mi => mi.GetCustomAttribute<ModuleInitializeAttribute>() != null);
+        }
+
         public static IEnumerable<MethodInfo> GetTestMethods(Type testclass, IEnumerable<string> codes = null)
         {
-            IEnumerable<MethodInfo> methods = testclass.GetMethods();
+            IEnumerable<MethodInfo> methods;
+            SprinklerDynamicModule sprinklerDynamicModule = testclass.GetCustomAttribute<SprinklerDynamicModule>();
+            if (sprinklerDynamicModule != null)
+            {
+                var dynamicTestGenerator = Activator.CreateInstance(sprinklerDynamicModule.DynamicTestGenerator) as IDynamicTestGenerator;
+                methods = dynamicTestGenerator.GetTestMethods();
+            }
+            else
+            {
+                methods = testclass.GetMethods();
+                
+            }
             if (codes != null && codes.Count() > 0)
             {
                 return methods.Where(method => IsProperTestMethod(method, codes));

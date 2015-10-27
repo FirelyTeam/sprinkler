@@ -9,6 +9,7 @@
 using System;
 using System.Linq;
 using System.Net;
+using System.Threading;
 using Hl7.Fhir.Model;
 using Sprinkler.Framework;
 
@@ -25,11 +26,13 @@ namespace Sprinkler.Tests
         {
             Binary bin = DemoData.GetDemoBinary();
             Binary received = null;
-            Assert.Success(Client, () => received = Client.Create(bin));
+            received = Client.Create(bin);
+           // Assert.Success(Client, () => received = Client.Create(bin));
 
             Assert.LocationPresentAndValid(Client);
 
             Binary binResult = Client.Read<Binary>(received.Id);
+            
 
             if (binResult.ContentType != bin.ContentType)
                 Assert.Fail("Created binary of type " + bin.ContentType +

@@ -42,6 +42,12 @@ namespace Sprinkler.Framework
                 test.Title = attribute.Title;
                 test.Code = attribute.Code;
             }
+            var dynamicAttribute = SprinklerDynamicTest.AttributeOf(method);
+            if (dynamicAttribute != null)
+            {
+                test.Title = dynamicAttribute.GetTitle(method);
+                test.Code = dynamicAttribute.GetCode(method);
+            }
             try
             {
                 method.Invoke(instance, null);
@@ -61,15 +67,7 @@ namespace Sprinkler.Framework
         {
             foreach(Type type in TestHelper.GetModules())
             {
-                var tests = TestHelper.GetTestMethods(type, codes);
-                if (tests.Count() > 0)
-                {
-                    var module = GetInstanceOf(type);
-                    foreach (var test in tests)
-                    {
-                        Run(module, test);
-                    }
-                }
+                RunModule(type, codes);
             }
         }
 
@@ -79,26 +77,31 @@ namespace Sprinkler.Framework
             Log(test);
         }
 
-        private void Run(SprinklerTestClass module, MethodInfo methodInfo)
+        private SprinklerTestClass RunModule(Type moduleType, params string[] codes)
         {
+            SprinklerTestClass module = GetInstanceOf(moduleType);
             module.SetClient(_client);
-            RunAndLog(module, methodInfo);
-        }
-
-        public void Run(SprinklerTestClass instance, IEnumerable<string> codes = null)
-        {
-            instance.SetClient(_client);
-            foreach (var methodInfo in TestHelper.TestMethodsOf(instance, codes))
+            var testMethods = TestHelper.GetTestMethods(moduleType, codes);
+            MethodInfo intializationMethod = TestHelper.GetInitializationMethod(moduleType);
+            TestResult moduleCorrecltyInitialized = null;
+            if (intializationMethod != null)
             {
-                Run(instance, methodInfo);
+                moduleCorrecltyInitialized  = RunTestMethod("Initialization", module, intializationMethod);
             }
+
+            if (moduleCorrecltyInitialized == null || moduleCorrecltyInitialized.Outcome == TestOutcome.Success)
+            {
+                foreach (var methodInfo in testMethods)
+                {
+                    RunAndLog(module, methodInfo);
+                }
+            }
+            return module;
         }
 
         public T Run<T>() where T : SprinklerTestClass
         {
-            var instance = Activator.CreateInstance<T>();
-            Run(instance);
-            return instance;
+           return (T)RunModule(typeof(T));
         }
 
         public SprinklerTestClass GetInstanceOf(Type testclass)

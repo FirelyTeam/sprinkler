@@ -1,361 +1,104 @@
 ﻿<?xml version="1.0" encoding="UTF-8"?>
-
 <Bundle xmlns="http://hl7.org/fhir">
-  <id value="xds"/>
+  <id value="bundle-example"/>
+  <!--   this example bundle is a search set   -->
   <meta>
-    <lastUpdated value="2013-07-01T13:11:33Z"/>
+    <lastUpdated value="2014-08-18T01:43:30Z"/>
+    <!--   when the search was executed   -->
   </meta>
-  <type value="transaction"/>
-  <base value="cid:123@healthintersections.com.au"/>
-  <entry>
-    <resource>
-      <DocumentReference>
-        <!--   although the resource has an id - which it might need so it can referred to 
-      from within this transaction, the server is to treat it as a new resource (see transaction below)   -->
-        <id value="a1"/>
-        <meta>
-          <lastUpdated value="2013-07-01T13:11:33Z"/>
-        </meta>
-        <text>
-          <status value="generated"/>
-          <div xmlns="http://www.w3.org/1999/xhtml">
+  <type value="searchset"/>
 
-            <a href="http://localhost:9556/svc/fhir/Binary/1e404af3-077f-4bee-b7a6-a9be97e1ce32">Document: urn:oid:129.6.58.92.88336</a>undefined, created 24/12/2005
-            <hr/>
-            <p>
-              <b>Generated Narrative with Details</b>
-            </p>
-            <p>
-              <b>text</b>:
-            </p>
-            <p>
-              <b>masterIdentifier</b>: urn:oid:129.6.58.92.88336
-            </p>
-            <p>
-              <b>subject</b>:
-              <a href="cid:123@healthintersections.com.au/Patient/a2">cid:123@healthintersections.com.au/Patient/a2</a>
-            </p>
-            <p>
-              <b>type</b>: History and Physical
-              <span style="background: LightGoldenRodYellow ">(Details : {http://ihe.net/connectathon/classCodes code &#39;History and Physical&#39; = &#39;History and Physical&#39;, given as &#39;History and Physical&#39;})</span>
-            </p>
-            <p>
-              <b>format</b>:
-              <a href="urn:oid:1.3.6.1.4.1.19376.1.5.3.1.1.16.1.4">urn:oid:1.3.6.1.4.1.19376.1.5.3.1.1.16.1.4</a>
-            </p>
-            <p>
-              <b>author</b>:
-              <a href="cid:123@healthintersections.com.au/Practitioner/a3">cid:123@healthintersections.com.au/Practitioner/a3</a>,
-              <a href="cid:123@healthintersections.com.au/Practitioner/a4">cid:123@healthintersections.com.au/Practitioner/a4</a>
-            </p>
-            <p>
-              <b>created</b>: Dec 24, 2005
-            </p>
-            <p>
-              <b>indexed</b>: Jul 1, 2013 1:11:33 PM
-            </p>
-            <p>
-              <b>status</b>: CURRENT
-            </p>
-            <p>
-              <b>description</b>: Physical
-            </p>
-            <p>
-              <b>content</b>:
-            </p>
-            <blockquote>
-              <p>
-                <b>context</b>
-              </p>
-              <p>
-                <b>period</b>: Dec 22, 2004 10:00:00 PM --&gt; Dec 22, 2004 10:01:00 PM
-              </p>
-              <p>
-                <b>practiceSetting</b>: General Medicine
-                <span style="background: LightGoldenRodYellow ">(Details : {http://ihe.net/connectathon/practiceSettingCodes code &#39;General Medicine&#39; = &#39;General Medicine&#39;, given as &#39;General Medicine&#39;})</span>
-              </p>
-            </blockquote>
-          </div>
-        </text>
-        <masterIdentifier>
-          <system value="urn:ietf:rfc:3986"/>
-          <value value="urn:oid:129.6.58.92.88336"/>
-        </masterIdentifier>
-        <subject>
-          <reference value="cid:123@healthintersections.com.au/Patient/a2"/>
-        </subject>
-        <type>
-          <coding>
-            <system value="http://ihe.net/connectathon/classCodes"/>
-            <code value="History and Physical"/>
-            <display value="History and Physical"/>
-          </coding>
-        </type>
-        <format value="urn:oid:1.3.6.1.4.1.19376.1.5.3.1.1.16.1.4"/>
-        <author>
-          <reference value="cid:123@healthintersections.com.au/Practitioner/a3"/>
-        </author>
-        <author>
-          <reference value="cid:123@healthintersections.com.au/Practitioner/a4"/>
-        </author>
-        <created value="2005-12-24"/>
-        <indexed value="2013-07-01T23:11:33+10:00"/>
-        <status value="current"/>
-        <description value="Physical"/>
-        <content>
-          <contentType value="text/plain"/>
-          <language value="en-us"/>
-          <url value="http://localhost:9556/svc/fhir/Binary/1e404af3-077f-4bee-b7a6-a9be97e1ce32"/>
-        </content>
-        <context>
-          <period>
-            <start value="2004-12-23T08:00:00+10:00"/>
-            <end value="2004-12-23T08:01:00+10:00"/>
-          </period>
-          <practiceSetting>
-            <coding>
-              <system value="http://ihe.net/connectathon/practiceSettingCodes"/>
-              <code value="General Medicine"/>
-              <display value="General Medicine"/>
-            </coding>
-          </practiceSetting>
-        </context>
-      </DocumentReference>
-    </resource>
-    <transaction>
-      <method value="POST"/>
-      <url value="DocumentReference"/>
-    </transaction>
-  </entry>
+  <!--   the total number of matches. This is a stupid example - there's a grand total of 3 matches, and 
+    we're only going to return the first 1, with a next link, in order to demonstrate what a page link
+    looks like   -->
+  <total value="3"/>
+  <!--   all search sets include the self link - the server's statement of what it thought it was 
+    searching on. The client can use this to cross-check whether the server executed what it 
+    asked the server to, if it cares   -->
+  <link>
+    <relation value="self"/>
+    <url value="https://example.com/base/MedicationOrder?patient=347&amp;_include=MedicationOrder.medication"/>
+  </link>
+  <!--   now, the link to the next set of results. The actual URL is entirely at the 
+  discretion of the server, and is opaque to the client. Many servers will insert 
+  some kind of search instance identifier 
+  
+  Note that a big set of results will include prev, first, last links as well as next   -->
+  <link>
+    <relation value="next"/>
+    <url value="https://example.com/base/MedicationOrder?patient=347&amp;searchId=ff15fd40-ff71-4b48-b366-09c706bed9d0&amp;page=2"/>
+  </link>
+
+  <!--   now, the actual entries   -->
   <entry>
+    <fullUrl value="https://example.com/base/MedicationOrder/3123"/>
+    <!--   the matching resource   -->
     <resource>
-      <Patient>
-        <!--   if the server can find a matching resource, use that, else create a new 
-      resource with these details   -->
-        <id value="a2"/>
-        <meta>
-          <lastUpdated value="2013-07-01T13:11:33Z"/>
-        </meta>
+      <MedicationOrder>
+        <id value="3123"/>
+        <!--   snip   -->
         <text>
           <status value="generated"/>
           <div xmlns="http://www.w3.org/1999/xhtml">
-            Person DOE, John, M, dob: 27/05/1956
-            <hr/>
             <p>
               <b>Generated Narrative with Details</b>
             </p>
             <p>
-              <b>text</b>:
+              <b>id</b>: 3123
             </p>
             <p>
-              <b>identifier</b>: MRN (USUAL)
+              <b>patient</b>: <a>Patient/347</a>
             </p>
             <p>
-              <b>name</b>: DOE, John
-            </p>
-            <p>
-              <b>birthDate</b>: May 27, 1956
+              <b>medication</b>: <a>Medication/example</a>
             </p>
           </div>
         </text>
-        <identifier>
-          <use value="usual"/>
-          <value value="MRN"/>
-        </identifier>
-        <name>
-          <use value="usual"/>
-          <text value="DOE, John"/>
-          <family value="Doe"/>
-          <given value="John"/>
-        </name>
-        <birthDate value="1956-05-27"/>
-      </Patient>
+        <patient>
+          <reference value="Patient/347"/>
+        </patient>
+        <medicationReference>
+          <reference value="Medication/example"/>
+        </medicationReference>
+        <!--   snip   -->
+      </MedicationOrder>
     </resource>
-    <transaction>
-      <method value="POST"/>
-      <url value="Patient"/>
-      <ifNoneExist value="Patient?identifier=http://acme.org/xds/patients!89765a87b"/>
-    </transaction>
+    <!--   and now optional search information   -->
+    <search>
+      <!--   this resource included as a match to the search criteria.
+         Servers are not required to populate this, but should, because
+         there are a few cases where it might be ambiguous whether a 
+         resource is added because it's a match or an include           -->
+      <mode value="match"/>
+      <!--   score. For matches where the criteria are not determinate,
+        e.g. text search on narrative, the server can include a score to indicate
+        how well the resource matches the conditions. Since this search is by patient
+        identifier, there's nothing fuzzy about it, but for example purposes:   -->
+      <score value="1"/>
+    </search>
   </entry>
   <entry>
+    <fullUrl value="https://example.com/base/Medication/example"/>
     <resource>
-      <Practitioner>
-        <id value="a3"/>
-        <meta>
-          <lastUpdated value="2013-07-01T13:11:33Z"/>
-        </meta>
+      <Medication>
+        <id value="example"/>
+        <!--   snip   -->
         <text>
           <status value="generated"/>
           <div xmlns="http://www.w3.org/1999/xhtml">
-            Author Gerald Smitty @ Cleveland Clinic
-            <hr/>
             <p>
               <b>Generated Narrative with Details</b>
             </p>
             <p>
-              <b>text</b>:
+              <b>id</b>: example
             </p>
-            <p>
-              <b>identifier</b>: usual = ??
-            </p>
-            <p>
-              <b>name</b>: Gerald Smitty
-            </p>
-            <blockquote>
-              <p>
-                <b>practitionerRole</b>
-              </p>
-              <p>
-                <b>managingOrganization</b>: Cleveland Clinic
-              </p>
-              <p>
-                <b>role</b>: Attending
-                <span style="background: LightGoldenRodYellow ">(Details : {[not stated] code &#39;Attending&#39; = &#39;Attending)</span>
-              </p>
-              <p>
-                <b>specialty</b>: Orthopedic
-                <span style="background: LightGoldenRodYellow ">(Details : {[not stated] code &#39;Orthopedic&#39; = &#39;Orthopedic)</span>
-              </p>
-            </blockquote>
-            <blockquote>
-              <p>
-                <b>practitionerRole</b>
-              </p>
-              <p>
-                <b>managingOrganization</b>: Parma Community
-              </p>
-            </blockquote>
           </div>
         </text>
-        <identifier>
-          <label value="usual"/>
-        </identifier>
-        <name>
-          <use value="usual"/>
-          <family value="Smitty"/>
-          <given value="Gerald"/>
-        </name>
-        <practitionerRole>
-          <managingOrganization>
-            <display value="Cleveland Clinic"/>
-          </managingOrganization>
-          <role>
-            <coding>
-              <code value="Attending"/>
-            </coding>
-          </role>
-          <specialty>
-            <coding>
-              <code value="Orthopedic"/>
-            </coding>
-          </specialty>
-        </practitionerRole>
-        <practitionerRole>
-          <managingOrganization>
-            <display value="Parma Community"/>
-          </managingOrganization>
-        </practitionerRole>
-      </Practitioner>
+      </Medication>
     </resource>
-    <transaction>
-      <method value="POST"/>
-      <url value="Practitioner"/>
-    </transaction>
-  </entry>
-  <entry>
-    <resource>
-      <Practitioner>
-        <id value="a4"/>
-        <!--   cid:51b578b4-3ccb-4e67-b0dc-ef519d82ef2d@healthintersections.com.au   -->
-        <meta>
-          <lastUpdated value="2013-07-01T13:11:33Z"/>
-        </meta>
-        <text>
-          <status value="generated"/>
-          <div xmlns="http://www.w3.org/1999/xhtml">
-            Author Person @ Cleveland Clinic
-            <hr/>
-            <p>
-              <b>Generated Narrative with Details</b>
-            </p>
-            <p>
-              <b>text</b>:
-            </p>
-            <p>
-              <b>name</b>: Sherry Dopplemeyer
-            </p>
-            <blockquote>
-              <p>
-                <b>practitionerRole</b>
-              </p>
-              <p>
-                <b>managingOrganization</b>: Cleveland Clinic
-              </p>
-              <p>
-                <b>role</b>: Primary Surgon
-                <span style="background: LightGoldenRodYellow ">(Details : {[not stated] code &#39;Primary Surgon&#39; = &#39;Primary Surgon)</span>
-              </p>
-              <p>
-                <b>specialty</b>: Orthopedic
-                <span style="background: LightGoldenRodYellow ">(Details : {[not stated] code &#39;Orthopedic&#39; = &#39;Orthopedic)</span>
-              </p>
-            </blockquote>
-            <blockquote>
-              <p>
-                <b>practitionerRole</b>
-              </p>
-              <p>
-                <b>managingOrganization</b>: Berea Community
-              </p>
-            </blockquote>
-          </div>
-        </text>
-        <name>
-          <use value="usual"/>
-          <family value="Dopplemeyer"/>
-          <given value="Sherry"/>
-        </name>
-        <practitionerRole>
-          <managingOrganization>
-            <display value="Cleveland Clinic"/>
-          </managingOrganization>
-          <role>
-            <coding>
-              <code value="Primary Surgon"/>
-            </coding>
-          </role>
-          <specialty>
-            <coding>
-              <code value="Orthopedic"/>
-            </coding>
-          </specialty>
-        </practitionerRole>
-        <practitionerRole>
-          <managingOrganization>
-            <display value="Berea Community"/>
-          </managingOrganization>
-        </practitionerRole>
-      </Practitioner>
-    </resource>
-    <transaction>
-      <method value="POST"/>
-      <url value="Practitioner"/>
-    </transaction>
-  </entry>
-  <entry>
-    <resource>
-      <Binary>
-        <id value="1e404af3-077f-4bee-b7a6-a9be97e1ce32"/>
-        <meta>
-          <lastUpdated value="2013-07-01T13:11:33Z"/>
-        </meta>
-        <contentType value="text/plain"/>
-        <content value="YXNkYXNkYXNkYXNkYXNk"/>
-      </Binary>
-    </resource>
-    <transaction>
-      <method value="POST"/>
-      <url value="Binary"/>
-    </transaction>
+    <search>
+      <!--   added because the client asked to include the medications   -->
+      <mode value="include"/>
+    </search>
   </entry>
 </Bundle>
