@@ -82,18 +82,21 @@ namespace Sprinkler.Framework
             SprinklerTestClass module = GetInstanceOf(moduleType);
             module.SetClient(_client);
             var testMethods = TestHelper.GetTestMethods(moduleType, codes);
-            MethodInfo intializationMethod = TestHelper.GetInitializationMethod(moduleType);
-            TestResult moduleCorrecltyInitialized = null;
-            if (intializationMethod != null)
+            if (testMethods.Any())
             {
-                moduleCorrecltyInitialized  = RunTestMethod("Initialization", module, intializationMethod);
-            }
-
-            if (moduleCorrecltyInitialized == null || moduleCorrecltyInitialized.Outcome == TestOutcome.Success)
-            {
-                foreach (var methodInfo in testMethods)
+                MethodInfo intializationMethod = TestHelper.GetInitializationMethod(moduleType);
+                TestResult moduleCorrecltyInitialized = null;
+                if (intializationMethod != null)
                 {
-                    RunAndLog(module, methodInfo);
+                    moduleCorrecltyInitialized = RunTestMethod("Initialization", module, intializationMethod);
+                }
+
+                if (moduleCorrecltyInitialized == null || moduleCorrecltyInitialized.Outcome == TestOutcome.Success)
+                {
+                    foreach (var methodInfo in testMethods)
+                    {
+                        RunAndLog(module, methodInfo);
+                    }
                 }
             }
             return module;

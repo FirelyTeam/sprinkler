@@ -22,13 +22,28 @@ namespace Sprinkler.Tests
         private Bundle.BundleEntryComponent _connDoc, _patDoc;
         private Bundle _postResult;
         private Bundle.BundleEntryComponent _prac1Doc, _prac2Doc;
+        private DateTimeOffset historyStartDate;
+        private Bundle historyBundle;
+
+        [ModuleInitialize]
+        public void Initialize()
+        {
+            historyStartDate = DateTimeOffset.Now;
+            Patient patient = Utils.GetNewPatient();
+            patient = Client.Create(patient);
+
+            patient = Utils.GetNewPatient();
+            patient = Client.Create(patient);
+
+            historyBundle = Client.TypeHistory("Patient", historyStartDate.AddMinutes(-1), pageSize: 4);
+        }
 
         [SprinklerTest("BU01", "post a bundle with xds docreference and binary")]
         public void PostBundle()
         {
             Bundle bundle = DemoData.GetDemoXdsBundle();
-            _postResult = Client.Transaction(bundle);
-            Assert.EntryIdsArePresentAndAbsoluteUrls(_postResult);
+            _postResult = Client.Transaction(historyBundle);
+            Assert.EntryIdsArePresentAndAbsoluteUrls(bundle);
 
             if (_postResult.Entry.Count != 5)
                 Assert.Fail(String.Format("Bundle response contained {0} entries in stead of 5",

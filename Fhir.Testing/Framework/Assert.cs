@@ -198,6 +198,14 @@ namespace Sprinkler.Framework
                                 ". Did you install the standard test-set?");
         }
 
+        internal static void AssertStatusCode(FhirClient client,  HttpStatusCode expected)
+        {
+            if (client.LastResult.Status != ((int) expected).ToString())
+            {
+                Fail("Expected http result {0} but got {1}", expected, client.LastResult.Status);
+            }
+        }
+
         internal static void HasAllForwardNavigationLinks(Bundle history)
         {
             if (history.FirstLink == null ||

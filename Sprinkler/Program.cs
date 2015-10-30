@@ -89,6 +89,8 @@ namespace Sprinkler
             try
             {
                 var url = parameters.Values.First();
+                
+
                 var tests = parameters.Values.Skip(1).ToArray(); 
                 TestRunner runner = Test.CreateRunner(url, log);
                 runner.Run(tests);

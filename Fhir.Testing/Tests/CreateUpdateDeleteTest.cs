@@ -19,42 +19,42 @@ namespace Sprinkler.Tests
     [SprinklerModule("CRUD")]
     public class CreateUpdateDeleteTest : SprinklerTestClass
     {
-        public CreateUpdateDeleteTest()
+        public string SimplePatientCrudId { get; private set; }
+
+        public string LocationSimplePatient
         {
-            Versions = new List<string>();
+            get { return String.IsNullOrEmpty(SimplePatientCrudId) ? null : "Patient/" + SimplePatientCrudId; }
         }
-
-        public string CrudId { get; private set; }
-
-        public string Location
-        {
-            get { return "Patient/" + CrudId; }
-        }
-
-        public List<string> Versions { get; private set; }
-        public DateTimeOffset? CreateDate { get; private set; }
 
         [SprinklerTest("CR01", "create a patient using xml")]
         public void CreatePersonUsingXml()
         {
-            TryCreatePatient(Client, ResourceFormat.Xml);
+            SimplePatientCrudId = TryCreatePatient(ResourceFormat.Xml).Id;
         }
 
         [SprinklerTest("CR02", "create a patient using json")]
         public void CreatePersonUsingJson()
         {
-            TryCreatePatient(Client, ResourceFormat.Json);
+            SimplePatientCrudId = TryCreatePatient(ResourceFormat.Json).Id;
         }
 
         [SprinklerTest("CR03", "create a patient using client-assigned id")]
         public void CreatePersonUsingClientAssignedId()
         {
             var rnd = new Random();
-            CrudId = "sprink" + rnd.Next();
+            string assignedId = "sprink" + rnd.Next();
+            Patient patient = CreatePatientWithClientAssignedId(ResourceFormat.Xml, assignedId);
 
-            Versions.Add(TryCreatePatient(Client, ResourceFormat.Xml, CrudId).ToString());
-            
-            CreateDate = DateTimeOffset.Now;
+            var ep = new RestUrl(Client.Endpoint);
+            if (!ep.IsEndpointFor(patient.ResourceIdentity()))
+                Assert.Fail("Location of created resource is not located within server endpoint");
+
+            var rl = new ResourceIdentity(patient.ResourceIdentity());
+            if (rl.Id != assignedId)
+                Assert.Fail("Server refused to honor client-assigned id");
+
+            Assert.AssertStatusCode(Client, HttpStatusCode.Created);
+            SimplePatientCrudId = assignedId;
         }
 
         [SprinklerTest("CR04", "Create a patient with manually assigned attributes")]
@@ -109,12 +109,17 @@ namespace Sprinkler.Tests
             {
                 Assert.Fail("Telecom component has disappeared on resource");
             }
+            SimplePatientCrudId = resource.Id;
         }
 
-        [SprinklerTest("CR05", "Create a patient with an extension")]
-        public void CreatePatientWithExtension()
+        [SprinklerTest("CR05", "Create and update a patient with an extension")]
+        //TODO: Make this more maintainable
+        public void CreateUpdatePatientWithExtension()
         {
+               string qualifier = "http://hl7.org/fhir/Profile/iso-21090#qualifier";
+            string extensionCode = "AC";
             Patient selena = new Patient();
+            Location location = null;
 
             var name = new HumanName();
             name.GivenElement.Add(new FhirString("selena"));
@@ -128,12 +133,12 @@ namespace Sprinkler.Tests
             address.StateElement = new FhirString("Texas");
             selena.Address.Add(address);
  
-            string qualifier = "http://hl7.org/fhir/Profile/iso-21090#qualifier";
+         
             var contact = new Patient.ContactComponent();
             var contactname = new HumanName();
             contactname.GivenElement.Add(new FhirString("Martijn"));
             contactname.FamilyElement.Add(new FhirString("Harthoorn"));
-            contactname.AddExtension(qualifier, new Code("AC"));
+            contactname.AddExtension(qualifier, new Code(extensionCode));
             contact.Name = contactname;
             selena.Contact.Add(contact);
             
@@ -141,83 +146,64 @@ namespace Sprinkler.Tests
 
             resource = Client.Read<Patient>(resource.ResourceIdentity());
 
-            IEnumerable<Extension> extensions = from contacts in resource.Contact
-                                                where contacts.Name.GetExtension(qualifier) != null
-                                                select contacts.Name.GetExtension(qualifier);
-                                                
 
-            if (extensions == null || extensions.Count() == 0)
-                Assert.Fail("Extensions have disappeared on resource " + Location);
+            CheckHumanNameExtensions(resource.Contact[0].Name, qualifier, new[] { extensionCode },
+                "Incorrect extensions found after creating resource" + resource.Id);
 
-            if (!extensions.Any(ext => ext.Value is Code && ((Code) ext.Value).Value == "AC"))
-                Assert.Fail("Resource extension was not persisted on created resource " + resource.Id);
+
+            Extension qExt1 = resource.Contact[0].Name.GetExtension(qualifier);
+
+            ((Code)qExt1.Value).Value = "NB";
+            resource.Contact[0].Name.AddExtension(qualifier, new Code("RT"));
+
+            resource = Client.Update(resource);
+
+            resource = Client.Read<Patient>(resource.ResourceIdentity());
+
+            CheckHumanNameExtensions(resource.Contact[0].Name, qualifier, new[] { "NB", "RT" },
+             "Incorrect extensions found after updating resource" + resource.Id);                        
         }
 
         [SprinklerTest("CR06", "update that patient (no extensions altered)")]
         public void UpdatePersonNoExt()
         {
-            Assert.SkipWhen(CreateDate == null);
-            Patient pat = Client.Read<Patient>(Location);
+            Assert.SkipWhen(LocationSimplePatient == null);
+            Patient pat = Client.Read<Patient>(LocationSimplePatient);
 
             pat.Telecom.Add(new ContactPoint{System = ContactPoint.ContactPointSystem.Other, Value = "http://www.nu.nl"});           
 
             Client.Update(pat);
 
-            pat = Client.Read<Patient>(Location);
+            pat = Client.Read<Patient>(LocationSimplePatient);
 
             if (!pat.Telecom.Any(
                 tel => tel.System == ContactPoint.ContactPointSystem.Other && tel.Value == "http://www.nu.nl"))
-                Assert.Fail(String.Format("Resource {0} unchanged after update", Location));
-
-            Versions.Add(pat.VersionId);
+                Assert.Fail(String.Format("Resource {0} unchanged after update", LocationSimplePatient));
         }
 
-        [SprinklerTest("CR07", "update that person again (alter extensions)")]
-        public void UpdatePersonAndAddExtension()
+
+
+        private void CheckHumanNameExtensions(HumanName name, string qualifier,
+           IEnumerable<string> expectedValues, string errorMessage)
         {
-            Assert.SkipWhen(CreateDate == null);
-
-            Patient pat= Client.Read<Patient>(Location);
-
-            HumanName name = pat.Contact[0].Name;
-            string qualifier = "http://hl7.org/fhir/Profile/iso-21090#qualifier";
-
-            Extension qExt1 = name.FamilyElement[0].GetExtension(qualifier);
-
-            if(qExt1 == null)
+             IList<Extension> extensions = name.GetExtensions(qualifier).ToList();
+            IList<string> extensionValues = extensions.Select(s => s.Value).OfType<Code>().Select(c => c.Value).ToList();
+            foreach (string value in expectedValues)
             {
-                Assert.Fail("The extension to be updated was not present on resource " + Location);
+                if (!extensionValues.Contains(value))
+                {
+                    Assert.Fail(errorMessage);
+                }
             }
-            
-            ((Code) qExt1.Value).Value = "NB";
-            name.FamilyElement[0].AddExtension(qualifier, new Code("AC"));
-
-            Client.Update(pat);
-
-            pat = Client.Read<Patient>(Location);
-
-            IEnumerable<Extension> extensions = pat.Contact[0].Name.FamilyElement[0].GetExtensions(qualifier);
-
-            if (extensions == null || extensions.Count() == 0)
-                Assert.Fail("Extensions have disappeared on resource " + Location);
-
-            if (!extensions.Any(ext => ext.Value is Code && ((Code) ext.Value).Value == "NB"))
-                Assert.Fail("Resource extension update was not persisted on resource " + Location);
-
-            if (!extensions.Any(ext => ext.Value is Code && ((Code) ext.Value).Value == "AC"))
-                Assert.Fail("Resource extension addition was not persisted on resource " + Location);
-
-            Versions.Add(pat.VersionId);
         }
 
         [SprinklerTest("CR08", "delete that person")]
         public void DeletePerson()
         {
-            if (CreateDate == null) Assert.Skip();
-            string location = "Patient/" + CrudId;
-            Client.Delete(location);
+            Assert.SkipWhen(LocationSimplePatient == null);
+            Client.Delete(LocationSimplePatient);
 
-            Assert.Fails(Client, () => Client.Read<Patient>(location), HttpStatusCode.Gone);
+            Assert.Fails(Client, () => Client.Read<Patient>(LocationSimplePatient), HttpStatusCode.Gone);
         }
 
         [SprinklerTest("CR09", "deletion of a non-existing resource")]
@@ -229,36 +215,30 @@ namespace Sprinkler.Tests
             Assert.Fails(Client, () => Client.Delete(location), HttpStatusCode.NotFound);
         }
 
-        private string TryCreatePatient(FhirClient client, ResourceFormat formatIn, string id = null)
+        private Patient TryCreatePatient(ResourceFormat formatIn)
         {
-            client.PreferredFormat = formatIn;
-            Patient created = null;
+            Client.PreferredFormat = formatIn;
             Patient demopat = DemoData.GetDemoPatient();
-            demopat.Id = id;
-            var resourceid = demopat.ResourceIdentity();           
+            Patient created = null;
 
-            if (demopat.Id != null)
-            {
-                Assert.Success(client, () => created = client.Update(demopat));
-                var ep = new RestUrl(client.Endpoint);
-                if (!ep.IsEndpointFor(created.ResourceIdentity()))
-                    Assert.Fail("Location of created resource is not located within server endpoint");
+            Assert.Success(Client, () => created = Client.Create(demopat));
 
-                var rl = new ResourceIdentity(created.ResourceIdentity());
-                if (rl.Id != id)
-                    Assert.Fail("Server refused to honor client-assigned id");
-            }
-
-            Assert.Success(client, () => created = client.Create(demopat));
-
-            Assert.LocationPresentAndValid(client);
+            Assert.LocationPresentAndValid(Client);
 
             // Create bevat geen response content meer. Terecht verwijderd?:
             // EK: Niet helemaal, er is weliswaar geen data meer gereturned, maar de headers (id, versie, modified) worden
             // nog wel geupdate
-            Assert.ContentLocationValidIfPresent(client);
+            Assert.ContentLocationValidIfPresent(Client);
 
-            return created.VersionId;
+            return created;
+        }
+
+        private Patient CreatePatientWithClientAssignedId(ResourceFormat formatIn, string id)
+        {
+            Client.PreferredFormat = formatIn;
+            Patient demopat = DemoData.GetDemoPatient();
+            demopat.Id = id;
+            return Client.Update(demopat);
         }
     }
 }
