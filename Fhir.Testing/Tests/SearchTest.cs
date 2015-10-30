@@ -325,5 +325,16 @@ namespace Sprinkler.Tests
             Assert.Fails(Client, () => Client.Search("Patient", new[] {"...=test"}), out actual,
                 HttpStatusCode.BadRequest);
         }
+
+        [SprinklerTest("SE26", "Search for deleted resources.")]
+        public void SearchShouldNotReturnDeletedResource()
+        {
+            Patient patientToDelete = Utils.GetNewPatient("Leroy");
+            patientToDelete = Client.Create(patientToDelete);
+            Client.Delete(patientToDelete);
+
+            Bundle bundle = Client.Search<Patient>(new[] { "_id=" + patientToDelete.Id });
+            BundleAssert.CheckBundleEmpty(bundle);
+        }
     }
 }
