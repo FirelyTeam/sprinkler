@@ -4,6 +4,7 @@ using System.Linq;
 using Hl7.Fhir.Model;
 using Hl7.Fhir.Rest;
 using Sprinkler.Framework;
+using Sprinkler.Tests;
 
 namespace Fhir.Testing.Framework
 {
@@ -55,6 +56,18 @@ namespace Fhir.Testing.Framework
             if (bundle.GetResources().Any(r => r.GetType() != typeof(T)))
             {
                 Assert.Fail("Not all resources are {0}", typeof(T).Name);
+            }
+        }
+
+        public static void CheckContainedResources<T>(Bundle bundle, IEnumerable<string> ids)
+        {
+            CheckTypeForResources<T>(bundle);
+            foreach (var id in ids)
+            {
+                if (!bundle.ContainsResource(id))
+                {
+                    Assert.Fail("Expected resource with id = {0} not found in result", id);
+                }
             }
         }
 

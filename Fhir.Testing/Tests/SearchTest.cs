@@ -56,7 +56,6 @@ namespace Sprinkler.Tests
             Assert.Fails(Client, () => Client.Search("Nonexistingnonpatientresource"), HttpStatusCode.NotFound);
         }
 
-
         [SprinklerTest("SE03", "Search patient resource on partial familyname")]
         public void SearchResourcesWithNameCriterium()
         {
@@ -277,6 +276,23 @@ namespace Sprinkler.Tests
             Assert.IsTrue(!bundle.ContainsResource(id0), "Search greater than quantity should not return lesser value.");
         }
 
+
+        [SprinklerTest("SE30", "Search for decimal parameters with trailling spaces")]
+        public void SearchObservationQuantityWith0Decimal()
+        {
+            string id1 = CreateObservation(6M);
+            string id2 = CreateObservation(6.0M);
+
+            Bundle bundle = Client.Search("Observation", new[] { "value-quantity=6||mg" });
+            BundleAssert.CheckContainedResources<Observation>(bundle, new string[]{id1, id2});
+
+            bundle = Client.Search("Observation", new[] { "value-quantity=6.0||mg" });
+            BundleAssert.CheckContainedResources<Observation>(bundle, new string[] { id1, id2 });
+
+            Client.Delete("Observation/"+id1);
+            Client.Delete("Observation/" + id2);
+        }
+
         [SprinklerTest("SE23", "Search with quantifier :missing, on Patient.gender.")]
         public void SearchPatientByGenderMissing()
         {
@@ -335,6 +351,69 @@ namespace Sprinkler.Tests
 
             Bundle bundle = Client.Search<Patient>(new[] { "_id=" + patientToDelete.Id });
             BundleAssert.CheckBundleEmpty(bundle);
+        }
+
+        [SprinklerTest("SE27", "Paging forward and backward through a search result")]
+        public void PageThroughResourceSearch()
+        {
+            DateTimeOffset searchStartDate = DateTimeOffset.Now;
+            Patient patient1 = Utils.GetNewPatient("PageThroughResourceSearch");
+            patient1 = Client.Create(patient1);
+            Patient patient2 = Utils.GetNewPatient("PageThroughResourceSearch");
+            patient2 = Client.Create(patient2);
+
+            int pageSize = 1;
+            Bundle page = Client.Search("Patient", new string[]
+            {
+                "family=PageThroughResourceSearch"
+            }, null, pageSize);
+
+            int forwardCount = TestBundlePages(page, PageDirection.Next, pageSize);
+            int backwardsCount = TestBundlePages(Client.Continue(page, PageDirection.Last), PageDirection.Previous,
+                pageSize);
+
+            if (forwardCount != backwardsCount)
+            {
+                Assert.Fail(String.Format("Paging forward returns {0} entries, backwards returned {1}",
+                    forwardCount, backwardsCount));
+            }
+
+            Client.Delete(patient1);
+            Client.Delete(patient2);
+        }
+
+        [SprinklerTest("SE31", "Using type query string parameter")]
+        public void SearchUsingTypeSearchParameter()
+        {
+            Location loc = new Location();
+            loc.Type = new CodeableConcept("http://hl7.org/fhir/v3/RoleCode", "RNEU", "test type");
+            loc = Client.Create(loc);
+
+            Bundle bundle = Client.Search("Location", new string[]
+            {
+                "type=RNEU"
+            });
+
+            BundleAssert.CheckTypeForResources<Location>(bundle);
+            BundleAssert.CheckMinimumNumberOfElementsInBundle(bundle, 1);
+
+            Client.Delete(loc);
+
+        }
+
+        private int TestBundlePages(Bundle page, PageDirection direction, int pageSize)
+        {
+            int pageCount = 0;
+            while (page != null)
+            {
+                pageCount++;
+                BundleAssert.CheckConditionForResources(page, r => r.Id != null || r.VersionId != null,
+                    "Resources must have id/versionId information");
+                BundleAssert.CheckMaximumNumberOfElementsInBundle(page, pageSize);
+
+                page = Client.Continue(page, direction);
+            }
+            return pageCount;
         }
     }
 }

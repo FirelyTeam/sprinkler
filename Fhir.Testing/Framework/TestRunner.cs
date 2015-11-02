@@ -81,7 +81,7 @@ namespace Sprinkler.Framework
         {
             SprinklerTestClass module = GetInstanceOf(moduleType);
             module.SetClient(_client);
-            var testMethods = TestHelper.GetTestMethods(moduleType, codes);
+            var testMethods = TestHelper.GetTestMethods(moduleType, codes).ToList();
             if (testMethods.Any())
             {
                 MethodInfo intializationMethod = TestHelper.GetInitializationMethod(moduleType);
