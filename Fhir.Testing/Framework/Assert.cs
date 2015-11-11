@@ -206,6 +206,15 @@ namespace Sprinkler.Framework
             }
         }
 
+        internal static void AssertStatusCode(FhirClient client, params HttpStatusCode[] expected)
+        {
+            string[] expectedStatuses = expected.Select(e => ((int)e).ToString()).ToArray();
+            if (!expectedStatuses.Contains(client.LastResult.Status))
+            {
+                Fail("Received ttp result {0} is not one of the expected statues {1}", client.LastResult.Status, string.Join(",", expectedStatuses));
+            }
+        }
+
         internal static void HasAllForwardNavigationLinks(Bundle history)
         {
             if (history.FirstLink == null ||

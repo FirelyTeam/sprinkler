@@ -200,10 +200,19 @@ namespace Sprinkler.Tests
         [SprinklerTest("CR08", "delete that person")]
         public void DeletePerson()
         {
+            //precondition
             Assert.SkipWhen(LocationSimplePatient == null);
-            Client.Delete(LocationSimplePatient);
 
+            //test initial delete
+            Client.Delete(LocationSimplePatient);
+            Assert.AssertStatusCode(Client, HttpStatusCode.NoContent);
             Assert.Fails(Client, () => Client.Read<Patient>(LocationSimplePatient), HttpStatusCode.Gone);
+
+            //test deleting an already deleted patient
+            Client.Delete(LocationSimplePatient);
+            Assert.AssertStatusCode(Client, HttpStatusCode.NoContent, HttpStatusCode.OK);
+
+
         }
 
         [SprinklerTest("CR09", "deletion of a non-existing resource")]
@@ -211,8 +220,9 @@ namespace Sprinkler.Tests
         {
             var rnd = new Random();
             string location = "Patient/sprink" + rnd.Next();
+            Client.Delete(location);
 
-            Assert.Fails(Client, () => Client.Delete(location), HttpStatusCode.NotFound);
+            Assert.AssertStatusCode(Client, HttpStatusCode.NoContent);
         }
 
         private Patient TryCreatePatient(ResourceFormat formatIn)
