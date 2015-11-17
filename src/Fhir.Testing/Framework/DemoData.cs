@@ -47,7 +47,7 @@ namespace Sprinkler.Framework
             return Resources.xds_example;
         }
 
-        public static Bundle GetDemoXdsBundle()
+        public static Bundle GetDemoBundle()
         {
             string xml = GetDemoXdsBundleXml();
             return (Bundle)FhirParser.ParseFromXml(xml);

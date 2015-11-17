@@ -41,7 +41,7 @@ namespace Sprinkler.Tests
         [SprinklerTest("BU01", "post a bundle with xds docreference and binary")]
         public void PostBundle()
         {
-            Bundle bundle = DemoData.GetDemoXdsBundle();
+            Bundle bundle = DemoData.GetDemoBundle();
             _postResult = Client.Transaction(historyBundle);
             Assert.EntryIdsArePresentAndAbsoluteUrls(bundle);
 
@@ -110,7 +110,7 @@ namespace Sprinkler.Tests
         [SprinklerTest("BU03", "post a bundle with identical cids")]
         public void PostBundleAgain()
         {
-            Bundle bundle = DemoData.GetDemoXdsBundle();
+            Bundle bundle = DemoData.GetDemoBundle();
             Bundle trans = Client.Transaction(bundle);
             List<Bundle.BundleEntryComponent> entries = trans.Entry;
             Assert.EntryIdsArePresentAndAbsoluteUrls(trans);
