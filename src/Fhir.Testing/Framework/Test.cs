@@ -18,12 +18,8 @@ namespace Sprinkler.Framework
 {
     public static class Test
     {
-        public static string serverUri;
-        public static string ServerUri { get { return serverUri; } }
-
         public static TestRunner CreateRunner(string uri, Action<TestResult> log)
         {
-            serverUri = uri;
             FhirClient client = new FhirClient(uri);
             return new TestRunner(client, log);
         }

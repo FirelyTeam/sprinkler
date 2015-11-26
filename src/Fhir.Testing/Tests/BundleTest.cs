@@ -43,14 +43,14 @@ namespace Sprinkler.Tests
         {
             Bundle bundle = DemoData.GetDemoBundle();
             _postResult = Client.Transaction(historyBundle);
-            Assert.BundleIsConformant(_postResult);
+            Assert.EntryIdsArePresentAndAbsoluteUrls(bundle);
 
             if (_postResult.Entry.Count != 5)
                 Assert.Fail(String.Format("Bundle response contained {0} entries in stead of 5",
                     _postResult.Entry.Count));
 
             _postResult = Client.RefreshBundle(_postResult);
-            Assert.BundleIsConformant(_postResult);
+            Assert.EntryIdsArePresentAndAbsoluteUrls(_postResult);
             List<Bundle.BundleEntryComponent> entries = _postResult.Entry;
 
             _connDoc = entries[0];
@@ -113,7 +113,7 @@ namespace Sprinkler.Tests
             Bundle bundle = DemoData.GetDemoBundle();
             Bundle trans = Client.Transaction(bundle);
             List<Bundle.BundleEntryComponent> entries = trans.Entry;
-            Assert.BundleIsConformant(trans);
+            Assert.EntryIdsArePresentAndAbsoluteUrls(trans);
 
             // If server honors the 'search' link, it might *not* re-create the patient
             if (entries[0].Resource.Id == _connDoc.Resource.Id || entries[4].Resource.Id == _binDoc.Resource.Id) // etcetera
@@ -137,14 +137,14 @@ namespace Sprinkler.Tests
 
             List<Bundle.BundleEntryComponent> entries = _postResult.Entry;
             Bundle returnedBundle = Client.Transaction(_postResult);
-            Assert.BundleIsConformant(returnedBundle);
+            Assert.EntryIdsArePresentAndAbsoluteUrls(returnedBundle);
 
             List<Bundle.BundleEntryComponent> entries2 = returnedBundle.Entry;
             if (entries2[0].Resource.Id != entries[0].Resource.Id || entries2[4].Resource.Id != entries[4].Resource.Id) // etcetera
                 Assert.Fail("submitting a batch with updates created new resources");
 
             Bundle refreshedBundle = Client.RefreshBundle(returnedBundle);
-            Assert.BundleIsConformant(refreshedBundle);
+            Assert.EntryIdsArePresentAndAbsoluteUrls(refreshedBundle);
 
             if (
                 refreshedBundle.Entry.ByResourceType<DocumentReference>()

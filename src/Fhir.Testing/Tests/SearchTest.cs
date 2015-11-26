@@ -42,7 +42,6 @@ namespace Sprinkler.Tests
         {
             int pageSize = 10;
             Bundle result = Client.Search<Patient>(pageSize: pageSize);
-            Assert.BundleIsConformant(result);
             BundleAssert.CheckConditionForResources(result, r => r.Id != null || r.VersionId != null,   "Resources must have id/versionId information");
             BundleAssert.CheckMinimumNumberOfElementsInBundle(result, 1);
             BundleAssert.CheckMaximumNumberOfElementsInBundle(result, pageSize);
@@ -75,7 +74,7 @@ namespace Sprinkler.Tests
 
 
             Bundle result = Client.Search<Patient>(new[] {"family=" + name});
-            Assert.BundleIsConformant(result);
+            Assert.EntryIdsArePresentAndAbsoluteUrls(result);
 
             BundleAssert.CheckMinimumNumberOfElementsInBundle(result, 1);
 
@@ -121,7 +120,7 @@ namespace Sprinkler.Tests
             var patientRef = new ResourceIdentity(newCondition.Patient.Url);
 
             Bundle result = Client.Search<Condition>(new[] { "patient=" + patientRef });
-            Assert.BundleIsConformant(result);
+            Assert.EntryIdsArePresentAndAbsoluteUrls(result);
 
             Assert.CorrectNumberOfResults(1, result.Entry.Count(),
                 "conditions for this patient (using patient=)");
@@ -132,13 +131,11 @@ namespace Sprinkler.Tests
         //public void SearchConditionByPatientReference()
         //{
         //    Bundle conditions = Client.Search<Condition>();
-        //    Assert.BundleIsConformant(result);
 
         //    if (conditions.Entry.Count == 0)
         //    {
         //        Bundle patients = Client.Search<Patient>();
-        //                Assert.BundleIsConformant(result);
-        //          if (patients.Entry.Count == 0)
+        //        if (patients.Entry.Count == 0)
         //            Assert.Fail("no patients found - cannot run test");
         //        var newCondition = new Condition
         //        {
@@ -169,7 +166,7 @@ namespace Sprinkler.Tests
         //            entry = Client.Read<Patient>(patientRef);
         //            patFirstName = entry.Name[0].Family.First();
         //            if (!string.IsNullOrEmpty(patFirstName)) break;
-
+                    
         //        }
         //        catch (Exception)
         //        {
@@ -185,20 +182,20 @@ namespace Sprinkler.Tests
         //    int nrOfConditionsForThisPatient = allConditionsForThisPatient.Count();
 
         //    Bundle result = Client.Search<Condition>(new[] {"subject=" + patientRef});
-        //    Assert.BundleIsConformant(result);
+        //    Assert.EntryIdsArePresentAndAbsoluteUrls(result);
 
         //    Assert.CorrectNumberOfResults(nrOfConditionsForThisPatient, result.Entry.Count(),
         //        "conditions for this patient (using subject=)");
 
         //    //Test for issue #6, https://github.com/furore-fhir/spark/issues/6
         //    result = Client.Search<Condition>(new[] {"subject:Patient=" + patientRef});
-        //    Assert.BundleIsConformant(result);
+        //    Assert.EntryIdsArePresentAndAbsoluteUrls(result);
 
         //    Assert.CorrectNumberOfResults(nrOfConditionsForThisPatient, result.Entry.Count(),
         //        "conditions for this patient (using subject:Patient=)");
 
         //    result = Client.Search<Condition>(new[] {"subject._id=" + patientRef.Id});
-        //    Assert.BundleIsConformant(result);
+        //    Assert.EntryIdsArePresentAndAbsoluteUrls(result);
 
         //    Assert.CorrectNumberOfResults(nrOfConditionsForThisPatient, result.Entry.Count(),
         //        "conditions for this patient (using subject._id=)");
@@ -206,15 +203,14 @@ namespace Sprinkler.Tests
         //    string param = "subject.name=" + patFirstName;
 
         //    result = Client.Search<Condition>(new[] {param});
-        //    Assert.BundleIsConformant(result);
+        //    Assert.EntryIdsArePresentAndAbsoluteUrls(result);
 
         //    if (result.Entry.Count() == 0)
         //        Assert.Fail("failed to find any conditions (using subject.name)");
 
-
+            
         //    string identifier = entry.Identifier[0].Value;
         //    result = Client.Search<Condition>(new[] {"subject.identifier=" + identifier});
-        //    Assert.BundleIsConformant(result);
 
         //    if (result.Entry.Count() == 0)
         //        Assert.Fail("failed to find any conditions (using subject.identifier)");
@@ -224,7 +220,6 @@ namespace Sprinkler.Tests
         public void SearchWithIncludes()
         {
             Bundle bundle = Client.Search<Condition>(new[] { "_id=" + newCondition.Id, "_include=Condition:patient" });
-            Assert.BundleIsConformant(bundle);
 
             IEnumerable<Patient> patients = bundle.Entry.ByResourceType<Patient>();
             Assert.IsTrue(patients.Count() > 0,
@@ -257,7 +252,6 @@ namespace Sprinkler.Tests
             string id2 = CreateObservation(4.12349M);
 
             Bundle bundle = Client.Search("Observation", new[] {"value-quantity=4.1234||mg"});
-            Assert.BundleIsConformant(bundle);
 
             Assert.IsTrue(bundle.ContainsResource(id0), "Search on quantity value 4.1234 should return 4.12345");
             Assert.IsTrue(!bundle.ContainsResource(id1), "Search on quantity value 4.1234 should not return 4.12346");
@@ -274,7 +268,6 @@ namespace Sprinkler.Tests
             string id2 = CreateObservation(6.12M);
 
             Bundle bundle = Client.Search("Observation", new[] {"value-quantity=gt5||mg"});
-            Assert.BundleIsConformant(bundle);
 
             BundleAssert.CheckMinimumNumberOfElementsInBundle(bundle, 2);
 
@@ -294,7 +287,6 @@ namespace Sprinkler.Tests
             BundleAssert.CheckContainedResources<Observation>(bundle, new string[]{id1, id2});
 
             bundle = Client.Search("Observation", new[] { "value-quantity=6.0||mg" });
-            Assert.BundleIsConformant(bundle);
             BundleAssert.CheckContainedResources<Observation>(bundle, new string[] { id1, id2 });
 
             Client.Delete("Observation/"+id1);
@@ -307,7 +299,6 @@ namespace Sprinkler.Tests
             var patients = new List<Patient>();
             var filter = "family=BROOKS";
             Bundle bundle = Client.Search<Patient>(new[] { filter });
-            Assert.BundleIsConformant(bundle);
             while (bundle != null && bundle.Entry.ByResourceType<Patient>().Count() > 0)
             {
                 patients.AddRange(bundle.Entry.ByResourceType<Patient>());
@@ -328,7 +319,6 @@ namespace Sprinkler.Tests
             int nrOfAllPatients = Client.Search<Patient>().Entry.ByResourceType<Patient>().Count();
             Bundle actual = Client.Search("Patient", new[] {"noparam=nonsense"});
                 //Obviously a non-existing search parameter
-            Assert.BundleIsConformant(actual);
             int nrOfActualPatients = actual.Entry.ByResourceType<Patient>().Count();
             Assert.CorrectNumberOfResults(nrOfAllPatients, nrOfActualPatients,
                 "Expected all patients ({0}) since the only search parameter is non-existing, but got {1}.");
@@ -360,7 +350,6 @@ namespace Sprinkler.Tests
             Client.Delete(patientToDelete);
 
             Bundle bundle = Client.Search<Patient>(new[] { "_id=" + patientToDelete.Id });
-            Assert.BundleIsConformant(bundle);
             BundleAssert.CheckBundleEmpty(bundle);
         }
 
@@ -379,7 +368,6 @@ namespace Sprinkler.Tests
                 "family=PageThroughResourceSearch"
             }, null, pageSize);
 
-            Assert.BundleIsConformant(page);
             int forwardCount = TestBundlePages(page, PageDirection.Next, pageSize);
             int backwardsCount = TestBundlePages(Client.Continue(page, PageDirection.Last), PageDirection.Previous,
                 pageSize);
@@ -406,7 +394,6 @@ namespace Sprinkler.Tests
                 "type=RNEU"
             });
 
-            Assert.BundleIsConformant(bundle);
             BundleAssert.CheckTypeForResources<Location>(bundle);
             BundleAssert.CheckMinimumNumberOfElementsInBundle(bundle, 1);
 
