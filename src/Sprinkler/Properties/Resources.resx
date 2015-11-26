@@ -127,7 +127,8 @@
 Parameters:</value>
   </data>
   <data name="HelpForParameters" xml:space="preserve">
-    <value>	&lt;url&gt;	The URL address of the FHIR server
+    <value>&lt;command&gt; test | script | list
+	&lt;url&gt;	The URL address of the FHIR server
 	&lt;codes&gt;	A space-separated list of the test-modules or test-codes to execute.
 		(optional. Default: all tests will be executed).</value>
   </data>
@@ -146,7 +147,7 @@ Options:</value>
     <value>Missing mandatory Fhir-server URL.</value>
   </data>
   <data name="HelpForSyntax" xml:space="preserve">
-    <value>&lt;url&gt; [&lt;codes&gt;] [-options]</value>
+    <value>&lt;command&gt; &lt;url&gt; [&lt;codes&gt;] [-options]</value>
   </data>
   <data name="ErrorWrongValueForParameter" xml:space="preserve">
     <value>Wrong value for parameter {0}:{1}</value>
