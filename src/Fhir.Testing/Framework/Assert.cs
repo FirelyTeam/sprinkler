@@ -165,10 +165,15 @@ namespace Sprinkler.Framework
             //    Assert.Fail("content type does not specify UTF8");
         }
 
-        public static void EntryIdsArePresentAndAbsoluteUrls(Bundle b)
+        public static void BundleIsConformant(Bundle b)
         {
             if (b.Entry.Any(e => e.Resource != null && (e.Resource.Id == null && e.Resource.VersionId == null) ))
                 Fail("Some id/versionId's in the bundle are null");
+
+            if (b.Base != Test.ServerUri)
+            {
+                Assert.Fail("Bundle.Base is [{0}], which is not equal to the server specified on the commandline ({1})", b.Base, Test.ServerUri);
+            }
 
             // todo: DSTU2 this no longer works in DSTU2
             //if (!b.Entry. All(e => (e.Resource != null && e.Resource.ResourceIdentity().IsAbsoluteUri ))

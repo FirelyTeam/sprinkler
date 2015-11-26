@@ -203,7 +203,7 @@ namespace Sprinkler.Tests
 
         private void CheckHistoryBundleBasicRequirements(Bundle history)
         {
-            Assert.EntryIdsArePresentAndAbsoluteUrls(history);
+            Assert.BundleIsConformant(history);
             BundleAssert.CheckConditionForAllElements(history, e => e.Request != null,
                 "A history entry must contain a transaction element");
             //ToDo: check if this is necessary
