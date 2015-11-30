@@ -1,7 +1,6 @@
 ﻿<?xml version="1.0" encoding="UTF-8"?>
 
 <Patient xmlns="http://hl7.org/fhir">
-  <id value="example"/>
   <text>
     <status value="generated"/>
     <div xmlns="http://www.w3.org/1999/xhtml">
@@ -51,9 +50,7 @@
 
     </div>
   </text>
-  <extension url="http://hl7.org/fhir/StructureDefinition/patient-birthTime">
-    <valueDateTime value="2001-05-06T14:35:45-05:00"/>
-  </extension>
+  
   <!--   MRN assigned by ACME healthcare on 6-May 2001   -->
   <identifier>
     <use value="usual"/>
@@ -88,7 +85,11 @@
   </telecom>
   <!--   use FHIR code system for male / female   -->
   <gender value="male"/>
-  <birthDate value="1974-12-25"/>
+  <birthDate value="1974-12-25">
+    <extension url="http://hl7.org/fhir/StructureDefinition/patient-birthTime">
+      <valueDateTime value="2001-05-06T14:35:45-05:00"/>
+    </extension>
+  </birthDate>
   <deceasedBoolean value="false"/>
   <address>
     <use value="home"/>
