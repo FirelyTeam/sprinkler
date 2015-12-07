@@ -65,7 +65,7 @@ namespace Furore.Fhir.Sprinkler.Framework.Framework
             return test;
         }
 
-        public void Run(string assemblyName, params string[] codes)
+        public void Run(params string[] codes)
         {
             foreach (Type type in GetTestModules())
             {

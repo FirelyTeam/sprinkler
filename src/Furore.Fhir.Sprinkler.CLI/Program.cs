@@ -92,7 +92,7 @@ namespace Furore.Fhir.Sprinkler.CLI
 
                 var tests = parameters.Values.Skip(1).ToArray();
                 TestRunner runner = Test.CreateRunner(url, log);
-                runner.Run("Furore.Fhir.Sprinkler.TestSet.dll", tests);
+                runner.Run(tests);
             }
             catch (Exception x)
             {
