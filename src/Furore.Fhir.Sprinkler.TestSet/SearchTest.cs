@@ -114,9 +114,8 @@ namespace Furore.Fhir.Sprinkler.TestSet
             Assert.IsTrue(found, "Patient was not found with given name");
         }
 
-
-        [SprinklerTest("SE05", "Search condition by subject (patient) reference")]
-        public void SearchConditionByPatientReference2()
+        [SprinklerTest("SE05", "Search condition by subject (patient) reference - given as url")]
+        public void SearchConditionByPatientReference()
         {
             var patientRef = new ResourceIdentity(newCondition.Patient.Url);
 
@@ -128,94 +127,16 @@ namespace Furore.Fhir.Sprinkler.TestSet
 
         }
 
-        //[SprinklerTest("SE05", "Search condition by subject (patient) reference")]
-        //public void SearchConditionByPatientReference()
-        //{
-        //    Bundle conditions = Client.Search<Condition>();
+        [SprinklerTest("SE32", "Search condition by subject (patient) reference - given just as id")]
+        public void SearchEncounterByPatientReference()
+        {
+            Bundle result = Client.Search<Condition>(new[] { "patient=" + newPatient.Id });
+            Assert.EntryIdsArePresentAndAbsoluteUrls(result);
 
-        //    if (conditions.Entry.Count == 0)
-        //    {
-        //        Bundle patients = Client.Search<Patient>();
-        //        if (patients.Entry.Count == 0)
-        //            Assert.Fail("no patients found - cannot run test");
-        //        var newCondition = new Condition
-        //        {
-        //            Patient = new ResourceReference
-        //            {
-        //                Reference = patients.Entry[0].Resource.Id
-        //            }
-        //        };
-        //        Client.Create(newCondition);
-        //    }
+            Assert.CorrectNumberOfResults(1, result.Entry.Count(),
+                "conditions for this patient (using patient=)");
 
-        //    IEnumerable<Condition> conditionsForPatients = conditions.Entry.ByResourceType<Condition>()
-        //        .Where(
-        //            c =>
-        //                c.Patient != null && new ResourceIdentity(c.Patient.Url).ResourceType == "Patient");
-
-        //    //We want a condition on a patient that has a name, for the last test in this method.
-        //    ResourceIdentity patientRef = null;
-        //    Patient entry = null;
-        //    string patFirstName = "";
-
-
-        //    foreach (var cond in conditionsForPatients)
-        //    {
-        //        try
-        //        {
-        //            patientRef = new ResourceIdentity(cond.Patient.Url);
-        //            entry = Client.Read<Patient>(patientRef);
-        //            patFirstName = entry.Name[0].Family.First();
-        //            if (!string.IsNullOrEmpty(patFirstName)) break;
-                    
-        //        }
-        //        catch (Exception)
-        //        {
-        //            // Apparently this patient has no name, try again.
-        //        }
-        //    }
-
-        //    if (entry == null)
-        //        Assert.Fail("failed to find patient condition is referring to");
-
-        //    IEnumerable<Condition> allConditionsForThisPatient =
-        //        conditionsForPatients.Where(c => c.Patient != null && c.Patient.Url == patientRef);
-        //    int nrOfConditionsForThisPatient = allConditionsForThisPatient.Count();
-
-        //    Bundle result = Client.Search<Condition>(new[] {"subject=" + patientRef});
-        //    Assert.EntryIdsArePresentAndAbsoluteUrls(result);
-
-        //    Assert.CorrectNumberOfResults(nrOfConditionsForThisPatient, result.Entry.Count(),
-        //        "conditions for this patient (using subject=)");
-
-        //    //Test for issue #6, https://github.com/furore-fhir/spark/issues/6
-        //    result = Client.Search<Condition>(new[] {"subject:Patient=" + patientRef});
-        //    Assert.EntryIdsArePresentAndAbsoluteUrls(result);
-
-        //    Assert.CorrectNumberOfResults(nrOfConditionsForThisPatient, result.Entry.Count(),
-        //        "conditions for this patient (using subject:Patient=)");
-
-        //    result = Client.Search<Condition>(new[] {"subject._id=" + patientRef.Id});
-        //    Assert.EntryIdsArePresentAndAbsoluteUrls(result);
-
-        //    Assert.CorrectNumberOfResults(nrOfConditionsForThisPatient, result.Entry.Count(),
-        //        "conditions for this patient (using subject._id=)");
-
-        //    string param = "subject.name=" + patFirstName;
-
-        //    result = Client.Search<Condition>(new[] {param});
-        //    Assert.EntryIdsArePresentAndAbsoluteUrls(result);
-
-        //    if (result.Entry.Count() == 0)
-        //        Assert.Fail("failed to find any conditions (using subject.name)");
-
-            
-        //    string identifier = entry.Identifier[0].Value;
-        //    result = Client.Search<Condition>(new[] {"subject.identifier=" + identifier});
-
-        //    if (result.Entry.Count() == 0)
-        //        Assert.Fail("failed to find any conditions (using subject.identifier)");
-        //}
+        }
 
         [SprinklerTest("SE06", "Search with includes")]
         public void SearchWithIncludes()
@@ -324,15 +245,6 @@ namespace Furore.Fhir.Sprinkler.TestSet
             Assert.CorrectNumberOfResults(nrOfAllPatients, nrOfActualPatients,
                 "Expected all patients ({0}) since the only search parameter is non-existing, but got {1}.");
             IEnumerable<OperationOutcome> outcomes = actual.Entry.ByResourceType<OperationOutcome>();
-            
-            //Assert.IsTrue(outcomes.Any(), "There should be an OperationOutcome.");
-            // mh: No there should not. Not in DSTU-1.
-
-            /*
-            Assert.IsTrue(
-                outcomes.Any(o => o.Resource.Issue.Any(i => i.Severity == OperationOutcome.IssueSeverity.Warning)),
-                "With a warning in it.");
-            */
         }
 
         [SprinklerTest("SE25", "Search with malformed parameter.")]
