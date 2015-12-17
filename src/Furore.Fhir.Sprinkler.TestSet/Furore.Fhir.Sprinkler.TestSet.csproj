@@ -67,54 +67,26 @@
     <Compile Include="ValidatorTest.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Resources\conn5-21-cid-example.xml">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Resources\conn5-21-example.xml">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Resources\message_false_SlicingRegularTestProfile.xml">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Resources\message_SlicingRegularTestProfile.xml">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Resources\patient-example.xml">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Resources\Patient.CardinalityMinus.xml">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Resources\Patient.CardinalityPlus.xml">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Resources\Patient.ConstraintError.xml">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Resources\Patient.ErrorUse.xml">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Resources\Patient.InvalidElement.xml">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Resources\Patient.Narrative.wrong.xml">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Resources\Patient.Valid.xml">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Resources\SlicingRegularTestProfile_expanded.xml">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Resources\xds_example.xml">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
+    <None Include="Resources\conn5-21-cid-example.xml" />
+    <None Include="Resources\conn5-21-example.xml" />
+    <None Include="Resources\message_false_SlicingRegularTestProfile.xml" />
+    <None Include="Resources\message_SlicingRegularTestProfile.xml" />
+    <None Include="Resources\patient-example.xml" />
+    <None Include="Resources\Patient.CardinalityMinus.xml" />
+    <None Include="Resources\Patient.CardinalityPlus.xml" />
+    <None Include="Resources\Patient.ConstraintError.xml" />
+    <None Include="Resources\Patient.ErrorUse.xml" />
+    <None Include="Resources\Patient.InvalidElement.xml" />
+    <None Include="Resources\Patient.Narrative.wrong.xml" />
+    <None Include="Resources\Patient.Valid.xml" />
+    <None Include="Resources\SlicingRegularTestProfile_expanded.xml" />
+    <None Include="Resources\xds_example.xml" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
-    <None Include="Resources\examples.zip">
+    <Content Include="Resources\examples.zip">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
+    </Content>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Properties\Resources.resx">

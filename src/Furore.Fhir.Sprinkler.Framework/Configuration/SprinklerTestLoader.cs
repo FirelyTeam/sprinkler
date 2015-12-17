@@ -7,16 +7,18 @@ using Furore.Fhir.Sprinkler.Framework.Utilities;
 
 namespace Furore.Fhir.Sprinkler.Framework.Configuration
 {
-    public class SprinklerConfigurationTestLoader : ITestLoader
+    public class SprinklerTestLoader : ITestLoader
     {
-        public IEnumerable<Type> GetTestModules()
+        private readonly IEnumerable<string> assemblies;
+
+        public SprinklerTestLoader(IEnumerable<string> assemblies = null)
         {
-            return GetAssembliesNames().SelectMany(GetTestModulesFromAssemblyName);
+            this.assemblies = assemblies;
         }
 
-        private IEnumerable<string> GetAssembliesNames()
+        public IEnumerable<Type> GetTestModules()
         {
-            return TestAssembliesConfiguration.Instance.TestAssemblies.Cast<TestAssembly>().Select(ta=> ta.AssemblyName);
+            return assemblies.SelectMany(GetTestModulesFromAssemblyName);
         }
 
         private IEnumerable<Type> GetTestModulesFromAssemblyName(string assemblyName)

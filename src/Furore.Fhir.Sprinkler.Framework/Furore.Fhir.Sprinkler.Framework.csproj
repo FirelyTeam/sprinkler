@@ -54,13 +54,15 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Configuration\ConfigurationAssembliesNameProvider.cs" />
     <Compile Include="Configuration\Furore.Fhir.Sprinkler.Framework.ConfigurationSection.csd.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>Furore.Fhir.Sprinkler.Framework.ConfigurationSection.csd</DependentUpon>
     </Compile>
+    <Compile Include="Configuration\IAssembliesNameProvider.cs" />
     <Compile Include="Configuration\ITestLoader.cs" />
-    <Compile Include="Configuration\SprinklerConfigurationTestLoader.cs" />
+    <Compile Include="Configuration\SprinklerTestLoader.cs" />
     <Compile Include="Framework\BundleAssert.cs" />
     <Compile Include="Framework\IDynamicTestGenerator.cs" />
     <Compile Include="Framework\Test.cs" />
@@ -97,7 +99,6 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Resources\" />
     <Folder Include="TestsFromDstu1\" />
   </ItemGroup>
   <ItemGroup>

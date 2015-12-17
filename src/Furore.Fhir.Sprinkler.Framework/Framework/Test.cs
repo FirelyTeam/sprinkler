@@ -7,6 +7,8 @@
  */
 
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using Furore.Fhir.Sprinkler.Framework.Configuration;
 
 namespace Furore.Fhir.Sprinkler.Framework.Framework
@@ -15,8 +17,22 @@ namespace Furore.Fhir.Sprinkler.Framework.Framework
     {
         public static TestRunner CreateRunner(string uri, Action<TestResult> log)
         {
-            return new TestRunner(uri,new ITestLoader[]{new SprinklerConfigurationTestLoader()}, log);
+            return new TestRunner(uri, new ITestLoader[] {new SprinklerTestLoader(new ConfigurationAssembliesNameProvider().GetTestAssemblies())}, log);
         }
 
+        public static TestRunner CreateRunner(string uri, Action<TestResult> log,  params IAssembliesNameProvider[] assembliesNameProviders)
+        {
+            return new TestRunner(uri, new ITestLoader[] { new SprinklerTestLoader(assembliesNameProviders.SelectMany(a => a.GetTestAssemblies())) }, log);
+        }
+
+        public static TestRunner CreateRunner(string uri, Action<TestResult> log, IEnumerable<string> assembliesNames)
+        {
+            return new TestRunner(uri, new ITestLoader[] { new SprinklerTestLoader(assembliesNames) }, log);
+        }
+
+        public static TestRunner CreateRunner(string uri, Action<TestResult> log, IEnumerable<ITestLoader> testLoaders)
+        {
+            return new TestRunner(uri, testLoaders, log);
+        }
     }
 }

@@ -72,6 +72,7 @@ namespace Furore.Fhir.Sprinkler.TestSet
                 DomainResource created = null;
                 try
                 {
+                    resource.Id = null;
                     created = Client.Create((T)resource);
                     key = created.ResourceIdentity().WithoutVersion().MakeRelative().ToString();
                     if (key != null)

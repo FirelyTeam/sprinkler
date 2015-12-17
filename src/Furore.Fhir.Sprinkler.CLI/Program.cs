@@ -77,9 +77,9 @@ namespace Furore.Fhir.Sprinkler.CLI
             if (result.Outcome == TestOutcome.Fail)
             {
                 Console.WriteLine("  - {0}\n", result.OperationOutcome());
-                //Console.ResetColor();
-                //Console.WriteLine("Press any key...");
-                //Console.ReadKey();
+                Console.ResetColor();
+                Console.WriteLine("Press any key...");
+                Console.ReadKey();
             }
             Console.ResetColor();
         }
@@ -91,7 +91,7 @@ namespace Furore.Fhir.Sprinkler.CLI
                 var url = parameters.Values.First();
 
                 var tests = parameters.Values.Skip(1).ToArray();
-                TestRunner runner = Test.CreateRunner(url, log);
+                TestRunner runner = Test.CreateRunner(url, log, new[] { "Furore.Fhir.Sprinkler.TestSet.dll" });
                 runner.Run(tests);
             }
             catch (Exception x)
@@ -118,7 +118,7 @@ namespace Furore.Fhir.Sprinkler.CLI
             var scripts = scriptlist();
             foreach(string script in scripts)
             {
-                var ts = new global::Furore.Fhir.Sprinkler.Framework.Framework.TestScript();
+                var ts = new TestScript();
                 ts.Base = url;
                 ts.Filename = script;
                 ts.WantSetup = true; 
