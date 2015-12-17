@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+<package >
+  <metadata>
+    <id>Furore.Fhir.Testing</id>
+    <version>0.5.1-beta2</version>
+    <authors>Furore</authors>
+    <owners>Furore (http://fhir.furore.com</owners>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>A test set for testing FHIR servers</description>
+    <releaseNotes>DSTU2 (1.0.1) release.</releaseNotes>
+	<iconUrl>https://raw.githubusercontent.com/ewoutkramer/fhir-net-api/master/icon-fhir-32.png</iconUrl>
+    <copyright>Copyright (c) 2015 Furore Health Informatics</copyright>
+    <tags>Furore FHIR Testing Sprinkler testset test set DSTU2 Client Server</tags>
+	 <dependencies>
+      <dependency id="Newtonsoft.Json" version="6.0.2" />
+      <dependency id="Hl7.Fhir.DSTU2" version="0.90.3" />
+    </dependencies>
+  </metadata>
+    <files>
+		<file src="src\Furore.Fhir.Sprinkler.Framework\bin\Release\Furore.Fhir.Sprinkler.Framework.dll" target="lib\net45\" />
+		<file src="src\Furore.Fhir.Sprinkler.Framework\bin\Release\Furore.Fhir.Sprinkler.Framework.pdb" target="lib\net45\" />
+		<file src="src\Furore.Fhir.Sprinkler.TestSet\bin\Release\Furore.Fhir.Sprinkler.TestSet.dll" target="lib\net45\" />
+		<file src="src\Furore.Fhir.Sprinkler.TestSet\bin\Release\Furore.Fhir.Sprinkler.TestSet.pdb" target="lib\net45\" />
+    </files>
+</package>

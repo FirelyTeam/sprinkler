@@ -10,6 +10,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Furore.Fhir.Sprinkler.Framework.Configuration;
+using System.Reflection;
 
 namespace Furore.Fhir.Sprinkler.Framework.Framework
 {
@@ -33,6 +34,11 @@ namespace Furore.Fhir.Sprinkler.Framework.Framework
         public static TestRunner CreateRunner(string uri, Action<TestResult> log, IEnumerable<ITestLoader> testLoaders)
         {
             return new TestRunner(uri, testLoaders, log);
+        }
+
+        public static TestRunner CreateRunner(string uri, Action<TestResult> log, params Assembly[] assemblies)
+        {
+            return new TestRunner(uri, new ITestLoader[] { new AssemblyTestLoader(assemblies) }, log);
         }
     }
 }

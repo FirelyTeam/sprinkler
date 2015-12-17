@@ -27,4 +27,29 @@ namespace Furore.Fhir.Sprinkler.Framework.Configuration
             return assembly.GetTypesWithAttribute<SprinklerModule>();
         }
     }
+
+    public class AssemblyTestLoader : ITestLoader
+    {
+        private readonly IList<Assembly> assemblies;
+
+        public AssemblyTestLoader(params Assembly[] assemblies)
+        {
+            this.assemblies = assemblies.ToList();
+        }
+
+        public AssemblyTestLoader(IEnumerable<Assembly> assemblies)
+        {
+            this.assemblies = assemblies.ToList();
+        }
+
+        public IEnumerable<Type> GetTestModules()
+        {
+            return assemblies.SelectMany(GetTestModules);
+        }
+
+        public static IEnumerable<Type> GetTestModules(Assembly assembly)
+        {
+            return assembly.GetTypesWithAttribute<SprinklerModule>();
+        }
+    }
 }
