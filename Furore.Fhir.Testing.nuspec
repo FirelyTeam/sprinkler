@@ -2,7 +2,7 @@
 <package >
   <metadata>
     <id>Furore.Fhir.Testing</id>
-    <version>0.5.1-beta2</version>
+    <version>0.5.5-beta1</version>
     <authors>Furore</authors>
     <owners>Furore (http://fhir.furore.com</owners>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
@@ -21,5 +21,6 @@
 		<file src="src\Furore.Fhir.Sprinkler.Framework\bin\Release\Furore.Fhir.Sprinkler.Framework.pdb" target="lib\net45\" />
 		<file src="src\Furore.Fhir.Sprinkler.TestSet\bin\Release\Furore.Fhir.Sprinkler.TestSet.dll" target="lib\net45\" />
 		<file src="src\Furore.Fhir.Sprinkler.TestSet\bin\Release\Furore.Fhir.Sprinkler.TestSet.pdb" target="lib\net45\" />
+        <file src="src\Furore.Fhir.Sprinkler.TestSet\Resources\*.*" target="lib\net45\Resources\" />
     </files>
 </package>

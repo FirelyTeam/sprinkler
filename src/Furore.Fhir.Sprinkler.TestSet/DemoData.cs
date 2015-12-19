@@ -13,6 +13,7 @@ using System.IO;
 using System.IO.Compression;
 using Hl7.Fhir.Model;
 using Hl7.Fhir.Serialization;
+using System.Reflection;
 
 namespace Furore.Fhir.Sprinkler.TestSet
 {
@@ -123,9 +124,12 @@ namespace Furore.Fhir.Sprinkler.TestSet
 
         public static List<DomainResource> GetListofResources()
         {
-            const string ZIPFILEPATH = "examples.zip";
+            const string ZIPFILENAME = "examples.zip";
             const string resourcesDir = "Resources";
-            string file = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, resourcesDir, ZIPFILEPATH);
+
+            //string file = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, resourcesDir, ZIPFILEPATH);
+            string file = AssemblyResources.GetResourcePath(ZIPFILENAME);
+
             List<DomainResource> resources = new List<DomainResource>();     
 
             using (FileStream zipFileToOpen = new FileStream(file, FileMode.Open))
@@ -147,6 +151,18 @@ namespace Furore.Fhir.Sprinkler.TestSet
             }
             return resources;        
         }
-       
+  
     }
+
+    public static class AssemblyResources
+    {
+        public static string GetResourcePath(string filename)
+        {
+            string location = Assembly.GetExecutingAssembly().Location;
+            string path = Path.GetDirectoryName(location);
+            string file = Path.Combine(path, "Resources", filename);
+            return file;
+        }
+    }
+
 }
