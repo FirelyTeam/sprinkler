@@ -158,7 +158,8 @@ namespace Furore.Fhir.Sprinkler.TestSet
     {
         public static string GetResourcePath(string filename)
         {
-            string location = Assembly.GetExecutingAssembly().Location;
+            string location = typeof(AssemblyResources).Assembly.Location;
+                //Assembly.GetExecutingAssembly().Location;
             string path = Path.GetDirectoryName(location);
             string file = Path.Combine(path, "Resources", filename);
             return file;
