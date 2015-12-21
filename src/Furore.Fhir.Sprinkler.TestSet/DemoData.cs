@@ -127,7 +127,7 @@ namespace Furore.Fhir.Sprinkler.TestSet
             const string ZIPFILENAME = "examples.zip";
             const string resourcesDir = "Resources";
 
-            //string file = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, resourcesDir, ZIPFILEPATH);
+
             string file = AssemblyResources.GetResourcePath(ZIPFILENAME);
 
             List<DomainResource> resources = new List<DomainResource>();     
@@ -158,8 +158,14 @@ namespace Furore.Fhir.Sprinkler.TestSet
     {
         public static string GetResourcePath(string filename)
         {
+            // DOES NOT WORK in dnx:
+            // string file = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, resourcesDir, ZIPFILEPATH);
+
+            // DOES NOT WORK EITHER (in dnx):
+            //Assembly.GetExecutingAssembly().Location;
+
             string location = typeof(AssemblyResources).Assembly.Location;
-                //Assembly.GetExecutingAssembly().Location;
+                
             string path = Path.GetDirectoryName(location);
             string file = Path.Combine(path, "Resources", filename);
             return file;
