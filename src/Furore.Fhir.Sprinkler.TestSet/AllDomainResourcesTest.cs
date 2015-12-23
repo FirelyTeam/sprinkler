@@ -723,7 +723,7 @@ namespace Furore.Fhir.Sprinkler.TestSet
             TestSomeResource<Subscription>();
         }
 
-        [SprinklerTest("AR96", "Create read update delete on SupplyDelivery")]
+        [SprinklerTest("AR96", "Create read update delete on Substance")]
         public void TestSubstance()
         {
             TestSomeResource<Substance>();
