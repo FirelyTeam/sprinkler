@@ -404,12 +404,7 @@ namespace Furore.Fhir.Sprinkler.TestSet
         {
             TestSomeResource<SupplyRequest>();
         }
-
-        [SprinklerTest("AR46", "Create read update delete on SupplyDelivery")]
-        public void TestSupplyDelivery()
-        {
-            TestSomeResource<SupplyDelivery>();
-        }
+       
 
         [SprinklerTest("AR47", "Create read update delete on Value Set")]
         public void TestValueSet()
@@ -738,6 +733,12 @@ namespace Furore.Fhir.Sprinkler.TestSet
         public void TestVisionPrescription()
         {
             TestSomeResource<VisionPrescription>();
+        }
+
+        [SprinklerTest("AR98", "Create read update delete on SupplyDelivery")]
+        public void TestSupplyDelivery()
+        {
+            TestSomeResource<SupplyDelivery>();
         }
     }
 }
