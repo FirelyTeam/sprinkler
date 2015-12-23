@@ -130,10 +130,10 @@ namespace Furore.Fhir.Sprinkler.TestSet
 
             string file = AssemblyResources.GetResourcePath(ZIPFILENAME);
 
-            List<DomainResource> resources = new List<DomainResource>();     
+            List<DomainResource> resources = new List<DomainResource>();
 
-            using (FileStream zipFileToOpen = new FileStream(file, FileMode.Open))
-
+            using (FileStream zipFileToOpen = new FileStream(file, FileMode.Open, FileAccess.Read, FileShare.Read))
+                
             using (ZipArchive archive = new ZipArchive(zipFileToOpen, ZipArchiveMode.Read))
             {
                 ReadOnlyCollection<ZipArchiveEntry> entries = archive.Entries;
