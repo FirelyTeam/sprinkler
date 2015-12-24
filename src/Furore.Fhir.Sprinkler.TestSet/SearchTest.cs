@@ -152,7 +152,7 @@ namespace Furore.Fhir.Sprinkler.TestSet
         {
             var observation = new Observation();
             observation.Status = Observation.ObservationStatus.Preliminary;
-            observation.Code = new CodeableConcept("http://loinc.org", "2164-2");
+            observation.Code = new CodeableConcept() { Coding = new List<Coding>() { new Coding("http://loinc.org", "2164-2"), new Coding("http://snomed.org", "abc123") }, Text = "Code text" };
             observation.Value = new Quantity
             {
                 System = "http://unitsofmeasure.org",
@@ -293,6 +293,28 @@ namespace Furore.Fhir.Sprinkler.TestSet
 
             Client.Delete(patient1);
             Client.Delete(patient2);
+        }
+
+        [SprinklerTest("SE28", "Search for code (in observation) - token parameter")]
+        public void SearchWithToken()
+        {
+            string id0 = CreateObservation(4.12345M);
+
+            Bundle bundle = Client.Search("Observation", new[] { "code=http://loinc.org/|2164-2" });
+
+            Assert.IsTrue(bundle.ContainsResource(id0), "Search on code with system 'http://loinc.org/' and code '2164-2' should return observation");
+
+            bundle = Client.Search("Observation", new[] { "code=2164-2" });
+
+            Assert.IsTrue(bundle.ContainsResource(id0), "Search on code with *no* system and code '2164-2' should return observation");
+
+            bundle = Client.Search("Observation", new[] { "code=|2164-2" });
+
+            Assert.IsTrue(!bundle.ContainsResource(id0), "Search on code with system '<empty>' and code '2164-2' should not return observation");
+
+            bundle = Client.Search("Observation", new[] { "code=completelyBonkersNamespace|2164-2" });
+
+            Assert.IsTrue(!bundle.ContainsResource(id0), "Search on code with system 'completelyBonkersNamespace' and code '2164-2' should return nothing");
         }
 
         [SprinklerTest("SE31", "Using type query string parameter")]
