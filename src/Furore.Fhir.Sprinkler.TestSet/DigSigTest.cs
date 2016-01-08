@@ -39,7 +39,7 @@ namespace Furore.Fhir.Sprinkler.TestSet
             p.Id = "http://test.com/fhir/Patient/233";            
             p.Name = new List<HumanName> {HumanName.ForFamily("Kramer").WithGiven("Ewout")};
 
-            var e = new Bundle.BundleEntryComponent();
+            var e = new Bundle.EntryComponent();
             e.Resource = p;
             b.Entry.Add(e);
 

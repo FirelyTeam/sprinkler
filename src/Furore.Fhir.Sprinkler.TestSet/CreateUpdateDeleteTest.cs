@@ -43,6 +43,8 @@ namespace Furore.Fhir.Sprinkler.TestSet
         {
             var rnd = new Random();
             string assignedId = "sprink" + rnd.Next();
+            ///TODO: CorinaC - write test for this type of id if we decide to solve issue #19 (https://github.com/furore-fhir/spark/issues/19)
+            //string assignedId = "7.345";
             Patient patient = CreatePatientWithClientAssignedId(ResourceFormat.Xml, assignedId);
 
             var ep = new RestUrl(Client.Endpoint);
@@ -60,28 +62,7 @@ namespace Furore.Fhir.Sprinkler.TestSet
         [SprinklerTest("CR04", "Create a patient with manually assigned attributes")]
         public void CreatePatientWithAttributes()
         {
-            Patient selena = new Patient();
-
-            var name = new HumanName();
-            name.GivenElement.Add(new FhirString("Selena"));
-            name.FamilyElement.Add(new FhirString("Gomez"));
-            selena.Name.Add(name);
-
-            var address = new Address();
-            address.LineElement.Add(new FhirString("Cornett"));
-            address.CityElement = new FhirString("Amanda");
-            address.CountryElement = new FhirString("United States");
-            address.StateElement = new FhirString("Texas");
-            selena.Address.Add(address);
-           
-            var contact = new Patient.ContactComponent();
-            var contactname = new HumanName();
-            contactname.GivenElement.Add(new FhirString("Martijn"));
-            contactname.FamilyElement.Add(new FhirString("Harthoorn"));
-            contact.Name = contactname;
-            selena.Contact.Add(contact);
-
-            selena.Gender = AdministrativeGender.Female;
+            var selena = GetNewPatient();
 
             var contactpoint = new ContactPoint();
             contactpoint.System = ContactPoint.ContactPointSystem.Email;
@@ -110,6 +91,33 @@ namespace Furore.Fhir.Sprinkler.TestSet
                 Assert.Fail("Telecom component has disappeared on resource");
             }
             SimplePatientCrudId = resource.Id;
+        }
+
+        private static Patient GetNewPatient()
+        {
+            Patient selena = new Patient();
+
+            var name = new HumanName();
+            name.GivenElement.Add(new FhirString("Selena"));
+            name.FamilyElement.Add(new FhirString("Gomez"));
+            selena.Name.Add(name);
+
+            var address = new Address();
+            address.LineElement.Add(new FhirString("Cornett"));
+            address.CityElement = new FhirString("Amanda");
+            address.CountryElement = new FhirString("United States");
+            address.StateElement = new FhirString("Texas");
+            selena.Address.Add(address);
+
+            var contact = new Patient.ContactComponent();
+            var contactname = new HumanName();
+            contactname.GivenElement.Add(new FhirString("Martijn"));
+            contactname.FamilyElement.Add(new FhirString("Harthoorn"));
+            contact.Name = contactname;
+            selena.Contact.Add(contact);
+
+            selena.Gender = AdministrativeGender.Female;
+            return selena;
         }
 
         [SprinklerTest("CR05", "Create and update a patient with an extension")]
@@ -180,8 +188,7 @@ namespace Furore.Fhir.Sprinkler.TestSet
                 tel => tel.System == ContactPoint.ContactPointSystem.Other && tel.Value == "http://www.nu.nl"))
                 Assert.Fail(String.Format("Resource {0} unchanged after update", LocationSimplePatient));
         }
-
-
+        
 
         private void CheckHumanNameExtensions(HumanName name, string qualifier,
            IEnumerable<string> expectedValues, string errorMessage)

@@ -19,10 +19,10 @@ namespace Furore.Fhir.Sprinkler.TestSet
     [SprinklerModule("Bundle")]
     public class BundleTest : SprinklerTestClass
     {
-        private Bundle.BundleEntryComponent _binDoc;
-        private Bundle.BundleEntryComponent _connDoc, _patDoc;
+        private Bundle.EntryComponent _binDoc;
+        private Bundle.EntryComponent _connDoc, _patDoc;
         private Bundle _postResult;
-        private Bundle.BundleEntryComponent _prac1Doc, _prac2Doc;
+        private Bundle.EntryComponent _prac1Doc, _prac2Doc;
         private DateTimeOffset historyStartDate;
         private Bundle historyBundle;
 
@@ -52,7 +52,7 @@ namespace Furore.Fhir.Sprinkler.TestSet
 
             _postResult = Client.RefreshBundle(_postResult);
             Assert.EntryIdsArePresentAndAbsoluteUrls(_postResult);
-            List<Bundle.BundleEntryComponent> entries = _postResult.Entry;
+            List<Bundle.EntryComponent> entries = _postResult.Entry;
 
             _connDoc = entries[0];
 
@@ -113,7 +113,7 @@ namespace Furore.Fhir.Sprinkler.TestSet
         {
             Bundle bundle = DemoData.GetDemoBundle();
             Bundle trans = Client.Transaction(bundle);
-            List<Bundle.BundleEntryComponent> entries = trans.Entry;
+            List<Bundle.EntryComponent> entries = trans.Entry;
             Assert.EntryIdsArePresentAndAbsoluteUrls(trans);
 
             // If server honors the 'search' link, it might *not* re-create the patient
@@ -136,11 +136,11 @@ namespace Furore.Fhir.Sprinkler.TestSet
             Patient pat = _postResult.Entry.ByResourceType<Patient>().First();
             pat.Identifier[0].Value = "3141592";
 
-            List<Bundle.BundleEntryComponent> entries = _postResult.Entry;
+            List<Bundle.EntryComponent> entries = _postResult.Entry;
             Bundle returnedBundle = Client.Transaction(_postResult);
             Assert.EntryIdsArePresentAndAbsoluteUrls(returnedBundle);
 
-            List<Bundle.BundleEntryComponent> entries2 = returnedBundle.Entry;
+            List<Bundle.EntryComponent> entries2 = returnedBundle.Entry;
             if (entries2[0].Resource.Id != entries[0].Resource.Id || entries2[4].Resource.Id != entries[4].Resource.Id) // etcetera
                 Assert.Fail("submitting a batch with updates created new resources");
 

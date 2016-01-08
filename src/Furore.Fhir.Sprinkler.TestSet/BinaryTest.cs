@@ -10,6 +10,7 @@ using System.Linq;
 using System.Net;
 using Furore.Fhir.Sprinkler.Framework.Framework;
 using Hl7.Fhir.Model;
+using Hl7.Fhir.Rest;
 
 namespace Furore.Fhir.Sprinkler.TestSet
 {
@@ -17,51 +18,72 @@ namespace Furore.Fhir.Sprinkler.TestSet
     public class BinaryTest : SprinklerTestClass
     {
         private string _binaryId;
+        private Binary referenceBinary;
 
-
-        [SprinklerTest("BI01", "create a binary")]
-        public void CreateBinary()
+        [ModuleInitialize]
+        public void Initialize()
         {
-            Binary bin = DemoData.GetDemoBinary();
-            Binary received = null;
-            received = Client.Create(bin);
-           // Assert.Success(Client, () => received = Client.Create(bin));
-
-            Assert.LocationPresentAndValid(Client);
-
-            Binary binResult = Client.Read<Binary>(received.Id);
-            
-
-            if (binResult.ContentType != bin.ContentType)
-                Assert.Fail("Created binary of type " + bin.ContentType +
-                                "but received " + binResult.ContentType);
-
-            Assert.ContentLocationValidIfPresent(Client);
-
-            CompareData(bin.Content, binResult);
-
-            _binaryId = received.Id;
-            
+            referenceBinary = DemoData.GetDemoBinary();
         }
 
-        [SprinklerTest("BI02", "retrieve & update that binary")]
-        public void RetrieveBinary()
+        [SprinklerTest("BI01", "Create a binary")]
+        public void CreateBinary()
+        {
+            Client.PreferredFormat = ResourceFormat.Xml;
+            Client.ReturnFullResource = true;
+
+            Binary received = Client.Create(referenceBinary);
+            CheckBinary(received);
+          
+            _binaryId = @"Binary/" + received.Id;
+        }
+
+        [SprinklerTest("BI02", "Read binary as xml")]
+        public void ReadBinaryAsXml()
         {
             if (_binaryId == null) Assert.Skip();
 
-            Binary received = Client.Read<Binary>(_binaryId);
-            CompareData(DemoData.GetDemoBinary().Content, received);
+            Client.PreferredFormat = ResourceFormat.Xml;
+            Client.UseFormatParam = true;
+            Client.ReturnFullResource = true;
 
-            byte[] data = DemoData.GetDemoBinary().Content.Reverse().ToArray();
+            Binary result = Client.Read<Binary>(_binaryId);
+            Assert.ResourceResponseConformsTo(Client, Client.PreferredFormat);
 
-            received.Content = data;
-            Client.Update(received);
+            CheckBinary(result);
 
-            received = Client.Read<Binary>(_binaryId);
-            CompareData(data, received);
+            referenceBinary = result;
         }
 
-        [SprinklerTest("BI03", "delete the binary")]
+        [SprinklerTest("BI03", "Read binary as json")]
+        public void ReadBinaryAsJson()
+        {
+            if (_binaryId == null) Assert.Skip();
+
+            Client.PreferredFormat = ResourceFormat.Json;
+            Client.UseFormatParam = false;
+            Client.ReturnFullResource = true;
+
+            Binary result = Client.Read<Binary>(_binaryId);
+            Assert.ResourceResponseConformsTo(Client, Client.PreferredFormat);
+
+            CheckBinary(result);
+
+            referenceBinary = result;
+        }   
+
+        [SprinklerTest("BI04", "Update binary - This might fail because FHIR.API doesn't send binary resources in a resource envelope and the documentation is not clear if FHIR servers should accept it like that.")]
+        public void UpdateBinary()
+        {
+            if (_binaryId == null || referenceBinary.Id == null) Assert.Skip();
+
+            referenceBinary.Content = referenceBinary.Content.Reverse().ToArray();
+            Binary result = Client.Update(referenceBinary);
+
+            CheckBinary(result);
+        }
+
+        [SprinklerTest("BI05", "Delete binary")]
         public void DeleteBinary()
         {
             Assert.SkipWhen(_binaryId == null);
@@ -71,6 +93,13 @@ namespace Furore.Fhir.Sprinkler.TestSet
             Assert.Fails(Client, () => Client.Read<Binary>(_binaryId), HttpStatusCode.Gone);
         }
 
+        private void CheckBinary(Binary result)
+        {
+            Assert.LocationPresentAndValid(Client);
+            Assert.IsTrue(referenceBinary.ContentType == result.ContentType, "ContentType of the received binary is not correct");
+            CompareData(referenceBinary.Content, result);
+
+        }
 
         private static void CompareData(byte[] data, Binary received)
         {
