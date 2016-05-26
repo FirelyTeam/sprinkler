@@ -25,7 +25,7 @@ namespace Furore.Fhir.Sprinkler.Framework.Framework
             }
         }
 
-        public static void CheckConditionForAllElements(Bundle bundle, Predicate<Bundle.BundleEntryComponent> condition, string conditionDescription)
+        public static void CheckConditionForAllElements(Bundle bundle, Predicate<Bundle.EntryComponent> condition, string conditionDescription)
         {
             if (!bundle.Entry.TrueForAll(condition))
             {
@@ -124,7 +124,7 @@ namespace Furore.Fhir.Sprinkler.Framework.Framework
             }
         }
 
-        public static void CheckConditionForAllElementsWithEntryInformation(Bundle bundle, Predicate<Bundle.BundleEntryComponent> condition, Func<Bundle.BundleEntryComponent, string> entryInformation, string conditionDescription)
+        public static void CheckConditionForAllElementsWithEntryInformation(Bundle bundle, Predicate<Bundle.EntryComponent> condition, Func<Bundle.EntryComponent, string> entryInformation, string conditionDescription)
         {
             foreach (var entry in bundle.Entry)
             {

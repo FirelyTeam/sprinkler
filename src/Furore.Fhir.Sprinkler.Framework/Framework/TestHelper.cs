@@ -33,17 +33,17 @@ namespace Furore.Fhir.Sprinkler.Framework.Framework
         public static IEnumerable<MethodInfo> GetTestMethods(Type testclass, IEnumerable<string> codes = null)
         {
             IEnumerable<MethodInfo> methods;
-            SprinklerDynamicModule sprinklerDynamicModule = testclass.GetCustomAttribute<SprinklerDynamicModule>();
-            if (sprinklerDynamicModule != null)
-            {
-                var dynamicTestGenerator = Activator.CreateInstance(sprinklerDynamicModule.DynamicTestGenerator) as IDynamicTestGenerator;
-                methods = dynamicTestGenerator.GetTestMethods();
-            }
-            else
-            {
+            //SprinklerDynamicModule sprinklerDynamicModule = testclass.GetCustomAttribute<SprinklerDynamicModule>();
+            //if (sprinklerDynamicModule != null)
+            //{
+            //    var dynamicTestGenerator = Activator.CreateInstance(sprinklerDynamicModule.DynamicTestGenerator) as IDynamicTestGenerator;
+            //    methods = dynamicTestGenerator.GetTestMethods();
+            //}
+            //else
+            //{
                 methods = testclass.GetMethods();
                 
-            }
+            //}
             if (codes != null && codes.Count() > 0)
             {
                 return methods.Where(method => IsProperTestMethod(method, codes));

@@ -66,13 +66,13 @@ namespace Furore.Fhir.Sprinkler.Framework.Utilities
             return bundle.Entry.ByResourceType<T>();
         }
 
-        public static bool IsDeleted(this Bundle.BundleEntryComponent entry)
+        public static bool IsDeleted(this Bundle.EntryComponent entry)
         {
             if (entry.Request == null) return false;
             return (entry.Request.Method == Bundle.HTTPVerb.DELETE);
         }
 
-        public static IEnumerable<Bundle.BundleEntryComponent> GetDeleted(this IEnumerable<Bundle.BundleEntryComponent> entries)
+        public static IEnumerable<Bundle.EntryComponent> GetDeleted(this IEnumerable<Bundle.EntryComponent> entries)
         {
             //return entries.Where(entry => entry.IsDeleted());
             return entries.Where(IsDeleted);
