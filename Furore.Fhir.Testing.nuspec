@@ -2,7 +2,7 @@
 <package >
   <metadata>
     <id>Furore.Fhir.Testing</id>
-    <version>0.5.6-alpha1</version>
+    <version>0.5.6-beta3</version>
     <authors>Furore</authors>
     <owners>Furore (http://fhir.furore.com</owners>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
