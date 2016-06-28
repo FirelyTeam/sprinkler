@@ -1,11 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Furore.Fhir.Sprinkler.Framework.Utilities;
+using System.Text;
+using System.Threading.Tasks;
 using Hl7.Fhir.Model;
 using Hl7.Fhir.Rest;
 
-namespace Furore.Fhir.Sprinkler.Framework.Framework
+namespace Furore.Fhir.Sprinkler.ClientUtilities
 {
     public class BundleAssert
     {
@@ -42,7 +43,7 @@ namespace Furore.Fhir.Sprinkler.Framework.Framework
         }
 
         public static void CheckConditionForResources<T>(Bundle bundle, Func<T, bool> condition, string conditionDescription)
-            where T:Resource
+            where T : Resource
         {
             if (bundle.GetResources().Cast<T>().Any(condition) == false)
             {
@@ -92,7 +93,7 @@ namespace Furore.Fhir.Sprinkler.Framework.Framework
             }
         }
 
-        public static void CheckResourcesInOrder<T>(Bundle bundle, Func<Resource, T> keySelector, string conditionDescription = null) where T: IComparable<T>
+        public static void CheckResourcesInOrder<T>(Bundle bundle, Func<Resource, T> keySelector, string conditionDescription = null) where T : IComparable<T>
         {
             Resource prevResource = null;
             foreach (var resource in bundle.GetResources())
@@ -133,7 +134,7 @@ namespace Furore.Fhir.Sprinkler.Framework.Framework
                     Assert.Fail("Entry {0} does not respect condition {1}", entryInformation(entry), conditionDescription);
                 }
             }
-         }
+        }
 
 
         public static void ContainsAllVersionIds(Bundle bundle, IEnumerable<string> versionsList)

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Reflection;
 using System.Linq;
 using Furore.Fhir.Sprinkler.Framework.Framework;
+using Furore.Fhir.Sprinkler.Framework.Framework.Attributes;
 using Furore.Fhir.Sprinkler.Framework.Utilities;
 
 namespace Furore.Fhir.Sprinkler.Framework.Configuration

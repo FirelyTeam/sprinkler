@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using Furore.Fhir.Sprinkler.Framework.Framework;
+using Furore.Fhir.Sprinkler.Framework.Framework.TestExecution;
 using Hl7.Fhir.Model;
 
 namespace Furore.Fhir.Sprinkler.TestSet

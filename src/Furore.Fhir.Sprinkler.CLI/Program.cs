@@ -13,6 +13,12 @@ using System.Linq;
 using System.Reflection;
 using Furore.Fhir.Sprinkler.CLI.Properties;
 using Furore.Fhir.Sprinkler.Framework.Framework;
+using Furore.Fhir.Sprinkler.Framework.Framework.Attributes;
+using Furore.Fhir.Sprinkler.Framework.Framework.TestExecution;
+using Furore.Fhir.Sprinkler.Framework.Framework.TestScripts;
+using Furore.Fhir.Sprinkler.Runner.Contracts;
+using Furore.Fhir.Sprinkler.XunitRunner.Runner;
+using Hl7.Fhir.Rest;
 
 namespace Furore.Fhir.Sprinkler.CLI
 {
@@ -91,7 +97,16 @@ namespace Furore.Fhir.Sprinkler.CLI
                 var url = parameters.Values.First();
 
                 var tests = parameters.Values.Skip(1).ToArray();
-                TestRunner runner = Test.CreateRunner(url, log, new[] { "Furore.Fhir.Sprinkler.TestSet.dll" });
+                ITestRunner runner = null;
+                if (parameters.HasOption("-xunit"))
+                {
+                    runner = new XUnitTestRunner(url, log, new []{ @"D:\Projects\Furore\sprinkler\Furore.Fhir.Sprinkler.Xunit.TestSet\bin\Debug\Furore.Fhir.Sprinkler.Xunit.TestSet.dll" });
+                }
+                else
+                {
+                    runner = Test.CreateRunner(url, log, new[] { "Furore.Fhir.Sprinkler.TestSet.dll" });
+                }
+                  
                 runner.Run(tests);
             }
             catch (Exception x)
@@ -154,5 +169,21 @@ namespace Furore.Fhir.Sprinkler.CLI
             Console.WriteLine("\t{0}\t{1}", "LIST", Resources.HelpForListParameter);
         }
 
+    }
+    public static class ExceptionWriter
+    {
+        public static string OperationOutcome(this TestResult testresult)
+        {
+            Exception exception = testresult.Exception;
+            if (exception == null) return null;
+
+            if (exception is FhirOperationException)
+            {
+                IEnumerable<string> details = (exception as FhirOperationException).Outcome.Issue.Select(i => i.Diagnostics);
+                return string.Join(" - \n", details);
+            }
+            else return exception.Message;
+
+        }
     }
 }

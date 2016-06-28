@@ -6,7 +6,7 @@
  * available at https://raw.github.com/furore-fhir/sprinkler/master/LICENSE
  */
 
-namespace Furore.Fhir.Sprinkler.Framework.Framework
+namespace Furore.Fhir.Sprinkler.Framework.Framework.TestExecution
 {
     public static class TestResultSerializer
     {

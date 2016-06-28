@@ -1,4 +1,4 @@
-﻿/* 
+/* 
  * Copyright (c) 2014, Furore (info@furore.com) and contributors
  * See the file CONTRIBUTORS for details.
  * 
@@ -9,10 +9,11 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Furore.Fhir.Sprinkler.Framework.Configuration;
 using System.Reflection;
+using Furore.Fhir.Sprinkler.Framework.Configuration;
+using Furore.Fhir.Sprinkler.Runner.Contracts;
 
-namespace Furore.Fhir.Sprinkler.Framework.Framework
+namespace Furore.Fhir.Sprinkler.Framework.Framework.TestExecution
 {
     public static class Test
     {

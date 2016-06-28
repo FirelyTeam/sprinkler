@@ -1,24 +1,19 @@
-﻿/* 
- * Copyright (c) 2014, Furore (info@furore.com) and contributors
- * See the file CONTRIBUTORS for details.
- * 
- * This file is licensed under the BSD 3-Clause license
- * available at https://raw.github.com/furore-fhir/sprinkler/master/LICENSE
- */
-
-using System;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Net;
+using System.Text;
+using System.Threading.Tasks;
 using Hl7.Fhir.Model;
 using Hl7.Fhir.Rest;
 
-namespace Furore.Fhir.Sprinkler.Framework.Framework
+namespace Furore.Fhir.Sprinkler.ClientUtilities
 {
     public class Assert
     {
         public static void ContentTypePresent(FhirClient client)
         {
-            if (String.IsNullOrEmpty( client.LastResult.GetHeader("Content-Type").FirstOrDefault()))                
+            if (String.IsNullOrEmpty(client.LastResult.GetHeader("Content-Type").FirstOrDefault()))
                 Fail("Mandatory Content-Type header missing");
         }
 
@@ -167,7 +162,7 @@ namespace Furore.Fhir.Sprinkler.Framework.Framework
 
         public static void EntryIdsArePresentAndAbsoluteUrls(Bundle b)
         {
-            if (b.Entry.Any(e => e.Resource != null && (e.Resource.Id == null && e.Resource.VersionId == null) ))
+            if (b.Entry.Any(e => e.Resource != null && (e.Resource.Id == null && e.Resource.VersionId == null)))
                 Fail("Some id/versionId's in the bundle are null");
 
             // todo: DSTU2 this no longer works in DSTU2
@@ -200,7 +195,7 @@ namespace Furore.Fhir.Sprinkler.Framework.Framework
 
         public static void AssertStatusCode(FhirClient client, HttpStatusCode expected)
         {
-            if (client.LastResult.Status != ((int) expected).ToString())
+            if (client.LastResult.Status != ((int)expected).ToString())
             {
                 Fail("Expected http result {0} but got {1}", expected, client.LastResult.Status);
             }

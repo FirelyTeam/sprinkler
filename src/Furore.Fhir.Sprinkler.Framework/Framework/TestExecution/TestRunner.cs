@@ -1,4 +1,4 @@
-﻿/* 
+/* 
  * Copyright (c) 2014, Furore (info@furore.com) and contributors
  * See the file CONTRIBUTORS for details.
  * 
@@ -11,11 +11,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using Furore.Fhir.Sprinkler.Framework.Configuration;
+using Furore.Fhir.Sprinkler.Framework.Framework.Attributes;
+using Furore.Fhir.Sprinkler.Framework.Utilities;
+using Furore.Fhir.Sprinkler.Runner.Contracts;
 using Hl7.Fhir.Rest;
 
-namespace Furore.Fhir.Sprinkler.Framework.Framework
+namespace Furore.Fhir.Sprinkler.Framework.Framework.TestExecution
 {
-    public class TestRunner
+    public class TestRunner : ITestRunner
     {
         private readonly FhirClient _client;
         private readonly IDictionary<Type, SprinklerTestClass> modules;
@@ -39,6 +42,12 @@ namespace Furore.Fhir.Sprinkler.Framework.Framework
         {
             var test = new TestResult {Category = category};
             var attribute = SprinklerTest.AttributeOf(method);
+            var resourcePrerequisiteAttribute =
+                method.GetCustomAttributes(typeof (ResourcePrerequisiteAttribute), false)
+                    .OfType<ResourcePrerequisiteAttribute>();
+            ResourcePrerequisitesHandler handler = new ResourcePrerequisitesHandler(resourcePrerequisiteAttribute);
+           var x= handler.HandlePrerequisities();
+
             if (attribute != null)
             {
                 test.Title = attribute.Title;
@@ -60,6 +69,10 @@ namespace Furore.Fhir.Sprinkler.Framework.Framework
             {
                 test.Outcome = TestOutcome.Fail;
                 test.Exception = e.InnerException;
+            }
+            finally
+            {
+
             }
 
             return test;

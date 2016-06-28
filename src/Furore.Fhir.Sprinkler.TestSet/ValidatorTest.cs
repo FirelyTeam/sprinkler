@@ -10,7 +10,10 @@ using System;
 using System.IO;
 using System.Net;
 using System.Text;
+using Furore.Fhir.Sprinkler.ClientUtilities;
 using Furore.Fhir.Sprinkler.Framework.Framework;
+using Furore.Fhir.Sprinkler.Framework.Framework.Attributes;
+using Furore.Fhir.Sprinkler.Framework.Utilities;
 using Hl7.Fhir.Rest;
 
 namespace Furore.Fhir.Sprinkler.TestSet

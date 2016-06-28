@@ -1,16 +1,8 @@
-﻿/* 
- * Copyright (c) 2014, Furore (info@furore.com) and contributors
- * See the file CONTRIBUTORS for details.
- * 
- * This file is licensed under the BSD 3-Clause license
- * available at https://raw.github.com/furore-fhir/sprinkler/master/LICENSE
- */
-
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using Hl7.Fhir.Model;
 
-namespace Furore.Fhir.Sprinkler.Framework.Utilities
+namespace Furore.Fhir.Sprinkler.ClientUtilities
 {
     public static class Utils
     {
@@ -43,8 +35,8 @@ namespace Furore.Fhir.Sprinkler.Framework.Utilities
         {
             var name = new HumanName
             {
-                Family = new List<string> {family},
-                Given = new List<string> {given}
+                Family = new List<string> { family },
+                Given = new List<string> { given }
             };
             var address = new Address
             {
@@ -59,7 +51,7 @@ namespace Furore.Fhir.Sprinkler.Framework.Utilities
         public static bool HasGiven(this Patient patient, string given)
         {
             return patient.Name.Exists(n => n.Given.Contains(given));
-        }       
+        }
 
         public static IEnumerable<T> ResourcesOf<T>(this Bundle bundle) where T : Resource, new()
         {
@@ -89,7 +81,7 @@ namespace Furore.Fhir.Sprinkler.Framework.Utilities
 
         }
 
-        public static Patient GetNewPatient(string family = "Adams" , params string[] given)
+        public static Patient GetNewPatient(string family = "Adams", params string[] given)
         {
             var p = new Patient();
             var n = new HumanName();

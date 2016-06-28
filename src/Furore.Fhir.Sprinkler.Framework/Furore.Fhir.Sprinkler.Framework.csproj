@@ -9,8 +9,9 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Furore.Fhir.Sprinkler.Framework</RootNamespace>
     <AssemblyName>Furore.Fhir.Sprinkler.Framework</AssemblyName>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.5.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -37,10 +38,6 @@
       <HintPath>..\..\packages\Hl7.Fhir.DSTU2.0.90.4\lib\net45\Hl7.Fhir.DSTU2.Core.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Newtonsoft.Json.6.0.7\lib\net45\Newtonsoft.Json.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
@@ -49,7 +46,6 @@
     <Reference Include="System.Security" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
   </ItemGroup>
@@ -63,23 +59,32 @@
     <Compile Include="Configuration\IAssembliesNameProvider.cs" />
     <Compile Include="Configuration\ITestLoader.cs" />
     <Compile Include="Configuration\SprinklerTestLoader.cs" />
-    <Compile Include="Framework\BundleAssert.cs" />
-    <Compile Include="Framework\IDynamicTestGenerator.cs" />
-    <Compile Include="Framework\Test.cs" />
-    <Compile Include="Framework\TestScript.cs" />
+    <Compile Include="Framework\Attributes\ModuleInitializeAttribute.cs" />
+    <Compile Include="Framework\Attributes\ResourcePrerequisiteAttribute.cs" />
+    <Compile Include="Framework\Attributes\SprinklerDynamicModule.cs" />
+    <Compile Include="Framework\Attributes\SprinklerDynamicTest.cs" />
+    <Compile Include="Framework\Attributes\SprinklerModule.cs" />
+    <Compile Include="Framework\Attributes\SprinklerTest.cs" />
+    <Compile Include="Framework\ResourceManagement\IResourceManager.cs" />
+    <Compile Include="Framework\ResourceManagement\ResourceConfiguration.cs" />
+    <Compile Include="Framework\ResourceManagement\ResourceManager.cs" />
+    <Compile Include="Framework\TestExecution\IDynamicTestGenerator.cs" />
+    <Compile Include="Framework\TestExecution\ResourcePrerequisitesHandler.cs" />
+    <Compile Include="Framework\TestExecution\Test.cs" />
+    <Compile Include="Framework\TestExecution\TestCleanupHandler.cs" />
+    <Compile Include="Framework\TestExecution\TestHelper.cs" />
+    <Compile Include="Framework\TestExecution\TestInitializationHandler.cs" />
+    <Compile Include="Framework\TestExecution\TestRunner.cs" />
+    <Compile Include="Framework\TestScripts\ResourceComparer.cs" />
+    <Compile Include="Framework\TestScripts\TestScript.cs" />
     <Compile Include="Utilities\AttributeHelper.cs" />
-    <Compile Include="Framework\Assert.cs" />
-    <Compile Include="Framework\SprinklerTestClass.cs" />
-    <Compile Include="Framework\Attributes.cs" />
-    <Compile Include="Framework\TestHelper.cs" />
-    <Compile Include="Framework\TestResult.cs" />
-    <Compile Include="Framework\TestResults.cs" />
-    <Compile Include="Framework\TestResultSerializer.cs" />
-    <Compile Include="Framework\TestRunner.cs" />
-    <Compile Include="Framework\TestSet.cs" />
-    <Compile Include="Framework\XmlSignatureHelper.cs" />
+    <Compile Include="Framework\TestExecution\TestResults.cs" />
+    <Compile Include="Framework\TestExecution\TestResultSerializer.cs" />
+    <Compile Include="Framework\TestExecution\TestSet.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Utilities\Utils.cs" />
+    <Compile Include="Utilities\MatchExtensions.cs" />
+    <Compile Include="Utilities\SprinklerTestClass.cs" />
+    <Compile Include="Utilities\XmlSignatureHelper.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Configuration\Furore.Fhir.Sprinkler.Framework.ConfigurationSection.csd">
@@ -108,6 +113,12 @@
   </ItemGroup>
   <ItemGroup>
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\Furore.Fhir.Sprinkler.Runner.Contracts\Furore.Fhir.Sprinkler.Runner.Contracts.csproj">
+      <Project>{f7eaa2a0-eb03-4b56-b751-f220aa326b74}</Project>
+      <Name>Furore.Fhir.Sprinkler.Runner.Contracts</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

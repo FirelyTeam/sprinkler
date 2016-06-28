@@ -9,8 +9,9 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Furore.Fhir.Sprinkler.TestSet</RootNamespace>
     <AssemblyName>Furore.Fhir.Sprinkler.TestSet</AssemblyName>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.5.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -122,6 +123,10 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\Furore.Fhir.Sprinkler.ClientUtilities\Furore.Fhir.Sprinkler.ClientUtilities.csproj">
+      <Project>{9dd5cbd7-71c0-464b-95ed-a5b94c94ddba}</Project>
+      <Name>Furore.Fhir.Sprinkler.ClientUtilities</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Furore.Fhir.Sprinkler.Framework\Furore.Fhir.Sprinkler.Framework.csproj">
       <Project>{90248e7c-fd51-42d8-86fe-e1ddbe856691}</Project>
       <Name>Furore.Fhir.Sprinkler.Framework</Name>

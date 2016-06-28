@@ -8,7 +8,7 @@
 
 //using Sprinkler.Properties;
 
-namespace Furore.Fhir.Sprinkler.Framework.Framework
+namespace Furore.Fhir.Sprinkler.Framework.Framework.TestExecution
 {
     /*
     [Serializable]

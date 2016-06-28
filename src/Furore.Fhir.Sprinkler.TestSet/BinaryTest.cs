@@ -8,7 +8,10 @@
 
 using System.Linq;
 using System.Net;
+using Furore.Fhir.Sprinkler.ClientUtilities;
 using Furore.Fhir.Sprinkler.Framework.Framework;
+using Furore.Fhir.Sprinkler.Framework.Framework.Attributes;
+using Furore.Fhir.Sprinkler.Framework.Utilities;
 using Hl7.Fhir.Model;
 using Hl7.Fhir.Rest;
 

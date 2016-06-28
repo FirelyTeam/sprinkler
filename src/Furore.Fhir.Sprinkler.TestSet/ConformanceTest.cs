@@ -6,7 +6,10 @@
  * available at https://raw.github.com/furore-fhir/sprinkler/master/LICENSE
  */
 
+using Furore.Fhir.Sprinkler.ClientUtilities;
 using Furore.Fhir.Sprinkler.Framework.Framework;
+using Furore.Fhir.Sprinkler.Framework.Framework.Attributes;
+using Furore.Fhir.Sprinkler.Framework.Utilities;
 using Hl7.Fhir.Model;
 
 namespace Furore.Fhir.Sprinkler.TestSet
