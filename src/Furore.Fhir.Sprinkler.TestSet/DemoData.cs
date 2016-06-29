@@ -91,8 +91,6 @@ namespace Furore.Fhir.Sprinkler.TestSet
             return Resources.patient_example;
         }
 
-     
-
         public static string GetDemoPatientJson()
         {
             Patient pat = GetDemoPatient();
