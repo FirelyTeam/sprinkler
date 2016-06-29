@@ -9,13 +9,13 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Furore.Fhir.Sprinkler.CLI",
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Furore.Fhir.Sprinkler.TestSet", "src\Furore.Fhir.Sprinkler.TestSet\Furore.Fhir.Sprinkler.TestSet.csproj", "{A3D61CB1-8D8D-44B1-8A2E-D2EDF91E7F41}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Furore.Fhir.Sprinkler.XunitRunner", "Furore.Fhir.Sprinkler.XunitRunner\Furore.Fhir.Sprinkler.XunitRunner.csproj", "{4CB0134D-87AD-4338-A687-7479486DE2C7}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Furore.Fhir.Sprinkler.XunitRunner", "src\Furore.Fhir.Sprinkler.XunitRunner\Furore.Fhir.Sprinkler.XunitRunner.csproj", "{4CB0134D-87AD-4338-A687-7479486DE2C7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Furore.Fhir.Sprinkler.Xunit.TestSet", "Furore.Fhir.Sprinkler.Xunit.TestSet\Furore.Fhir.Sprinkler.Xunit.TestSet.csproj", "{6FFF878C-93BE-4AB9-83B3-A8D766077C52}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Furore.Fhir.Sprinkler.Xunit.TestSet", "src\Furore.Fhir.Sprinkler.Xunit.TestSet\Furore.Fhir.Sprinkler.Xunit.TestSet.csproj", "{6FFF878C-93BE-4AB9-83B3-A8D766077C52}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Furore.Fhir.Sprinkler.ClientUtilities", "Furore.Fhir.Sprinkler.ClientUtilities\Furore.Fhir.Sprinkler.ClientUtilities.csproj", "{9DD5CBD7-71C0-464B-95ED-A5B94C94DDBA}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Furore.Fhir.Sprinkler.ClientUtilities", "src\Furore.Fhir.Sprinkler.ClientUtilities\Furore.Fhir.Sprinkler.ClientUtilities.csproj", "{9DD5CBD7-71C0-464B-95ED-A5B94C94DDBA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Furore.Fhir.Sprinkler.Runner.Contracts", "Furore.Fhir.Sprinkler.Runner.Contracts\Furore.Fhir.Sprinkler.Runner.Contracts.csproj", "{F7EAA2A0-EB03-4B56-B751-F220AA326B74}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Furore.Fhir.Sprinkler.Runner.Contracts", "src\Furore.Fhir.Sprinkler.Runner.Contracts\Furore.Fhir.Sprinkler.Runner.Contracts.csproj", "{F7EAA2A0-EB03-4B56-B751-F220AA326B74}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -115,7 +115,7 @@
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\Furore.Fhir.Sprinkler.Runner.Contracts\Furore.Fhir.Sprinkler.Runner.Contracts.csproj">
+    <ProjectReference Include="..\Furore.Fhir.Sprinkler.Runner.Contracts\Furore.Fhir.Sprinkler.Runner.Contracts.csproj">
       <Project>{f7eaa2a0-eb03-4b56-b751-f220aa326b74}</Project>
       <Name>Furore.Fhir.Sprinkler.Runner.Contracts</Name>
     </ProjectReference>

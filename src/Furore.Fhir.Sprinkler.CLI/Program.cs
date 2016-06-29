@@ -100,7 +100,7 @@ namespace Furore.Fhir.Sprinkler.CLI
                 ITestRunner runner = null;
                 if (parameters.HasOption("-xunit"))
                 {
-                    runner = new XUnitTestRunner(url, log, new []{ @"D:\Projects\Furore\sprinkler\Furore.Fhir.Sprinkler.Xunit.TestSet\bin\Debug\Furore.Fhir.Sprinkler.Xunit.TestSet.dll" });
+                    runner = new XUnitTestRunner(url, log, new []{ @"D:\Projects\Furore\sprinkler\src\Furore.Fhir.Sprinkler.Xunit.TestSet\bin\Debug\Furore.Fhir.Sprinkler.Xunit.TestSet.dll" });
                 }
                 else
                 {

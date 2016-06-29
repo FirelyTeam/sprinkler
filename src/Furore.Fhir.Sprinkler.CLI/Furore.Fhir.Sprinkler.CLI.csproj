@@ -102,15 +102,15 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\Furore.Fhir.Sprinkler.Runner.Contracts\Furore.Fhir.Sprinkler.Runner.Contracts.csproj">
+    <ProjectReference Include="..\Furore.Fhir.Sprinkler.Runner.Contracts\Furore.Fhir.Sprinkler.Runner.Contracts.csproj">
       <Project>{f7eaa2a0-eb03-4b56-b751-f220aa326b74}</Project>
       <Name>Furore.Fhir.Sprinkler.Runner.Contracts</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\Furore.Fhir.Sprinkler.Xunit.TestSet\Furore.Fhir.Sprinkler.Xunit.TestSet.csproj">
+    <ProjectReference Include="..\Furore.Fhir.Sprinkler.Xunit.TestSet\Furore.Fhir.Sprinkler.Xunit.TestSet.csproj">
       <Project>{6fff878c-93be-4ab9-83b3-a8d766077c52}</Project>
       <Name>Furore.Fhir.Sprinkler.Xunit.TestSet</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\Furore.Fhir.Sprinkler.XunitRunner\Furore.Fhir.Sprinkler.XunitRunner.csproj">
+    <ProjectReference Include="..\Furore.Fhir.Sprinkler.XunitRunner\Furore.Fhir.Sprinkler.XunitRunner.csproj">
       <Project>{4cb0134d-87ad-4338-a687-7479486de2c7}</Project>
       <Name>Furore.Fhir.Sprinkler.XunitRunner</Name>
     </ProjectReference>
