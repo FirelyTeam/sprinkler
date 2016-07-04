@@ -1,4 +1,4 @@
-﻿namespace Furore.Fhir.Sprinkler.Framework.Framework.ResourceManagement
+﻿namespace Furore.Fhir.Sprinkler.ClientUtilities.ResourceManagement
 {
     public class ResourceConfiguration
     {

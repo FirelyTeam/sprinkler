@@ -1,50 +1,63 @@
 ﻿using System.Collections.Generic;
 using Furore.Fhir.Sprinkler.XunitRunner.FhirExtensions;
 using Hl7.Fhir.Model;
-using Hl7.Fhir.Rest;
 using Xunit;
-using Furore.Fhir.Sprinkler.ClientUtilities;
+using Furore.Fhir.Sprinkler.ClientUtilities.ResourceManagement;
 using Assert = Furore.Fhir.Sprinkler.ClientUtilities.Assert;
 
 namespace Furore.Fhir.Sprinkler.Xunit.TestSet
 {
-    public class ReadTest : IClassFixture<FhirClientFixture>
-    {
-        private FhirClient Client;
+    ////[FixtureConfiguration(@"d:\projects\furore\sprinkler\src\Furore.Fhir.Sprinkler.TestSet\Resources\", FixtureType.File)]
+    //[FixtureConfiguration(@"D:\Projects\Furore\sprinkler\src\Furore.Fhir.Sprinkler.TestSet\Resources\examples.zip", FixtureType.ZipFile)]
+    //public class ReadTest : IClassFixture<FhirClientFixture>
+    //{
+    //    private readonly FhirClientFixture client;
 
-        public ReadTest(FhirClientFixture client)
-        {
-            Client = client.Client;
-        }
+    //    public ReadTest(FhirClientFixture client)
+    //    {
+    //        this.client = client;
+    //    }
 
-        public static Patient NewPatient(string family, params string[] given)
-        {
-            var p = new Patient();
-            var n = new HumanName();
-            foreach (string g in given)
-            {
-                n.WithGiven(g);
-            }
+    //    public static TheoryData<Patient> NewPatient(string family, params string[] given)
+    //    {
+    //        var p = new Patient();
+    //        var n = new HumanName();
+    //        //foreach (string g in given)
+    //        //{
+    //        //    n.WithGiven(g);
+    //        //}
 
-            n.AndFamily(family);
-            p.Name = new List<HumanName>();
-            p.Name.Add(n);
-            return p;
-        }
+    //        n.AndFamily("aaa");
+    //        p.Name = new List<HumanName>();
+    //        p.Name.Add(n);
+    //        return new TheoryData<Patient>() {p};
+    //    }
 
-        [Fact]
-        [Code("R01")]
-        public void GetTestDataPerson()
-        {
-            Patient p = NewPatient("Emerald", "Caro");
-            Patient entry = Client.Create(p);
-            string id = entry.ResourceIdentity().MakeRelative().ToString();
+    //    [Theory]
+    //    [MemberData("NewPatient", new object[] {"aaa", new string[] { "bbb", "ccc"}})]
+    //    public void CheckResource(Patient patient)
+    //    {
+    //        client.Client.Create<Patient>(patient);
+    //        Assert.HttpOk(client.Client);
+    //        Assert.ValidResourceContentTypePresent(client.Client);
 
-            Client.Read<Patient>(id);
+    //    }
 
-            Assert.HttpOk(Client);
+    //   // [Theory]
+    //   // [Code("R01")]
+    //   // // [Fixture(fileNames: @"d:\projects\furore\sprinkler\src\Furore.Fhir.Sprinkler.TestSet\Resources\patient-example.xml")]
+    //   //// [Fixture(fileNames:"patient-example.xml")]
+    //   // [Fixture(fileNames: "patient-example(example).xml")]
+    //   // [SpyBeforeAfterTest]
+    //   // public void GetTestDataPerson(AutoSetupFixture<Resource> setupPatient)
+    //   // {
+    //   //     Patient patient = (Patient)setupPatient.Fixture;
 
-            Assert.ValidResourceContentTypePresent(Client);
-        }
-    }
+    //   //     string id = patient.ResourceIdentity().MakeRelative().ToString();
+    //   //     client.Client.Read<Patient>(id);
+    //   //     Assert.HttpOk(client.Client);
+    //   //     Assert.ValidResourceContentTypePresent(client.Client);
+
+    //   // }
+    //}
 }

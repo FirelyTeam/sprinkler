@@ -42,11 +42,6 @@ namespace Furore.Fhir.Sprinkler.Framework.Framework.TestExecution
         {
             var test = new TestResult {Category = category};
             var attribute = SprinklerTest.AttributeOf(method);
-            var resourcePrerequisiteAttribute =
-                method.GetCustomAttributes(typeof (ResourcePrerequisiteAttribute), false)
-                    .OfType<ResourcePrerequisiteAttribute>();
-            ResourcePrerequisitesHandler handler = new ResourcePrerequisitesHandler(resourcePrerequisiteAttribute);
-           var x= handler.HandlePrerequisities();
 
             if (attribute != null)
             {

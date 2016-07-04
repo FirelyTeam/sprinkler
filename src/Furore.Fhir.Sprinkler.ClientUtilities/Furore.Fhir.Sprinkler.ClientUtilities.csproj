@@ -32,15 +32,16 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Hl7.Fhir.DSTU2.Core, Version=0.90.4.20849, Culture=neutral, PublicKeyToken=d706911480550fc3, processorArchitecture=MSIL">
-      <HintPath>..\packages\Hl7.Fhir.DSTU2.0.90.4\lib\net45\Hl7.Fhir.DSTU2.Core.dll</HintPath>
+      <HintPath>..\..\packages\Hl7.Fhir.DSTU2.0.90.4\lib\net45\Hl7.Fhir.DSTU2.Core.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\packages\Newtonsoft.Json.6.0.7\lib\net45\Newtonsoft.Json.dll</HintPath>
+      <HintPath>..\..\packages\Newtonsoft.Json.6.0.7\lib\net45\Newtonsoft.Json.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.IO.Compression" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -52,6 +53,14 @@
     <Compile Include="Assert.cs" />
     <Compile Include="BundleAssert.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ResourceManagement\FhirStreamReader.cs" />
+    <Compile Include="ResourceManagement\FileResourceFixtureProvider.cs" />
+    <Compile Include="ResourceManagement\FixtureConfiguration.cs" />
+    <Compile Include="ResourceManagement\IResourceFixturesProvider.cs" />
+    <Compile Include="ResourceManagement\ResourceConfiguration.cs" />
+    <Compile Include="ResourceManagement\ResourceFixturesProvider.cs" />
+    <Compile Include="ResourceManagement\ResxResourceFixtureProvider.cs" />
+    <Compile Include="ResourceManagement\ZipFileResourceFixtureProvider.cs" />
     <Compile Include="TestFailedException.cs" />
     <Compile Include="TestOutcome.cs" />
     <Compile Include="Utils.cs" />

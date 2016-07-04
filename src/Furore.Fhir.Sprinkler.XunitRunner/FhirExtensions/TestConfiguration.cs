@@ -3,5 +3,6 @@
     public static class TestConfiguration
     {
         public static string Url { get; internal set; }
+
     }
 }

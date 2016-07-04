@@ -100,7 +100,7 @@ namespace Furore.Fhir.Sprinkler.CLI
                 ITestRunner runner = null;
                 if (parameters.HasOption("-xunit"))
                 {
-                    runner = new XUnitTestRunner(url, log, new []{ @"D:\Projects\Furore\sprinkler\src\Furore.Fhir.Sprinkler.Xunit.TestSet\bin\Debug\Furore.Fhir.Sprinkler.Xunit.TestSet.dll" });
+                    runner = new XUnitTestRunner(url, log, GetAssemblies());
                 }
                 else
                 {
@@ -113,6 +113,16 @@ namespace Furore.Fhir.Sprinkler.CLI
             {
                 Console.Error.WriteLine(Resources.error, x.Message);
             }
+        }
+
+
+        private static string[] GetAssemblies()
+        {
+            string[] assemblyNames = new[] {@"Furore.Fhir.Sprinkler.Xunit.TestSet.dll"};
+
+            string basePath = AppDomain.CurrentDomain.BaseDirectory;
+
+            return assemblyNames.Select(a => Path.Combine(basePath, a)).ToArray();
         }
 
         private static List<string> scriptlist()

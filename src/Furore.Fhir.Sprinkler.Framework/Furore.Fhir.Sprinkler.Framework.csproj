@@ -65,9 +65,6 @@
     <Compile Include="Framework\Attributes\SprinklerDynamicTest.cs" />
     <Compile Include="Framework\Attributes\SprinklerModule.cs" />
     <Compile Include="Framework\Attributes\SprinklerTest.cs" />
-    <Compile Include="Framework\ResourceManagement\IResourceManager.cs" />
-    <Compile Include="Framework\ResourceManagement\ResourceConfiguration.cs" />
-    <Compile Include="Framework\ResourceManagement\ResourceManager.cs" />
     <Compile Include="Framework\TestExecution\IDynamicTestGenerator.cs" />
     <Compile Include="Framework\TestExecution\ResourcePrerequisitesHandler.cs" />
     <Compile Include="Framework\TestExecution\Test.cs" />
@@ -115,6 +112,10 @@
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Furore.Fhir.Sprinkler.ClientUtilities\Furore.Fhir.Sprinkler.ClientUtilities.csproj">
+      <Project>{9dd5cbd7-71c0-464b-95ed-a5b94c94ddba}</Project>
+      <Name>Furore.Fhir.Sprinkler.ClientUtilities</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Furore.Fhir.Sprinkler.Runner.Contracts\Furore.Fhir.Sprinkler.Runner.Contracts.csproj">
       <Project>{f7eaa2a0-eb03-4b56-b751-f220aa326b74}</Project>
       <Name>Furore.Fhir.Sprinkler.Runner.Contracts</Name>

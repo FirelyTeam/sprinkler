@@ -1,8 +1,11 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Threading;
 using Furore.Fhir.Sprinkler.Runner.Contracts;
 using Furore.Fhir.Sprinkler.XunitRunner.FhirExtensions;
+using Xunit;
 using Xunit.Abstractions;
 using Xunit.Runners;
 
@@ -50,6 +53,11 @@ namespace Furore.Fhir.Sprinkler.XunitRunner.Runner
                 }
             }
 
+        }
+
+        public IEnumerable<Type> GetTestModules()
+        {
+            return testAssemblies.SelectMany(a=>Assembly.LoadFrom(a).GetTypes());
         }
 
         private bool TestCaseFilter(string[] tests, ITestCase testCase)
