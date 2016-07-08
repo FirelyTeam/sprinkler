@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Furore.Fhir.Sprinkler.ClientUtilities
+namespace Furore.Fhir.Sprinkler.FhirUtilities
 {
     [Serializable]
     public class TestFailedException : Exception

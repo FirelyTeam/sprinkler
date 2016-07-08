@@ -69,7 +69,9 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="FhirExtensions\CodeAttribute.cs" />
+    <Compile Include="FhirExtensions\ResourceExtension.cs" />
+    <Compile Include="FhirExtensions\TestDependencyContext.cs" />
+    <Compile Include="FhirExtensions\TestMetadataAttribute.cs" />
     <Compile Include="FhirExtensions\FhirClientFixture.cs" />
     <Compile Include="FhirExtensions\FixtureAttribute.cs" />
     <Compile Include="FhirExtensions\FixtureConfiguration.cs" />
@@ -78,7 +80,13 @@
     <Compile Include="FhirExtensions\ResourceProxy.cs" />
     <Compile Include="FhirExtensions\SpyBeforeAfterTest.cs" />
     <Compile Include="FhirExtensions\TestConfiguration.cs" />
+    <Compile Include="FhirExtensions\PriorityOrderer.cs" />
+    <Compile Include="FhirExtensions\TestPriorityAttribute.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Runner\FhirAssemblyRunner.cs" />
+    <Compile Include="Runner\FhirDiscoveryVisitor.cs" />
+    <Compile Include="Runner\FhirExecutionVisitor.cs" />
+    <Compile Include="Runner\XUnitRunnerOld.cs" />
     <Compile Include="Runner\XUnitTestRunner.cs" />
   </ItemGroup>
   <ItemGroup>

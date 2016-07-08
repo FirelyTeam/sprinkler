@@ -75,15 +75,24 @@ namespace Furore.Fhir.Sprinkler.Framework.Framework.TestExecution
 
         public void Run(params string[] codes)
         {
-            foreach (Type type in GetTestModules())
+            foreach (Type type in GetTestModulesInternal())
             {
                 RunModule(type, codes);
             }
         }
 
-        public IEnumerable<Type> GetTestModules()
+        private IEnumerable<Type> GetTestModulesInternal()
         {
             return testLoaders.SelectMany(l => l.GetTestModules());
+        }
+
+        public IEnumerable<TestModule> GetTestModules()
+        {
+            return GetTestModulesInternal().Select(t =>
+                new TestModule(SprinklerModule.AttributeOf(t).Name,
+                    TestHelper.GetTestMethods(t)
+                        .Select(SprinklerTest.AttributeOf)
+                        .Select(a => new TestCase(a.Code, a.Title))));
         }
 
         private void RunAndLog(SprinklerTestClass instance, MethodInfo methodInfo)

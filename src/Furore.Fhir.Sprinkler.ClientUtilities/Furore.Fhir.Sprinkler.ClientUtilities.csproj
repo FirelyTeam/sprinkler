@@ -50,6 +50,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AssemblyResources.cs" />
     <Compile Include="Assert.cs" />
     <Compile Include="BundleAssert.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

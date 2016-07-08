@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using Hl7.Fhir.Model;
 using Hl7.Fhir.Rest;
 
-namespace Furore.Fhir.Sprinkler.ClientUtilities
+namespace Furore.Fhir.Sprinkler.FhirUtilities
 {
     public class BundleAssert
     {

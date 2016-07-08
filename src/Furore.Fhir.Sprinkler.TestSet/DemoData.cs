@@ -14,6 +14,7 @@ using System.IO.Compression;
 using Hl7.Fhir.Model;
 using Hl7.Fhir.Serialization;
 using System.Reflection;
+using Furore.Fhir.Sprinkler.FhirUtilities;
 
 namespace Furore.Fhir.Sprinkler.TestSet
 {
@@ -154,22 +155,6 @@ namespace Furore.Fhir.Sprinkler.TestSet
   
     }
 
-    public static class AssemblyResources
-    {
-        public static string GetResourcePath(string filename)
-        {
-            // DOES NOT WORK in dnx:
-            // string file = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, resourcesDir, ZIPFILEPATH);
-
-            // DOES NOT WORK EITHER (in dnx):
-            //Assembly.GetExecutingAssembly().Location;
-
-            string location = typeof(AssemblyResources).Assembly.Location;
-                
-            string path = Path.GetDirectoryName(location);
-            string file = Path.Combine(path, "Resources", filename);
-            return file;
-        }
-    }
+   
 
 }

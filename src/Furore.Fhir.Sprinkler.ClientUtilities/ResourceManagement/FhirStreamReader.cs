@@ -4,7 +4,7 @@ using System.Text;
 using Hl7.Fhir.Model;
 using Hl7.Fhir.Serialization;
 
-namespace Furore.Fhir.Sprinkler.ClientUtilities.ResourceManagement
+namespace Furore.Fhir.Sprinkler.FhirUtilities.ResourceManagement
 {
     public class FhirStreamReader : StreamReader
     {

@@ -80,9 +80,6 @@
     <Content Include="Resources\message_SlicingRegularTestProfile.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Resources\patient-example.xml">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
     <Content Include="Resources\Patient.CardinalityMinus.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

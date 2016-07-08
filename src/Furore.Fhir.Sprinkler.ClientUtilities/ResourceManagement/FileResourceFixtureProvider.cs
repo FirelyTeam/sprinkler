@@ -4,7 +4,7 @@ using System.IO;
 using System.Linq;
 using Hl7.Fhir.Model;
 
-namespace Furore.Fhir.Sprinkler.ClientUtilities.ResourceManagement
+namespace Furore.Fhir.Sprinkler.FhirUtilities.ResourceManagement
 {
     public class FileResourceFixtureProvider : IResourceFixturesProvider
     {

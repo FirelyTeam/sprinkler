@@ -82,7 +82,14 @@ namespace Furore.Fhir.Sprinkler.CLI
             Console.WriteLine("{0}", result.Outcome);
             if (result.Outcome == TestOutcome.Fail)
             {
-                Console.WriteLine("  - {0}\n", result.OperationOutcome());
+                if (result.OperationOutcome() != null)
+                {
+                    Console.WriteLine("  - {0}\n", result.OperationOutcome());
+                }
+                foreach (string message in result.Messages)
+                {
+                    Console.WriteLine(message);
+                }
                 Console.ResetColor();
                 Console.WriteLine("Press any key...");
                 Console.ReadKey();
@@ -90,24 +97,43 @@ namespace Furore.Fhir.Sprinkler.CLI
             Console.ResetColor();
         }
 
+        private static ITestRunner CreateRunner()
+        {
+            var url = parameters.Values.First();
+            ITestRunner runner = null;
+            if (parameters.HasOption("-xunit"))
+            {
+                runner = new XUnitTestRunner(url, log, GetAssemblies());
+            }
+            else
+            {
+                runner = Test.CreateRunner(url, log, new[] { "Furore.Fhir.Sprinkler.TestSet.dll" });
+            }
+
+            return runner;
+        }
+
+        private static void ShowModulesList()
+        {
+            Console.WriteLine(Resources.availableModules);
+            foreach (TestModule module in CreateRunner().GetTestModules())
+            {
+                Console.WriteLine("{0}:", module.Name);
+
+                foreach (TestCase test in module.TestCases)
+                {
+                    Console.WriteLine("\t{0}: {1}", test.Code, test.Title);
+                }
+            }
+        }
+
         private static void RunTests()
         {
             try
             {
-                var url = parameters.Values.First();
-
                 var tests = parameters.Values.Skip(1).ToArray();
-                ITestRunner runner = null;
-                if (parameters.HasOption("-xunit"))
-                {
-                    runner = new XUnitTestRunner(url, log, GetAssemblies());
-                }
-                else
-                {
-                    runner = Test.CreateRunner(url, log, new[] { "Furore.Fhir.Sprinkler.TestSet.dll" });
-                }
-                  
-                runner.Run(tests);
+
+                CreateRunner().Run(tests);
             }
             catch (Exception x)
             {
@@ -151,22 +177,7 @@ namespace Furore.Fhir.Sprinkler.CLI
             }
         }
        
-        private static void ShowModulesList()
-        {
-            Console.WriteLine(Resources.availableModules);
-            var url = parameters.Values.First();
-
-            TestRunner runner = Test.CreateRunner(url, log);
-            foreach (Type type in runner.GetTestModules())
-            {
-                Console.WriteLine("{0}:", SprinklerModule.AttributeOf(type).Name);
-                
-                foreach(SprinklerTest test in TestHelper.GetTestMethods(type).Select(SprinklerTest.AttributeOf))
-                {
-                    Console.WriteLine("\t{0}: {1}", test.Code, test.Title);
-                }
-            }
-        }
+      
 
         private static void ShowOptions()
         {

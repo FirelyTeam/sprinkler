@@ -1,4 +1,4 @@
-﻿namespace Furore.Fhir.Sprinkler.ClientUtilities.ResourceManagement
+﻿namespace Furore.Fhir.Sprinkler.FhirUtilities.ResourceManagement
 {
     public class FixtureConfiguration
     {
@@ -6,10 +6,6 @@
         public FixtureType FixtureType { get; set; }
 
         public KeyProvider KeyProvider { get; set; }
-
-
-        //public string FixturePath { get; set; }
-        //public Type ResourceType { get; set; }
     }
 
     public enum FixtureType

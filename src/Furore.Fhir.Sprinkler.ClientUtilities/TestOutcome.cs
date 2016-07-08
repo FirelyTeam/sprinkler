@@ -1,4 +1,4 @@
-﻿namespace Furore.Fhir.Sprinkler.ClientUtilities
+﻿namespace Furore.Fhir.Sprinkler.FhirUtilities
 {
     public enum TestOutcome
     {

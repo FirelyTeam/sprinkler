@@ -66,11 +66,16 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AllDomainResourcesTest.cs" />
+    <Compile Include="BinaryTest.cs" />
+    <Compile Include="BundleTest.cs" />
     <Compile Include="ReadTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+    <None Include="Resourcesx\examples.zip">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Furore.Fhir.Sprinkler.ClientUtilities\Furore.Fhir.Sprinkler.ClientUtilities.csproj">
@@ -81,6 +86,21 @@
       <Project>{4cb0134d-87ad-4338-a687-7479486de2c7}</Project>
       <Name>Furore.Fhir.Sprinkler.XunitRunner</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Resourcesx\allergyintolerance-example.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resourcesx\Document.xml" />
+    <Content Include="Resourcesx\patient-example-no_references.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resourcesx\patient-example.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resourcesx\practitioner-example-no_references.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

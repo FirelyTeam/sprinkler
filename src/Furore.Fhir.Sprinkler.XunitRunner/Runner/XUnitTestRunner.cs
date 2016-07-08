@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Threading;
@@ -8,17 +9,18 @@ using Furore.Fhir.Sprinkler.XunitRunner.FhirExtensions;
 using Xunit;
 using Xunit.Abstractions;
 using Xunit.Runners;
+using System.Linq;
 
 namespace Furore.Fhir.Sprinkler.XunitRunner.Runner
 {
     public class XUnitTestRunner : ITestRunner
     {
         private readonly string url;
+        private readonly Action<TestResult> log;
         private readonly string[] testAssemblies;
         object consoleLock = new object();
 
         // Use an event to know when we're done
-        ManualResetEvent finished = new ManualResetEvent(false);
 
         // Start out assuming success; we'll set this to 1 if we get a failed test
         int result = 0;
@@ -26,43 +28,49 @@ namespace Furore.Fhir.Sprinkler.XunitRunner.Runner
         public XUnitTestRunner(string url, Action<TestResult> log, string[] testAssemblies)
         {
             this.url = url;
+            this.log = log;
             this.testAssemblies = testAssemblies;
         }
 
         public void Run(string[] tests)
         {
+            tests = new string[] { "BU01" };
             TestConfiguration.Url = url;
             foreach (string testAssembly in testAssemblies)
             {
-                using (var runner = AssemblyRunner.WithoutAppDomain(testAssembly))
+                using (var runner = FhirAssemblyRunner.WithoutAppDomain(testAssembly))
                 {
-                    runner.OnDiscoveryComplete = OnDiscoveryComplete;
-                    runner.OnExecutionComplete = OnExecutionComplete;
-                    runner.OnTestFailed = OnTestFailed;
-                    runner.OnTestSkipped = OnTestSkipped;
+                    TestConfiguration.AssemblyRootDirectory = Path.GetDirectoryName(testAssembly);
+
                     if (tests.Any())
                     {
                         runner.TestCaseFilter = @case => TestCaseFilter(tests, @case);
                     }
-
-                    Console.WriteLine("Discovering...");
-                    runner.Start();
-
-                    finished.WaitOne();
-                    finished.Dispose();
+                    runner.Start(log);
                 }
             }
 
         }
 
-        public IEnumerable<Type> GetTestModules()
+        public IEnumerable<TestModule> GetTestModules()
         {
-            return testAssemblies.SelectMany(a=>Assembly.LoadFrom(a).GetTypes());
+            IEnumerable<TestModule> modules = Enumerable.Empty<TestModule>();
+            foreach (string testAssembly in testAssemblies)
+            {
+                using (var runner = FhirAssemblyRunner.WithoutAppDomain(testAssembly))
+                {
+                    modules = modules.UnionAll(runner.DiscoverTests().GroupBy(t => t.TestMethod.TestClass.Class.Name)
+                        .Select(g => new TestModule(g.Key, g.AsEnumerable().Select(testCase =>
+                            new TestCase(testCase.Traits[MetadataTraitDiscoverer.CodeKey].First(),
+                                testCase.Traits[MetadataTraitDiscoverer.DescriptionKey].First())))));
+                }
+            }
+            return modules;
         }
 
         private bool TestCaseFilter(string[] tests, ITestCase testCase)
         {
-            return tests.Contains<string>(testCase.Traits.SingleOrDefault(x => x.Key == CodeTraitDiscoverer.KEY).Value.First().ToString());
+            return tests.Contains<string>(testCase.Traits.SingleOrDefault(x => x.Key == MetadataTraitDiscoverer.CodeKey).Value.First());
         }
 
         void OnDiscoveryComplete(DiscoveryCompleteInfo info)
@@ -73,10 +81,10 @@ namespace Furore.Fhir.Sprinkler.XunitRunner.Runner
 
         void OnExecutionComplete(ExecutionCompleteInfo info)
         {
+       
             lock (consoleLock)
                 Console.WriteLine($"Finished: {info.TotalTests} tests in {Math.Round(info.ExecutionTime, 3)}s ({info.TestsFailed} failed, {info.TestsSkipped} skipped)");
 
-            finished.Set();
         }
 
         void OnTestFailed(TestFailedInfo info)

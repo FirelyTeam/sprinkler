@@ -2,8 +2,8 @@
 using Furore.Fhir.Sprinkler.XunitRunner.FhirExtensions;
 using Hl7.Fhir.Model;
 using Xunit;
-using Furore.Fhir.Sprinkler.ClientUtilities.ResourceManagement;
-using Assert = Furore.Fhir.Sprinkler.ClientUtilities.Assert;
+using Furore.Fhir.Sprinkler.FhirUtilities.ResourceManagement;
+using Assert = Furore.Fhir.Sprinkler.FhirUtilities.Assert;
 
 namespace Furore.Fhir.Sprinkler.Xunit.TestSet
 {

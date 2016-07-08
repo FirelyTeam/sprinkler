@@ -25,10 +25,25 @@ namespace Furore.Fhir.Sprinkler.XunitRunner.FhirExtensions
             for (int i = 0; i < batchSize; i++)
             {
                 yield return source.Current;
-                if(i < batchSize && (source.MoveNext() == false))
+                if(i < (batchSize - 1) && (source.MoveNext() == false))
                     break;
 
             }
         }
+
+        public static IEnumerable<T> UnionAll<T>(
+           this IEnumerable<T> source, IEnumerable<T> values)
+        {
+            foreach (T t in source)
+            {
+                yield return t;
+            }
+            foreach (T t in values)
+            {
+                yield return t;
+            }
+        }
+
+
     }
 }

@@ -55,7 +55,7 @@
 
   <xsl:template match="TestResult">
     <tr>
-      <td class="category">
+      <td class="code">
         <xsl:value-of select="Category" />
       </td>
       <td class="code">

@@ -7,7 +7,7 @@
  */
 
 using System.Collections.Generic;
-using Furore.Fhir.Sprinkler.ClientUtilities;
+using Furore.Fhir.Sprinkler.FhirUtilities;
 using Furore.Fhir.Sprinkler.Framework.Framework;
 using Furore.Fhir.Sprinkler.Framework.Framework.Attributes;
 using Furore.Fhir.Sprinkler.Framework.Utilities;

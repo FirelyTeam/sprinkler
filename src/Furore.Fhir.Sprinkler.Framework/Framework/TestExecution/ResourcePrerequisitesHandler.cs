@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using Furore.Fhir.Sprinkler.ClientUtilities.ResourceManagement;
+using Furore.Fhir.Sprinkler.FhirUtilities.ResourceManagement;
 using Furore.Fhir.Sprinkler.Framework.Framework.Attributes;
 using Hl7.Fhir.Model;
 using Hl7.Fhir.Rest;

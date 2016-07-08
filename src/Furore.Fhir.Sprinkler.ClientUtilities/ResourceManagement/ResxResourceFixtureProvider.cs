@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using Hl7.Fhir.Model;
 
-namespace Furore.Fhir.Sprinkler.ClientUtilities.ResourceManagement
+namespace Furore.Fhir.Sprinkler.FhirUtilities.ResourceManagement
 {
     public class ResxResourceFixtureProvider : IResourceFixturesProvider
     {

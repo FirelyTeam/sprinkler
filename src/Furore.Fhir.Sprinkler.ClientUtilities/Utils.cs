@@ -2,7 +2,7 @@
 using System.Linq;
 using Hl7.Fhir.Model;
 
-namespace Furore.Fhir.Sprinkler.ClientUtilities
+namespace Furore.Fhir.Sprinkler.FhirUtilities
 {
     public static class Utils
     {

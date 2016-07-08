@@ -10,6 +10,7 @@ namespace Furore.Fhir.Sprinkler.Runner.Contracts
         public string Title { get; set; }
         public TestOutcome Outcome { get; set; }
         public Exception Exception { get; set; }
+        public IEnumerable<string> Messages { get; set; }
     }
 
     public enum TestOutcome

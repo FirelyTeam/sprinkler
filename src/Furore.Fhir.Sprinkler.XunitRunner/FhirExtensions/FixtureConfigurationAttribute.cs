@@ -1,5 +1,7 @@
 ﻿using System;
-using Furore.Fhir.Sprinkler.ClientUtilities.ResourceManagement;
+using System.IO;
+using Furore.Fhir.Sprinkler.FhirUtilities;
+using Furore.Fhir.Sprinkler.FhirUtilities.ResourceManagement;
 
 namespace Furore.Fhir.Sprinkler.XunitRunner.FhirExtensions
 {
@@ -20,11 +22,17 @@ namespace Furore.Fhir.Sprinkler.XunitRunner.FhirExtensions
             this.fixtureType = fixtureType;
         }
 
+        public FixtureConfigurationAttribute(FixtureType fixtureType)
+        {
+            this.fixtureType = fixtureType;
+        }
+
         public FixtureConfiguration GetFixtureConfiguration()
         {
             return new FixtureConfiguration()
             {
-                FixturesRootPath = fixturesRootPath,
+                FixturesRootPath =((!string.IsNullOrEmpty(fixturesRootPath) ) && Path.IsPathRooted(fixturesRootPath) )
+                ? fixturesRootPath: Path.Combine(TestConfiguration.AssemblyRootDirectory, "Resourcesx", fixturesRootPath??string.Empty),
                 FixtureType = fixtureType
             };
         }

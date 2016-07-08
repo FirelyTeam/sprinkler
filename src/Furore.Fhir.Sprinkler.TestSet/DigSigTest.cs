@@ -13,7 +13,7 @@ using System.Net;
 using System.Reflection;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
-using Furore.Fhir.Sprinkler.ClientUtilities;
+using Furore.Fhir.Sprinkler.FhirUtilities;
 using Furore.Fhir.Sprinkler.Framework.Framework;
 using Furore.Fhir.Sprinkler.Framework.Utilities;
 using Furore.Fhir.Sprinkler.Framework.Utilities.Framework;

@@ -5,7 +5,7 @@ using System.IO.Compression;
 using System.Linq;
 using Hl7.Fhir.Model;
 
-namespace Furore.Fhir.Sprinkler.ClientUtilities.ResourceManagement
+namespace Furore.Fhir.Sprinkler.FhirUtilities.ResourceManagement
 {
     public class ZipFileResourceFixtureProvider : IResourceFixturesProvider
     {
@@ -76,7 +76,7 @@ namespace Furore.Fhir.Sprinkler.ClientUtilities.ResourceManagement
                 if (foundInAdvancedResource.ContainsKey(entry.Key))
                 {
                     yield return foundInAdvancedResource[entry.Key];
-                    break;
+                    continue;
                 }
                 
                 foreach (var zipEntry in entry.Value)

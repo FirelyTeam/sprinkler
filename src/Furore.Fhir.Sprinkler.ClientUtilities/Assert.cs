@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using Hl7.Fhir.Model;
 using Hl7.Fhir.Rest;
 
-namespace Furore.Fhir.Sprinkler.ClientUtilities
+namespace Furore.Fhir.Sprinkler.FhirUtilities
 {
     public class Assert
     {
@@ -123,7 +123,7 @@ namespace Furore.Fhir.Sprinkler.ClientUtilities
             }
         }
 
-        public static void Fails(FhirClient client, Action action, HttpStatusCode? expected = null)
+        public static void Fails(FhirClient client, Action action, HttpStatusCode? expected = null, string message = null)
         {
             try
             {
@@ -133,7 +133,7 @@ namespace Furore.Fhir.Sprinkler.ClientUtilities
             catch (FhirOperationException)
             {
                 if (expected != null && client.LastResult.Status != ((int)expected).ToString()) //HttpStatusCode To String???
-                    Assert.Fail(String.Format("Expected http result {0} but got {1}", expected,
+                    Assert.Fail(String.Format("{0}, Expected http result {1} but got {2}", message ?? "Operation failled", expected,
                          client.LastResult.Status));
             }
         }

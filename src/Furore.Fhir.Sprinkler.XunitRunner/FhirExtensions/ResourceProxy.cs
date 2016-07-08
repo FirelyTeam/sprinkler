@@ -1,4 +1,4 @@
-﻿using Furore.Fhir.Sprinkler.ClientUtilities.ResourceManagement;
+﻿using Furore.Fhir.Sprinkler.FhirUtilities.ResourceManagement;
 using Hl7.Fhir.Model;
 using Xunit.Abstractions;
 

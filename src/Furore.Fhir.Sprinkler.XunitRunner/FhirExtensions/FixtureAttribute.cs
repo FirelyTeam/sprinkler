@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using Furore.Fhir.Sprinkler.ClientUtilities.ResourceManagement;
+using Furore.Fhir.Sprinkler.FhirUtilities.ResourceManagement;
 using Hl7.Fhir.Model;
 using Hl7.Fhir.Rest;
 using Xunit;
@@ -13,12 +13,19 @@ namespace Furore.Fhir.Sprinkler.XunitRunner.FhirExtensions
     public class FixtureAttribute : DataAttribute
     {
         private readonly bool autocreate;
+        private readonly ResourceType[] resourceTypes;
         private string[] fileNames;
 
         public FixtureAttribute(bool autocreate = true,  params string[] fileNames)
         {
             this.autocreate = autocreate;
             this.fileNames = fileNames;
+        }
+
+        public FixtureAttribute(bool autocreate = true, params ResourceType[] resourceTypes)
+        {
+            this.autocreate = autocreate;
+            this.resourceTypes = resourceTypes;
         }
 
         public FixtureAttribute(bool autocreate = true)
@@ -56,20 +63,47 @@ namespace Furore.Fhir.Sprinkler.XunitRunner.FhirExtensions
         private Resource[] GetResources(FixtureConfiguration configuration, MethodInfo testMethod)
         {
             ResourceFixturesProvider fixturesProvider = new ResourceFixturesProvider();
+            List<string> resourceKeys = new List<string>();
             if (fileNames == null)
             {
                 configuration.KeyProvider = KeyProvider.MatchFixtureType;
-                Type[] x = testMethod.GetParameters()[0].ParameterType.GetGenericParameterConstraints();
-                fileNames =
-                    Assembly.GetAssembly(typeof(Resource))
-                        .GetTypes()
-                        .Where(t => x.All(z => z.IsAssignableFrom(t)))
-                        .Select(t => t.Name).ToArray();
-
+                if (resourceTypes != null)
+                {
+                    resourceKeys.AddRange(resourceTypes.Select(r => r.ToString()).ToArray());
+                }
+                else
+                {
+                    ParameterInfo[] parameterInfos = testMethod.GetParameters();
+                    foreach (ParameterInfo parameterInfo in parameterInfos)
+                    {
+                        if (parameterInfo.ParameterType.IsGenericParameter)
+                        {
+                            //hack - this doesn't work for methods with multiple parameters(either all generic or combinations of some generic, some non-generic)
+                            Type[] x = parameterInfo.ParameterType.GetGenericParameterConstraints();
+                            resourceKeys.AddRange(Assembly.GetAssembly(typeof (Resource))
+                                .GetTypes()
+                                .Where(t => x.All(z => z.IsAssignableFrom(t)))
+                                .Select(t => t.Name).ToArray());
+                        }
+                        else
+                        {
+                            resourceKeys.Add(parameterInfo.ParameterType.Name);
+                        }
+                    }
+                }
             }
-            return
-                fixturesProvider.GetResources(configuration, fileNames)
+            else
+            {
+                resourceKeys.AddRange(fileNames);
+            }
+            var xc = 
+                
+
+                fixturesProvider.GetResources(configuration, resourceKeys.ToArray())
                     .ToArray();
+
+
+            return xc;
 
         }
 
