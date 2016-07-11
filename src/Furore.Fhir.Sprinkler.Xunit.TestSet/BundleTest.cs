@@ -12,16 +12,14 @@ namespace Furore.Fhir.Sprinkler.Xunit.TestSet
 {
     [FixtureConfiguration(FixtureType.File)]
     [TestCaseOrderer("Furore.Fhir.Sprinkler.XunitRunner.FhirExtensions.PriorityOrderer", "Furore.Fhir.Sprinkler.XunitRunner")]
-    public class BundleTest : IClassFixture<FhirClientFixture>, IClassFixture<TestDependencyContext<Bundle>>
+    public class BundleTest : IClassFixture<FhirClientFixture>
     {
-        private readonly TestDependencyContext<Bundle> bundleContext;
         private readonly FhirClient client;
         private const string uuidFormat = @"urn:uuid:{0}";
         private const string fhirServer = @"http://example.org/fhir/";
 
-        public BundleTest(FhirClientFixture client, TestDependencyContext<Bundle> bundleContext)
+        public BundleTest(FhirClientFixture client)
         {
-            this.bundleContext = bundleContext;
             this.client = client.Client;
         }
 

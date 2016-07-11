@@ -34,7 +34,7 @@ namespace Furore.Fhir.Sprinkler.XunitRunner.Runner
 
         public void Run(string[] tests)
         {
-            tests = new string[] { "BU01" };
+            tests = new string[] { "SE" };
             TestConfiguration.Url = url;
             foreach (string testAssembly in testAssemblies)
             {
@@ -70,7 +70,7 @@ namespace Furore.Fhir.Sprinkler.XunitRunner.Runner
 
         private bool TestCaseFilter(string[] tests, ITestCase testCase)
         {
-            return tests.Contains<string>(testCase.Traits.SingleOrDefault(x => x.Key == MetadataTraitDiscoverer.CodeKey).Value.First());
+            return tests.Any(t => testCase.Traits.SingleOrDefault(x => x.Key == MetadataTraitDiscoverer.CodeKey).Value.First().Contains(t));
         }
 
         void OnDiscoveryComplete(DiscoveryCompleteInfo info)

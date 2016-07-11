@@ -70,6 +70,7 @@
     <Compile Include="BundleTest.cs" />
     <Compile Include="ReadTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SearchTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
