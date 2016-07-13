@@ -252,7 +252,6 @@ namespace Furore.Fhir.Sprinkler.Xunit.TestSet
             }
         }
 
-
         [TestMetadata("SE10", "Search for decimal parameters with trailing spaces")]
         [Fact]
         public void SearchObservationQuantityWith0Decimal()
@@ -313,12 +312,142 @@ namespace Furore.Fhir.Sprinkler.Xunit.TestSet
         public void SearchPatientByNonExistingParameter(Patient patient)
         {
             patient = client.CreateTagged(patient);
-            Bundle actual = client.SearchTagged<Patient>(patient.Meta, new[] { "noparam=nonsense" });
-            //Obviously a non-existing search parameter
-            int nrOfActualPatients = actual.Entry.ByResourceType<Patient>().Count();
-            Assert.CorrectNumberOfResults(1, nrOfActualPatients,
-                "Expected all patients ({0}) since the only search parameter is non-existing, but got {1}.");
-            IEnumerable<OperationOutcome> outcomes = actual.Entry.ByResourceType<OperationOutcome>();
+            try
+            {
+                Bundle actual = client.SearchTagged<Patient>(patient.Meta, new[] { "noparam=nonsense" });
+                //Obviously a non-existing search parameter
+                int nrOfActualPatients = actual.Entry.ByResourceType<Patient>().Count();
+                Assert.CorrectNumberOfResults(1, nrOfActualPatients,
+                    "Expected all patients ({0}) since the only search parameter is non-existing, but got {1}.");
+                IEnumerable<OperationOutcome> outcomes = actual.Entry.ByResourceType<OperationOutcome>();
+            }
+            finally
+            {
+                DeleteIds(ResourceType.Patient, patient.Id);
+            }
+        }
+
+        [TestMetadata("SE13", "Search with malformed parameter.")]
+        [Fact]
+        public void SearchPatientByMalformedParameter()
+        {
+            Bundle actual = null;
+            Assert.Fails(client, () => client.Search("Patient", new[] { "...=test" }), out actual,
+                HttpStatusCode.BadRequest);
+        }
+
+        [TestMetadata("SE14", "Search for deleted resources.")]
+        [Theory]
+        [Fixture(false, "patient-example-no_references.xml")]
+        public void SearchShouldNotReturnDeletedResource(Patient patient)
+        {
+            patient = client.Create(patient);
+            client.Delete(patient);
+
+            Bundle bundle = client.Search<Patient>(new[] { "_id=" + patient.Id });
+            BundleAssert.CheckBundleEmpty(bundle);
+        }
+
+        [TestMetadata("SE15", "Paging forward and backward through a search result")]
+        [Theory]
+        [Fixture(false, "patient-example-no_references.xml")]
+        public void PageThroughResourceSearch(Patient patient)
+        {
+            int pageSize = 1;
+            Resource[] results = client.CreateTagged(patient, patient).ToArray();
+            try
+            {
+                Bundle page = client.SearchTagged<Patient>(results[0].Meta, null, null, pageSize);
+
+                int forwardCount = TestBundlePages(page, PageDirection.Next, pageSize);
+                int backwardsCount = TestBundlePages(client.Continue(page, PageDirection.Last), PageDirection.Previous,
+                    pageSize);
+
+                Assert.IsTrue(forwardCount == backwardsCount,
+                    String.Format("Paging forward returns {0} entries, backwards returned {1}",
+                        forwardCount, backwardsCount));
+                Assert.IsTrue(forwardCount >= 2, "Bundle should have at least two pages");
+            }
+            finally 
+            {
+                DeleteIds(ResourceType.Patient, results.Select(r => r.Id).ToArray());
+            }
+        }
+
+        private int TestBundlePages(Bundle page, PageDirection direction, int pageSize)
+        {
+            int pageCount = 0;
+            while (page != null)
+            {
+                pageCount++;
+                BundleAssert.CheckConditionForResources(page, r => r.Id != null || r.VersionId != null,
+                    "Resources must have id/versionId information");
+                BundleAssert.CheckMaximumNumberOfElementsInBundle(page, pageSize);
+
+                page = client.Continue(page, direction);
+            }
+            return pageCount;
+        }
+
+        [TestMetadata("SE16", "Search for code (in observation) - token parameter")]
+        [Fact]
+        public void SearchWithToken()
+        {
+            Observation observation = client.CreateTagged(CreateObservation(4.12345M));
+            try
+            {
+
+                Bundle bundle = client.SearchTagged<Observation>(observation.Meta,
+                    new[] {"code=http://loinc.org/|2164-2"});
+
+                Assert.IsTrue(bundle.ContainsResource(observation.Id),
+                    "Search on code with system 'http://loinc.org/' and code '2164-2' should return observation");
+
+                bundle = client.SearchTagged<Observation>(observation.Meta, new[] {"code=2164-2"});
+
+                Assert.IsTrue(bundle.ContainsResource(observation.Id),
+                    "Search on code with *no* system and code '2164-2' should return observation");
+
+                bundle = client.SearchTagged<Observation>(observation.Meta, new[] {"code=|2164-2"});
+
+                Assert.IsTrue(!bundle.ContainsResource(observation.Id),
+                    "Search on code with system '<empty>' and code '2164-2' should not return observation");
+
+                bundle = client.SearchTagged<Observation>(observation.Meta,
+                    new[] {"code=completelyBonkersNamespace|2164-2"});
+
+                Assert.IsTrue(!bundle.ContainsResource(observation.Id),
+                    "Search on code with system 'completelyBonkersNamespace' and code '2164-2' should return nothing");
+            }
+            finally
+            {
+                DeleteIds(ResourceType.Observation, observation.Id);
+            }
+        }
+
+
+        [TestMetadata("SE17", "Using type query string parameter")]
+        [Fact]
+        public void SearchUsingTypeSearchParameter()
+        {
+            Location loc = new Location();
+            loc.Type = new CodeableConcept("http://hl7.org/fhir/v3/RoleCode", "RNEU", "test type");
+            loc = client.Create(loc);
+            try
+            {
+
+                Bundle bundle = client.Search("Location", new string[]
+                {
+                    "type=RNEU"
+                });
+
+                BundleAssert.CheckTypeForResources<Location>(bundle);
+                BundleAssert.CheckMinimumNumberOfElementsInBundle(bundle, 1);
+            }
+            finally
+            {
+                client.Delete(loc);
+            }
         }
 
     }
