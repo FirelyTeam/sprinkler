@@ -34,7 +34,7 @@ namespace Furore.Fhir.Sprinkler.XunitRunner.Runner
 
         public void Run(string[] tests)
         {
-            tests = new string[] { "SE" };
+            tests = new string[] { "VA" };
             TestConfiguration.Url = url;
             foreach (string testAssembly in testAssemblies)
             {

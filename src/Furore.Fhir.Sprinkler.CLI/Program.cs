@@ -38,6 +38,7 @@ namespace Furore.Fhir.Sprinkler.CLI
     public class Program
     {
         static Parameters parameters;
+        static object lockingObj= new object(); 
 
         public static void Main(string[] args)
         {
@@ -76,25 +77,30 @@ namespace Furore.Fhir.Sprinkler.CLI
 
         private static void log(TestResult result)
         {
-            string designator = string.Format("{0}/{1} {2}", result.Category, result.Code, result.Title);
-            Console.WriteLine(designator);
-            Console.ForegroundColor = result.Outcome == TestOutcome.Success ? ConsoleColor.Green : ConsoleColor.Red;
-            Console.WriteLine("{0}", result.Outcome);
-            if (result.Outcome == TestOutcome.Fail)
+            lock (lockingObj)
             {
-                if (result.OperationOutcome() != null)
+                string designator = string.Format("{0}/{1} {2}", result.Category, result.Code, result.Title);
+                Console.WriteLine(designator);
+                Console.ForegroundColor = result.Outcome == TestOutcome.Success ? ConsoleColor.Green : ConsoleColor.Red;
+                Console.WriteLine("{0}", result.Outcome);
+
+
+                if (result.Outcome == TestOutcome.Fail)
                 {
-                    Console.WriteLine("  - {0}\n", result.OperationOutcome());
-                }
-                foreach (string message in result.Messages)
-                {
-                    Console.WriteLine(message);
+                    if (result.OperationOutcome() != null)
+                    {
+                        Console.WriteLine("  - {0}\n", result.OperationOutcome());
+                    }
+                    foreach (string message in result.Messages)
+                    {
+                        Console.WriteLine(message);
+                    }
+                    Console.ResetColor();
+                    Console.WriteLine("Press any key...");
+                    Console.ReadKey();
                 }
                 Console.ResetColor();
-                Console.WriteLine("Press any key...");
-                Console.ReadKey();
             }
-            Console.ResetColor();
         }
 
         private static ITestRunner CreateRunner()

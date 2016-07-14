@@ -80,26 +80,32 @@
     <Content Include="Resources\message_SlicingRegularTestProfile.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Resources\Patient.CardinalityMinus.xml">
+    <Content Include="..\Furore.Fhir.Sprinkler.Xunit.TestSet\Resourcesx\Patient.CardinalityMinus.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <Link>Resources\Patient.CardinalityMinus.xml</Link>
     </Content>
-    <Content Include="Resources\Patient.CardinalityPlus.xml">
+    <Content Include="..\Furore.Fhir.Sprinkler.Xunit.TestSet\Resourcesx\Patient.CardinalityPlus.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <Link>Resources\Patient.CardinalityPlus.xml</Link>
     </Content>
-    <Content Include="Resources\Patient.ConstraintError.xml">
+    <Content Include="..\Furore.Fhir.Sprinkler.Xunit.TestSet\Resourcesx\Patient.ConstraintError.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <Link>Resources\Patient.ConstraintError.xml</Link>
     </Content>
-    <Content Include="Resources\Patient.ErrorUse.xml">
+    <Content Include="..\Furore.Fhir.Sprinkler.Xunit.TestSet\Resourcesx\Patient.ErrorUse.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <Link>Resources\Patient.ErrorUse.xml</Link>
     </Content>
-    <Content Include="Resources\Patient.InvalidElement.xml">
+    <Content Include="..\Furore.Fhir.Sprinkler.Xunit.TestSet\Resourcesx\Patient.InvalidElement.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <Link>Resources\Patient.InvalidElement.xml</Link>
     </Content>
     <Content Include="Resources\Patient.Narrative.wrong.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Resources\Patient.Valid.xml">
+    <Content Include="..\Furore.Fhir.Sprinkler.Xunit.TestSet\Resourcesx\Patient.Valid.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <Link>Resources\Patient.Valid.xml</Link>
     </Content>
     <Content Include="Resources\SlicingRegularTestProfile_expanded.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>

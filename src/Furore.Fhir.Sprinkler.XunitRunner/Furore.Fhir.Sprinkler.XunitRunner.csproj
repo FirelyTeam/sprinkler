@@ -69,6 +69,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="FhirExtensions\DisposableTestDependencyContext.cs" />
     <Compile Include="FhirExtensions\ResourceExtension.cs" />
     <Compile Include="FhirExtensions\TestDependencyContext.cs" />
     <Compile Include="FhirExtensions\TestMetadataAttribute.cs" />

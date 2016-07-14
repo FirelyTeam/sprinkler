@@ -3,7 +3,7 @@ using Hl7.Fhir.Model;
 
 namespace Furore.Fhir.Sprinkler.XunitRunner.FhirExtensions
 {
-    public class TestDependencyContext<T> where T:Resource
+    public class TestDependencyContext<T> : FhirClientFixture where T:Resource
     {
         public T Dependency
         {
@@ -17,6 +17,11 @@ namespace Furore.Fhir.Sprinkler.XunitRunner.FhirExtensions
                     id = GetId();
                 }
             }
+        }
+
+        public string Location
+        {
+            get { return Dependency.GetReferenceId(); }
         }
 
         public string Id

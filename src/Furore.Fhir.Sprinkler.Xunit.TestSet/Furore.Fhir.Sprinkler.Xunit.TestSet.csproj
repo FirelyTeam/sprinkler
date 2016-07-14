@@ -68,9 +68,14 @@
     <Compile Include="AllDomainResourcesTest.cs" />
     <Compile Include="BinaryTest.cs" />
     <Compile Include="BundleTest.cs" />
+    <Compile Include="ConformanceTest.cs" />
+    <Compile Include="CreateUpdateDeleteTest.cs" />
+    <Compile Include="HistoryTest.cs" />
     <Compile Include="ReadTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="RequestFormatTest.cs" />
     <Compile Include="SearchTest.cs" />
+    <Compile Include="ValidatorTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -97,6 +102,24 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Resourcesx\patient-example.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resourcesx\Patient.CardinalityMinus.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resourcesx\Patient.CardinalityPlus.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resourcesx\Patient.ConstraintError.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resourcesx\Patient.ErrorUse.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resourcesx\Patient.InvalidElement.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resourcesx\Patient.Valid.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Resourcesx\practitioner-example-no_references.xml">

@@ -28,27 +28,27 @@ namespace Furore.Fhir.Sprinkler.Xunit.TestSet
         //    TestDelete<T>(GetKey(resource));
         //}
 
-        //[Theory]
-        //[Fixture(false)]
-        //[TestMetadata("AR{T}", "Create read update delete on {T}")]
-        //public void TestAllResource<T>(T resource) where T : DomainResource, new()
-        //{
-        //    resource = TestCreate<T>(resource);
-        //    TestRead<T>(GetKey(resource));
-        //    TestUpdate<T>(resource);
-        //    TestDelete<T>(GetKey(resource));
-        //}
-
         [Theory]
         [Fixture(false)]
-        [TestMetadata("AR01", "Create read update delete on Patient")]
-        public void TestSomeResource(Patient resource, Account account) 
+        [TestMetadata("AR{T}", "Create read update delete on {T}")]
+        public void TestAllResource<T>(T resource) where T : DomainResource, new()
         {
-            resource = TestCreate(resource);
-            TestRead<Patient>(GetKey(resource));
-            TestUpdate(resource);
-            TestDelete<Patient>(GetKey(resource));
+            resource = TestCreate<T>(resource);
+            TestRead<T>(GetKey(resource));
+            TestUpdate<T>(resource);
+            TestDelete<T>(GetKey(resource));
         }
+
+        //[Theory]
+        //[Fixture(false)]
+        //[TestMetadata("AR01", "Create read update delete on Patient")]
+        //public void TestSomeResource(Patient resource, Account account) 
+        //{
+        //    resource = TestCreate(resource);
+        //    TestRead<Patient>(GetKey(resource));
+        //    TestUpdate(resource);
+        //    TestDelete<Patient>(GetKey(resource));
+        //}
 
         private string GetKey(Resource resource)
         {
