@@ -10,6 +10,8 @@ using Xunit;
 using Xunit.Abstractions;
 using Xunit.Runners;
 using System.Linq;
+using Hl7.Fhir.Model;
+using Hl7.Fhir.Rest;
 
 namespace Furore.Fhir.Sprinkler.XunitRunner.Runner
 {
@@ -34,7 +36,9 @@ namespace Furore.Fhir.Sprinkler.XunitRunner.Runner
 
         public void Run(string[] tests)
         {
-            tests = new string[] { };
+             tests = new string[] { "HI" };
+
+            // CountResources();
             TestConfiguration.Url = url;
             foreach (string testAssembly in testAssemblies)
             {
@@ -50,6 +54,33 @@ namespace Furore.Fhir.Sprinkler.XunitRunner.Runner
                 }
             }
 
+        }
+
+        private void CountResources()
+        {
+            FhirClient client = new FhirClient(url);
+            int resources = 0;
+            foreach (ResourceType resourceType in Enum.GetValues(typeof(ResourceType)))
+            {
+                if (resourceType != ResourceType.Resource && resourceType != ResourceType.DomainResource)
+
+                {
+                    try
+                    {
+                        Bundle bundle = client.Search(resourceType.ToString());
+                        if (bundle.Total.HasValue && bundle.Total.Value > 0)
+                        {
+                            resources += bundle.Total.Value;
+                            System.Console.WriteLine("There are {0} resources of type {1}", bundle.Total, resourceType);
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        System.Console.WriteLine(ex.ToString());
+                    }
+                }
+            }
+            System.Console.WriteLine("{0} total resources were found in the system.", resources);
         }
 
         public IEnumerable<TestModule> GetTestModules()

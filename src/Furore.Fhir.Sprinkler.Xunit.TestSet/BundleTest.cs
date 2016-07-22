@@ -46,8 +46,8 @@ namespace Furore.Fhir.Sprinkler.Xunit.TestSet
             AllergyIntolerance allergyIntolerance)
         {
             Bundle bundle = GetBatchBundleForCreate(patient, practitioner);
-            allergyIntolerance.Patient = new ResourceReference() {Reference = bundle.Entry[0].FullUrl};
-            allergyIntolerance.Recorder = new ResourceReference() {Reference = bundle.Entry[1].FullUrl};
+            allergyIntolerance.Patient = new ResourceReference() { Reference = bundle.Entry[0].FullUrl };
+            allergyIntolerance.Recorder = new ResourceReference() { Reference = bundle.Entry[1].FullUrl };
             bundle.Entry.Add(CreateEntryForCreate(allergyIntolerance));
             var xml = FhirSerializer.SerializeToXml(bundle);
 
@@ -87,16 +87,16 @@ namespace Furore.Fhir.Sprinkler.Xunit.TestSet
 
             if (!resources.Any())
             {
-                foreach (var entriesWithLocation in responseBundle.Entry.Where(e => e.Response!= null && e.Response.Location != null))
+                foreach (var entriesWithLocation in responseBundle.Entry.Where(e => e.Response != null && e.Response.Location != null))
                 {
                     resources.Add(client.Read<Resource>(entriesWithLocation.Response.Location));
                 }
             }
 
             return resources;
-        } 
+        }
 
-        
+
 
 
         //[Theory]
@@ -134,7 +134,7 @@ namespace Furore.Fhir.Sprinkler.Xunit.TestSet
             {
                 Resource = resource,
                 Request = new Bundle.RequestComponent() { Method = Bundle.HTTPVerb.POST },
-                FullUrl = string.Format("{0}/{1}",resource.ResourceType, id)
+                FullUrl = string.Format("{0}/{1}", resource.ResourceType, id)
                 //FullUrl = GenerateUrl(resource)
             };
         }
@@ -142,8 +142,12 @@ namespace Furore.Fhir.Sprinkler.Xunit.TestSet
 
         private string GenerateUuid()
         {
-           return string.Format(uuidFormat, Guid.NewGuid());
+            // return "urn:uuid:1055f04a-61ca-4014-84f7-0036b8659678";
+            //urn:uuid:{CF5BE65E-C8AB-4694-8D76-D4267A1EDB40}
+            // return string.Format(uuidFormat, "AA97B177-9383-4934-8543-0F91A7A02836");
+            return string.Format(uuidFormat, System.Guid.NewGuid());
         }
+
 
         private string GenerateUrl(Resource resource)
         {

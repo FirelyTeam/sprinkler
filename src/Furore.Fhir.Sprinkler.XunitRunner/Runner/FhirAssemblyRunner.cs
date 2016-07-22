@@ -74,6 +74,13 @@ namespace Furore.Fhir.Sprinkler.XunitRunner.Runner
             return Task.Run(() => ExecuteAssembly(log, testCases)).Result;
         }
 
+
+        //public IEnumerable<TestResult> Start(Action<TestResult> log = null, IEnumerable<ITestCase> testCases = null)
+        //{
+        //    testCases = testCases ?? DiscoverFromAssembly();
+        //    return ExecuteAssembly(log, testCases);
+        //}
+
         public IEnumerable<ITestCase> DiscoverTests()
         {
            return Task.Run(() => DiscoverFromAssembly()).Result;

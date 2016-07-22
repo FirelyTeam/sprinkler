@@ -11,73 +11,107 @@ using Assert = Furore.Fhir.Sprinkler.FhirUtilities.Assert;
 
 namespace Furore.Fhir.Sprinkler.Xunit.TestSet
 {
-    public class HistoryPatientContext : DisposableTestDependencyContext<Patient>
+    public interface ISetupAndTeardown 
     {
-        private readonly IList<string> versions = new List<string>();
-
-        public IEnumerable<string> PatientVersions
-        {
-            get { return versions.ToList(); }
-        }
-
-        public Patient Patient
-        {
-            get { return Dependency; }
-        }
-
-
-        public DateTimeOffset CreationDate { get; private set; }
-
-        public HistoryPatientContext()
-        {
-            CreationDate = DateTimeOffset.Now;
-            Patient patient = CreatePatient();
-            if (patient.Meta != null && patient.Meta.LastUpdated != null)
-            {
-                CreationDate = patient.Meta.LastUpdated.Value;
-            }
-            patient = this.Client.Create(patient);
-            versions.Add(patient.VersionId);
-
-            patient.Telecom.Add(new ContactPoint
-            {
-                System = ContactPoint.ContactPointSystem.Email,
-                Value = "info@furore.com"
-            });
-
-            patient = Client.Update(patient, true);
-            versions.Add(patient.VersionId);
-
-            patient = Client.Update(patient, true);
-            versions.Add(patient.VersionId);
-
-            this.Dependency = patient;
-        }
-
-        private Patient CreatePatient(string family = "Adams", params string[] given)
-        {
-            var p = new Patient();
-            var n = new HumanName();
-            foreach (string g in given)
-            {
-                n.WithGiven(g);
-            }
-
-            n.AndFamily(family);
-            p.Name = new List<HumanName>();
-            p.Name.Add(n);
-            return p;
-        }
+        void Setup();
+        void Teardown();
     }
-    public class HistoryTest : IClassFixture<HistoryPatientContext>
+
+    public abstract class SetupAndTeardown<T> : ISetupAndTeardown, IDisposable where T : class, ISetupAndTeardown, new()
+    {
+
+        public SetupAndTeardown()
+        {
+            this.Setup();
+        }
+
+        public void Dispose()
+        {
+            this.Teardown();
+        }
+
+        public abstract void Setup();
+        public abstract void Teardown();
+    }
+
+    public class HistoryTest : IClassFixture<HistoryTest.Context>
     {
         private readonly FhirClient client;
-        private readonly HistoryPatientContext context;
+        private readonly HistoryTest.Context context;
 
-        public HistoryTest(HistoryPatientContext context)
+        public class Context : SetupAndTeardown<Context>
         {
-            this.client = context.Client;
+            public DateTimeOffset CreationDate { get; private set; }
+
+            private readonly IList<string> versions = new List<string>();
+
+            private Patient patient;
+
+            public IEnumerable<string> PatientVersions
+            {
+                get { return versions.ToList(); }
+            }
+
+            public Patient Patient
+            {
+                get { return patient; }
+            }
+
+            public string Location
+            {
+                get { return patient.GetReferenceId(); }
+            }
+
+            public override void Setup()
+            {
+                FhirClient client = FhirClientBuilder.CreateFhirClient();
+                CreationDate = DateTimeOffset.Now;
+                patient = CreatePatient();
+                if (patient.Meta != null && patient.Meta.LastUpdated != null)
+                {
+                    CreationDate = patient.Meta.LastUpdated.Value;
+                }
+                patient = client.Create(patient);
+                versions.Add(patient.VersionId);
+
+                patient.Telecom.Add(new ContactPoint
+                {
+                    System = ContactPoint.ContactPointSystem.Email,
+                    Value = "info@furore.com"
+                });
+
+                patient = client.Update(patient, true);
+                versions.Add(patient.VersionId);
+
+                patient = client.Update(patient, true);
+                versions.Add(patient.VersionId);
+            }
+
+            private Patient CreatePatient(string family = "Adams", params string[] given)
+            {
+                var p = new Patient();
+                var n = new HumanName();
+                foreach (string g in given)
+                {
+                    n.WithGiven(g);
+                }
+
+                n.AndFamily(family);
+                p.Name = new List<HumanName>();
+                p.Name.Add(n);
+                return p;
+            }
+
+            public override void Teardown()
+            {
+               FhirClientBuilder.CreateFhirClient().Delete(patient);
+            }
+        }
+
+        public HistoryTest(HistoryTest.Context context)
+        {
             this.context = context;
+            this.client = FhirClientBuilder.CreateFhirClient();
         }
 
         [TestMetadata("HI01", "Request full history for specific resource")]
