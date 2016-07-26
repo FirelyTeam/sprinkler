@@ -64,7 +64,6 @@ namespace Furore.Fhir.Sprinkler.TestSet
             // There's one version less here, because we don't have the deletion
             BundleAssert.CheckMinimumNumberOfElementsInBundle(history, versions.Count + 1);
             CheckHistoryBundleBasicRequirements(history);
-
         }
 
         [SprinklerTest("HI02", "Request full history for specific resource using the _since parameter (set to before the resource was created)")]

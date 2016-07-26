@@ -85,9 +85,9 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Furore.Fhir.Sprinkler.ClientUtilities\Furore.Fhir.Sprinkler.ClientUtilities.csproj">
-      <Project>{9dd5cbd7-71c0-464b-95ed-a5b94c94ddba}</Project>
-      <Name>Furore.Fhir.Sprinkler.ClientUtilities</Name>
+    <ProjectReference Include="..\Furore.Fhir.Sprinkler.Xunit.ClientUtilities\Furore.Fhir.Sprinkler.Xunit.ClientUtilities.csproj">
+      <Project>{4b0f0882-552e-4f9d-9a94-761ab8a55772}</Project>
+      <Name>Furore.Fhir.Sprinkler.Xunit.ClientUtilities</Name>
     </ProjectReference>
     <ProjectReference Include="..\Furore.Fhir.Sprinkler.XunitRunner\Furore.Fhir.Sprinkler.XunitRunner.csproj">
       <Project>{4cb0134d-87ad-4338-a687-7479486de2c7}</Project>

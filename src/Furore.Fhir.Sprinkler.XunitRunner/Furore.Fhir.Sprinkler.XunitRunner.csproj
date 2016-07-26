@@ -91,13 +91,13 @@
     <Compile Include="Runner\XUnitTestRunner.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Furore.Fhir.Sprinkler.ClientUtilities\Furore.Fhir.Sprinkler.ClientUtilities.csproj">
-      <Project>{9dd5cbd7-71c0-464b-95ed-a5b94c94ddba}</Project>
-      <Name>Furore.Fhir.Sprinkler.ClientUtilities</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Furore.Fhir.Sprinkler.Runner.Contracts\Furore.Fhir.Sprinkler.Runner.Contracts.csproj">
       <Project>{f7eaa2a0-eb03-4b56-b751-f220aa326b74}</Project>
       <Name>Furore.Fhir.Sprinkler.Runner.Contracts</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Furore.Fhir.Sprinkler.Xunit.ClientUtilities\Furore.Fhir.Sprinkler.Xunit.ClientUtilities.csproj">
+      <Project>{4b0f0882-552e-4f9d-9a94-761ab8a55772}</Project>
+      <Name>Furore.Fhir.Sprinkler.Xunit.ClientUtilities</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

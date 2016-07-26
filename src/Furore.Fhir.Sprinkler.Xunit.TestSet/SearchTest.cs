@@ -2,24 +2,23 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
-using Furore.Fhir.Sprinkler.FhirUtilities;
 using Furore.Fhir.Sprinkler.FhirUtilities.ResourceManagement;
+using Furore.Fhir.Sprinkler.Xunit.ClientUtilities;
 using Furore.Fhir.Sprinkler.XunitRunner.FhirExtensions;
 using Hl7.Fhir.Model;
 using Hl7.Fhir.Rest;
 using Xunit;
-using Assert = Furore.Fhir.Sprinkler.FhirUtilities.Assert;
 
 namespace Furore.Fhir.Sprinkler.Xunit.TestSet
 {
     [FixtureConfiguration(FixtureType.File)]
-    public class SearchTest : IClassFixture<FhirClientFixture>
+    public class SearchTest
     {
         private readonly FhirClient client;
 
-        public SearchTest(FhirClientFixture client)
+        public SearchTest()
         {
-            this.client = client.Client;
+            this.client = FhirClientBuilder.CreateFhirClient();
         }
 
         [Theory]
@@ -35,14 +34,16 @@ namespace Furore.Fhir.Sprinkler.Xunit.TestSet
             BundleAssert.CheckMaximumNumberOfElementsInBundle(result, pageSize);
 
             if (!result.Entry.ByResourceType<Patient>().Any())
-                Assert.Fail("search returned entries other than patient");
+                FhirAssert.Fail("search returned entries other than patient");
         }
 
         [TestMetadata("SE02", "Search on non-existing resource")]
         [Fact]
         public void TrySearchNonExistingResource()
         {
-            Assert.Fails(client, () => client.Search("Nonexistingnonpatientresource"), HttpStatusCode.NotFound);
+            Assert.Throws<FhirOperationException>(() => client.Search("Nonexistingnonpatientresource"));
+            Assert.True(client.LastBodyAsResource is OperationOutcome,
+                "When the search fails, a server SHOULD return an OperationOutcome detailing the cause of the failure");
         }
 
         [TestMetadata("SE03", "Search patient resource on partial familyname")]
@@ -53,10 +54,10 @@ namespace Furore.Fhir.Sprinkler.Xunit.TestSet
             string name = patient.Fixture.Name.SelectMany(n => n.Family).First().Substring(0, 3).ToLower();
             Bundle result = client.Search<Patient>(new[] {"family=" + name});
 
-            Assert.EntryIdsArePresentAndAbsoluteUrls(result);
+            FhirAssert.EntryIdsArePresentAndAbsoluteUrls(result);
             BundleAssert.CheckMinimumNumberOfElementsInBundle(result, 1);
 
-            Assert.IsTrue(result.Entry.ByResourceType<Patient>().All(p => p.Name != null &&
+            FhirAssert.IsTrue(result.Entry.ByResourceType<Patient>().All(p => p.Name != null &&
                                                                           p.Name.Any(
                                                                               n =>
                                                                                   n.Family != null &&
@@ -74,9 +75,9 @@ namespace Furore.Fhir.Sprinkler.Xunit.TestSet
             Bundle result = client.Search<Patient>(new[] {"given=" + given});
 
 
-            Assert.EntryIdsArePresentAndAbsoluteUrls(result);
+            FhirAssert.EntryIdsArePresentAndAbsoluteUrls(result);
             BundleAssert.CheckMinimumNumberOfElementsInBundle(result, 1);
-            Assert.IsTrue(result.Entry.ByResourceType<Patient>().All(p => p.Name != null &&
+            FhirAssert.IsTrue(result.Entry.ByResourceType<Patient>().All(p => p.Name != null &&
                                                                           p.Name.Any(
                                                                               n =>
                                                                                   n.Given != null &&
@@ -92,7 +93,9 @@ namespace Furore.Fhir.Sprinkler.Xunit.TestSet
         {
             Condition condition = new Condition()
             {
-                Patient = new ResourceReference() {Reference = patient.Fixture.GetReferenceId()}
+                Patient = new ResourceReference() {Reference = patient.Fixture.GetReferenceId()},
+                Code = new CodeableConcept(@"http://example.org/sprinkler", Guid.NewGuid().ToString()),
+                VerificationStatus = Condition.ConditionVerificationStatus.Provisional
             };
             try
             {
@@ -100,8 +103,8 @@ namespace Furore.Fhir.Sprinkler.Xunit.TestSet
 
                 Bundle result = client.SearchTagged<Condition>(condition.Meta, new[] {"patient=" + condition.Patient.Url});
 
-                Assert.EntryIdsArePresentAndAbsoluteUrls(result);
-                Assert.CorrectNumberOfResults(1, result.Entry.Count(),
+                FhirAssert.EntryIdsArePresentAndAbsoluteUrls(result);
+                FhirAssert.CorrectNumberOfResults(1, result.Entry.Count(),
                     "conditions for this patient (using patient=)");
 
                 client.Delete(condition);
@@ -122,15 +125,17 @@ namespace Furore.Fhir.Sprinkler.Xunit.TestSet
         {
             Condition condition = new Condition()
             {
-                Patient = new ResourceReference() {Reference = patient.Fixture.GetReferenceId()}
+                Patient = new ResourceReference() {Reference = patient.Fixture.GetReferenceId()},
+                Code = new CodeableConcept(@"http://example.org/sprinkler", Guid.NewGuid().ToString()),
+                VerificationStatus = Condition.ConditionVerificationStatus.Provisional
             };
             try
             {
                 condition = client.CreateTagged(condition);
                 Bundle result = client.SearchTagged<Condition>(condition.Meta, new[] {"patient=" + patient.Fixture.Id});
 
-                Assert.EntryIdsArePresentAndAbsoluteUrls(result);
-                Assert.CorrectNumberOfResults(1, result.Entry.Count(),
+                FhirAssert.EntryIdsArePresentAndAbsoluteUrls(result);
+                FhirAssert.CorrectNumberOfResults(1, result.Entry.Count(),
                     "conditions for this patient (using patient=)");
             }
             finally
@@ -149,7 +154,9 @@ namespace Furore.Fhir.Sprinkler.Xunit.TestSet
         {
             Condition condition = new Condition()
             {
-                Patient = new ResourceReference() {Reference = patient.Fixture.GetReferenceId()}
+                Patient = new ResourceReference() {Reference = patient.Fixture.GetReferenceId()},
+                Code = new CodeableConcept(@"http://example.org/sprinkler", Guid.NewGuid().ToString()),
+                VerificationStatus = Condition.ConditionVerificationStatus.Provisional
             };
             try
             {
@@ -157,7 +164,7 @@ namespace Furore.Fhir.Sprinkler.Xunit.TestSet
                 Bundle bundle = client.Search<Condition>(new[] {"_id=" + condition.Id, "_include=Condition:patient"});
 
                 IEnumerable<Patient> patients = bundle.Entry.ByResourceType<Patient>();
-                Assert.IsTrue(patients.Any(),
+                FhirAssert.IsTrue(patients.Any(),
                     "Search Conditions with _include=Condition.subject should have patients");
             }
             finally
@@ -181,15 +188,16 @@ namespace Furore.Fhir.Sprinkler.Xunit.TestSet
             }.Select(CreateObservation).Cast<Resource>().ToArray();
 
             var idValues = client.CreateTagged(observations).Select(o => o.Id).ToArray();
+
             try
             {
                 Bundle bundle = client.SearchTagged<Observation>(observations[0].Meta, new[] {"value-quantity=4.1234||mg"});
 
-                Assert.IsTrue(bundle.ContainsResource(idValues[0]),
+                FhirAssert.IsTrue(bundle.ContainsResource(idValues[0]),
                     "Search on quantity value 4.1234 should return 4.12345");
-                Assert.IsTrue(!bundle.ContainsResource(idValues[1]),
+                FhirAssert.IsTrue(!bundle.ContainsResource(idValues[1]),
                     "Search on quantity value 4.1234 should not return 4.12346");
-                Assert.IsTrue(!bundle.ContainsResource(idValues[2]),
+                FhirAssert.IsTrue(!bundle.ContainsResource(idValues[2]),
                     "Search on quantity value 4.1234 should not return 4.12349");
             }
             finally
@@ -222,7 +230,7 @@ namespace Furore.Fhir.Sprinkler.Xunit.TestSet
            {
                 4.12M,
                 5.12M,
-                46.12M
+                6.12M
             }.Select(CreateObservation).Cast<Resource>().ToArray();
 
             var idValues = client.CreateTagged(observations).Select(o => o.Id).ToArray();
@@ -235,7 +243,7 @@ namespace Furore.Fhir.Sprinkler.Xunit.TestSet
                 BundleAssert.CheckTypeForResources<Observation>(bundle);
                 BundleAssert.CheckConditionForResources<Observation>(bundle, o => o.Value is Quantity &&
                         ((Quantity)o.Value).Value > 5, "All observation should have a quantity larger than 5 mg");
-                Assert.IsTrue(!bundle.ContainsResource(idValues[0]), "Search greater than quantity should not return lesser value.");
+                FhirAssert.IsTrue(!bundle.ContainsResource(idValues[0]), "Search greater than quantity should not return lesser value.");
             }
             finally
             {
@@ -272,7 +280,7 @@ namespace Furore.Fhir.Sprinkler.Xunit.TestSet
 
                 bundle = client.SearchTagged<Observation>(observations[0].Meta, new[] {"value-quantity=6.0||mg"});
                 BundleAssert.CheckContainedResources<Observation>(bundle, new string[] {idValues[1]});
-                Assert.IsTrue(!bundle.ContainsResource(idValues[0]),
+                FhirAssert.IsTrue(!bundle.ContainsResource(idValues[0]),
                     "Search on quantity value 6.0||mg should not return  6M");
 
             }
@@ -296,7 +304,7 @@ namespace Furore.Fhir.Sprinkler.Xunit.TestSet
                  
                        b .Entry.ByResourceType<Patient>();
 
-                Assert.CorrectNumberOfResults(1, actual.Count(),
+                FhirAssert.CorrectNumberOfResults(1, actual.Count(),
                     "Expected {0} patients without gender, but got {1}.");
 
             }
@@ -317,7 +325,7 @@ namespace Furore.Fhir.Sprinkler.Xunit.TestSet
                 Bundle actual = client.SearchTagged<Patient>(patient.Meta, new[] { "noparam=nonsense" });
                 //Obviously a non-existing search parameter
                 int nrOfActualPatients = actual.Entry.ByResourceType<Patient>().Count();
-                Assert.CorrectNumberOfResults(1, nrOfActualPatients,
+                FhirAssert.CorrectNumberOfResults(1, nrOfActualPatients,
                     "Expected all patients ({0}) since the only search parameter is non-existing, but got {1}.");
                 IEnumerable<OperationOutcome> outcomes = actual.Entry.ByResourceType<OperationOutcome>();
             }
@@ -332,7 +340,7 @@ namespace Furore.Fhir.Sprinkler.Xunit.TestSet
         public void SearchPatientByMalformedParameter()
         {
             Bundle actual = null;
-            Assert.Fails(client, () => client.Search("Patient", new[] { "...=test" }), out actual,
+            FhirAssert.Fails(client, () => client.Search("Patient", new[] { "...=test" }), out actual,
                 HttpStatusCode.BadRequest);
         }
 
@@ -363,10 +371,10 @@ namespace Furore.Fhir.Sprinkler.Xunit.TestSet
                 int backwardsCount = TestBundlePages(client.Continue(page, PageDirection.Last), PageDirection.Previous,
                     pageSize);
 
-                Assert.IsTrue(forwardCount == backwardsCount,
+                FhirAssert.IsTrue(forwardCount == backwardsCount,
                     String.Format("Paging forward returns {0} entries, backwards returned {1}",
                         forwardCount, backwardsCount));
-                Assert.IsTrue(forwardCount >= 2, "Bundle should have at least two pages");
+                FhirAssert.IsTrue(forwardCount >= 2, "Bundle should have at least two pages");
             }
             finally 
             {
@@ -400,23 +408,23 @@ namespace Furore.Fhir.Sprinkler.Xunit.TestSet
                 Bundle bundle = client.SearchTagged<Observation>(observation.Meta,
                     new[] {"code=http://loinc.org/|2164-2"});
 
-                Assert.IsTrue(bundle.ContainsResource(observation.Id),
+                FhirAssert.IsTrue(bundle.ContainsResource(observation.Id),
                     "Search on code with system 'http://loinc.org/' and code '2164-2' should return observation");
 
                 bundle = client.SearchTagged<Observation>(observation.Meta, new[] {"code=2164-2"});
 
-                Assert.IsTrue(bundle.ContainsResource(observation.Id),
+                FhirAssert.IsTrue(bundle.ContainsResource(observation.Id),
                     "Search on code with *no* system and code '2164-2' should return observation");
 
                 bundle = client.SearchTagged<Observation>(observation.Meta, new[] {"code=|2164-2"});
 
-                Assert.IsTrue(!bundle.ContainsResource(observation.Id),
+                FhirAssert.IsTrue(!bundle.ContainsResource(observation.Id),
                     "Search on code with system '<empty>' and code '2164-2' should not return observation");
 
                 bundle = client.SearchTagged<Observation>(observation.Meta,
                     new[] {"code=completelyBonkersNamespace|2164-2"});
 
-                Assert.IsTrue(!bundle.ContainsResource(observation.Id),
+                FhirAssert.IsTrue(!bundle.ContainsResource(observation.Id),
                     "Search on code with system 'completelyBonkersNamespace' and code '2164-2' should return nothing");
             }
             finally

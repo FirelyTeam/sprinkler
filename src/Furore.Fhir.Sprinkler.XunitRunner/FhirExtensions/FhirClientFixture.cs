@@ -155,7 +155,10 @@ namespace Furore.Fhir.Sprinkler.XunitRunner.FhirExtensions
                 resource.Meta = new Meta();
             }
 
-            resource.Meta.Tag.Add(new Coding(@"http://example.org/sprinkler", tag.ToString()));
+            if (!resource.Meta.Tag.Any(c => c.System == @"http://example.org/sprinkler"))
+            {
+                resource.Meta.Tag.Add(new Coding(@"http://example.org/sprinkler", tag.ToString()));
+            }
             return client.Create(resource);
         }
 

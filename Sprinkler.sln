@@ -17,6 +17,12 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Furore.Fhir.Sprinkler.Clien
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Furore.Fhir.Sprinkler.Runner.Contracts", "src\Furore.Fhir.Sprinkler.Runner.Contracts\Furore.Fhir.Sprinkler.Runner.Contracts.csproj", "{F7EAA2A0-EB03-4B56-B751-F220AA326B74}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "XUnit", "XUnit", "{86F8B442-EAF4-44AD-973A-B6FBD31FDA63}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Custom", "Custom", "{3DFC60E8-C5AD-4070-BB44-ABF744A333D2}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Furore.Fhir.Sprinkler.Xunit.ClientUtilities", "src\Furore.Fhir.Sprinkler.Xunit.ClientUtilities\Furore.Fhir.Sprinkler.Xunit.ClientUtilities.csproj", "{4B0F0882-552E-4F9D-9A94-761AB8A55772}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -108,8 +114,28 @@ Global
 		{F7EAA2A0-EB03-4B56-B751-F220AA326B74}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{F7EAA2A0-EB03-4B56-B751-F220AA326B74}.Release|x86.ActiveCfg = Release|Any CPU
 		{F7EAA2A0-EB03-4B56-B751-F220AA326B74}.Release|x86.Build.0 = Release|Any CPU
+		{4B0F0882-552E-4F9D-9A94-761AB8A55772}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4B0F0882-552E-4F9D-9A94-761AB8A55772}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4B0F0882-552E-4F9D-9A94-761AB8A55772}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{4B0F0882-552E-4F9D-9A94-761AB8A55772}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{4B0F0882-552E-4F9D-9A94-761AB8A55772}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{4B0F0882-552E-4F9D-9A94-761AB8A55772}.Debug|x86.Build.0 = Debug|Any CPU
+		{4B0F0882-552E-4F9D-9A94-761AB8A55772}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4B0F0882-552E-4F9D-9A94-761AB8A55772}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4B0F0882-552E-4F9D-9A94-761AB8A55772}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{4B0F0882-552E-4F9D-9A94-761AB8A55772}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{4B0F0882-552E-4F9D-9A94-761AB8A55772}.Release|x86.ActiveCfg = Release|Any CPU
+		{4B0F0882-552E-4F9D-9A94-761AB8A55772}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{90248E7C-FD51-42D8-86FE-E1DDBE856691} = {3DFC60E8-C5AD-4070-BB44-ABF744A333D2}
+		{A3D61CB1-8D8D-44B1-8A2E-D2EDF91E7F41} = {3DFC60E8-C5AD-4070-BB44-ABF744A333D2}
+		{4CB0134D-87AD-4338-A687-7479486DE2C7} = {86F8B442-EAF4-44AD-973A-B6FBD31FDA63}
+		{6FFF878C-93BE-4AB9-83B3-A8D766077C52} = {86F8B442-EAF4-44AD-973A-B6FBD31FDA63}
+		{9DD5CBD7-71C0-464B-95ED-A5B94C94DDBA} = {3DFC60E8-C5AD-4070-BB44-ABF744A333D2}
+		{4B0F0882-552E-4F9D-9A94-761AB8A55772} = {86F8B442-EAF4-44AD-973A-B6FBD31FDA63}
 	EndGlobalSection
 EndGlobal

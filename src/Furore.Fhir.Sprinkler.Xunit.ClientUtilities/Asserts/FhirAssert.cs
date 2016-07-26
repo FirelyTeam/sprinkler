@@ -1,16 +1,13 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Net;
-using System.Text;
-using System.Threading.Tasks;
 using Furore.Fhir.Sprinkler.Runner.Contracts;
 using Hl7.Fhir.Model;
 using Hl7.Fhir.Rest;
 
-namespace Furore.Fhir.Sprinkler.FhirUtilities
+namespace Furore.Fhir.Sprinkler.Xunit.ClientUtilities
 {
-    public class Assert
+    public class FhirAssert
     {
         public static void ContentTypePresent(FhirClient client)
         {
@@ -27,7 +24,7 @@ namespace Furore.Fhir.Sprinkler.FhirUtilities
             int charsetFormat = type.IndexOf(";", 0, StringComparison.Ordinal);
             type = type.Substring(0, charsetFormat);
             if (ContentType.GetResourceFormatFromContentType(type) != format)
-                Assert.Fail(String.Format("{0} is not acceptable when expecting {1}", type, format));
+                FhirAssert.Fail(String.Format("{0} is not acceptable when expecting {1}", type, format));
         }
 
         public static void BodyNotEmpty(FhirClient client)
@@ -134,7 +131,7 @@ namespace Furore.Fhir.Sprinkler.FhirUtilities
             catch (FhirOperationException)
             {
                 if (expected != null && client.LastResult.Status != ((int)expected).ToString()) //HttpStatusCode To String???
-                    Assert.Fail(String.Format("{0}, Expected http result {1} but got {2}", message ?? "Operation failled", expected,
+                    FhirAssert.Fail(String.Format("{0}, Expected http result {1} but got {2}", message ?? "Operation failled", expected,
                          client.LastResult.Status));
             }
         }
@@ -147,7 +144,7 @@ namespace Furore.Fhir.Sprinkler.FhirUtilities
                 Fail("expected xml or json content type, but received " +
                                 client.LastResult.GetHeader("Content-Type").FirstOrDefault());
             //if (client.LastResponseDetails.CharacterEncoding != Encoding.UTF8)
-            //    Assert.Fail("content type does not specify UTF8");
+            //    FhirAssert.Fail("content type does not specify UTF8");
         }
 
         public static void ValidBundleContentTypePresent(FhirClient client)
@@ -158,7 +155,7 @@ namespace Furore.Fhir.Sprinkler.FhirUtilities
                 Fail("expected Atom xml or json bundle content type, but received " +
                                 client.LastResult.GetHeader("Content-Type").FirstOrDefault());
             //if (client.LastResponseDetails.CharacterEncoding != Encoding.UTF8)
-            //    Assert.Fail("content type does not specify UTF8");
+            //    FhirAssert.Fail("content type does not specify UTF8");
         }
 
         public static void EntryIdsArePresentAndAbsoluteUrls(Bundle b)
@@ -168,7 +165,7 @@ namespace Furore.Fhir.Sprinkler.FhirUtilities
 
             // todo: DSTU2 this no longer works in DSTU2
             //if (!b.Entry. All(e => (e.Resource != null && e.Resource.ResourceIdentity().IsAbsoluteUri ))
-            //    Assert.Fail("Some id/versionId's in the bundle are relative");
+            //    FhirAssert.Fail("Some id/versionId's in the bundle are relative");
         }
 
         public static void CorrectNumberOfResults(int expected, int actual, string messageFormat = "")

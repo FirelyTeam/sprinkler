@@ -2,14 +2,10 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Reflection;
-using System.Threading;
 using Furore.Fhir.Sprinkler.Runner.Contracts;
 using Furore.Fhir.Sprinkler.XunitRunner.FhirExtensions;
-using Xunit;
 using Xunit.Abstractions;
 using Xunit.Runners;
-using System.Linq;
 using Hl7.Fhir.Model;
 using Hl7.Fhir.Rest;
 
@@ -36,8 +32,7 @@ namespace Furore.Fhir.Sprinkler.XunitRunner.Runner
 
         public void Run(string[] tests)
         {
-             tests = new string[] { "HI" };
-
+             tests = new string[] { "SE16" };
             // CountResources();
             TestConfiguration.Url = url;
             foreach (string testAssembly in testAssemblies)

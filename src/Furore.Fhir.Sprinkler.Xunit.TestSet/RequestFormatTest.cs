@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Furore.Fhir.Sprinkler.Xunit.ClientUtilities;
 using Furore.Fhir.Sprinkler.XunitRunner.FhirExtensions;
 using Hl7.Fhir.Model;
 using Hl7.Fhir.Rest;
 using Xunit;
-using Assert = Furore.Fhir.Sprinkler.FhirUtilities.Assert;
 
 namespace Furore.Fhir.Sprinkler.Xunit.TestSet
 {
@@ -51,7 +51,7 @@ namespace Furore.Fhir.Sprinkler.Xunit.TestSet
             Client.PreferredFormat = ResourceFormat.Xml;
             Client.UseFormatParam = false;
             Client.Read<Patient>(context.Location);
-            Assert.ResourceResponseConformsTo(Client, Client.PreferredFormat);
+            FhirAssert.ResourceResponseConformsTo(Client, Client.PreferredFormat);
         }
 
         [TestMetadata("CT02", "request xml using _format")]
@@ -61,7 +61,7 @@ namespace Furore.Fhir.Sprinkler.Xunit.TestSet
             Client.PreferredFormat = ResourceFormat.Xml;
             Client.UseFormatParam = true;
             Client.Read<Patient>(context.Location);
-            Assert.ResourceResponseConformsTo(Client, Client.PreferredFormat);
+            FhirAssert.ResourceResponseConformsTo(Client, Client.PreferredFormat);
         }
 
         [TestMetadata("CT03", "request json using accept")]
@@ -71,7 +71,7 @@ namespace Furore.Fhir.Sprinkler.Xunit.TestSet
             Client.PreferredFormat = ResourceFormat.Json;
             Client.UseFormatParam = false;
             Client.Read<Patient>(context.Location);
-            Assert.ResourceResponseConformsTo(Client, Client.PreferredFormat);
+            FhirAssert.ResourceResponseConformsTo(Client, Client.PreferredFormat);
         }
 
         [TestMetadata("CT04", "request json using _format")]
@@ -81,7 +81,7 @@ namespace Furore.Fhir.Sprinkler.Xunit.TestSet
             Client.PreferredFormat = ResourceFormat.Json;
             Client.UseFormatParam = true;
             Client.Read<Patient>(context.Location);
-            Assert.ResourceResponseConformsTo(Client, Client.PreferredFormat);
+            FhirAssert.ResourceResponseConformsTo(Client, Client.PreferredFormat);
         }
 
     }

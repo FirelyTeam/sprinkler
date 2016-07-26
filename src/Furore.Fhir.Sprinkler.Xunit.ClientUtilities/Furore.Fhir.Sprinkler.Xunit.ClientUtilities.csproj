@@ -4,11 +4,11 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{9DD5CBD7-71C0-464B-95ED-A5B94C94DDBA}</ProjectGuid>
+    <ProjectGuid>{4B0F0882-552E-4F9D-9A94-761AB8A55772}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Furore.Fhir.Sprinkler.ClientUtilities</RootNamespace>
-    <AssemblyName>Furore.Fhir.Sprinkler.ClientUtilities</AssemblyName>
+    <RootNamespace>Furore.Fhir.Sprinkler.Xunit.ClientUtilities</RootNamespace>
+    <AssemblyName>Furore.Fhir.Sprinkler.Xunit.ClientUtilities</AssemblyName>
     <TargetFrameworkVersion>v4.5.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
@@ -41,23 +41,38 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.IO.Compression" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Xml" />
+    <Reference Include="xunit.assert, Version=2.1.0.3179, Culture=neutral, PublicKeyToken=8d05b1bb7a6fdb6c, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\xunit.assert.2.1.0\lib\dotnet\xunit.assert.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AssemblyResources.cs" />
-    <Compile Include="Assert.cs" />
-    <Compile Include="BundleAssert.cs" />
+    <Compile Include="Asserts\BundleAssert.cs" />
+    <Compile Include="Asserts\FhirAssert.cs" />
+    <Compile Include="ISetupAndTeardown.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ResourceManagement\FhirStreamReader.cs" />
+    <Compile Include="ResourceManagement\FileResourceFixtureProvider.cs" />
+    <Compile Include="ResourceManagement\FixtureConfiguration.cs" />
+    <Compile Include="ResourceManagement\IResourceFixturesProvider.cs" />
+    <Compile Include="ResourceManagement\ResourceConfiguration.cs" />
+    <Compile Include="ResourceManagement\ResourceFixturesProvider.cs" />
+    <Compile Include="ResourceManagement\ResxResourceFixtureProvider.cs" />
+    <Compile Include="ResourceManagement\ZipFileResourceFixtureProvider.cs" />
+    <Compile Include="SetupAndTeardown.cs" />
     <Compile Include="Utils.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <ProjectReference Include="..\Furore.Fhir.Sprinkler.Runner.Contracts\Furore.Fhir.Sprinkler.Runner.Contracts.csproj">
       <Project>{f7eaa2a0-eb03-4b56-b751-f220aa326b74}</Project>

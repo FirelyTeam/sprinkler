@@ -3,12 +3,12 @@ using System.IO;
 using System.Net;
 using System.Text;
 using Furore.Fhir.Sprinkler.FhirUtilities.ResourceManagement;
+using Furore.Fhir.Sprinkler.Xunit.ClientUtilities;
 using Furore.Fhir.Sprinkler.XunitRunner.FhirExtensions;
 using Hl7.Fhir.Model;
 using Hl7.Fhir.Rest;
 using Hl7.Fhir.Serialization;
 using Xunit;
-using Assert = Furore.Fhir.Sprinkler.FhirUtilities.Assert;
 
 namespace Furore.Fhir.Sprinkler.Xunit.TestSet
 {
@@ -33,7 +33,7 @@ namespace Furore.Fhir.Sprinkler.Xunit.TestSet
                // Client.ValidateCreate(patient);
                 HttpWebResponse response = PostResource(location, FhirSerializer.SerializeToXml(patient));
                 if (response.StatusCode != HttpStatusCode.Created)
-                    Assert.Fail("Server did not accept valid resource");
+                    FhirAssert.Fail("Server did not accept valid resource");
             }
             catch (Exception)
             {

@@ -12,13 +12,4 @@ namespace Furore.Fhir.Sprinkler.Runner.Contracts
         public Exception Exception { get; set; }
         public IEnumerable<string> Messages { get; set; }
     }
-
-    public enum TestOutcome
-    {
-        Success,
-        Fail,
-        Skipped
-    }
-
-    
 }

@@ -1,7 +1,7 @@
-﻿using Furore.Fhir.Sprinkler.XunitRunner.FhirExtensions;
+﻿using Furore.Fhir.Sprinkler.Xunit.ClientUtilities;
+using Furore.Fhir.Sprinkler.XunitRunner.FhirExtensions;
 using Hl7.Fhir.Rest;
 using Xunit;
-using Assert = Furore.Fhir.Sprinkler.FhirUtilities.Assert;
 
 namespace Furore.Fhir.Sprinkler.Xunit.TestSet
 {
@@ -19,8 +19,8 @@ namespace Furore.Fhir.Sprinkler.Xunit.TestSet
         public void GetConformanceUsingMetadata()
         {
            client.Conformance();
-            Assert.ValidResourceContentTypePresent(client);
-            Assert.ContentLocationValidIfPresent(client);
+            FhirAssert.ValidResourceContentTypePresent(client);
+            FhirAssert.ContentLocationValidIfPresent(client);
         }
     }
 }

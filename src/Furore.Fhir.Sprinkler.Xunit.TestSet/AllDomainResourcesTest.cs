@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Net;
 using Furore.Fhir.Sprinkler.FhirUtilities.ResourceManagement;
+using Furore.Fhir.Sprinkler.Xunit.ClientUtilities;
 using Furore.Fhir.Sprinkler.XunitRunner.FhirExtensions;
 using Hl7.Fhir.Model;
 using Xunit;
@@ -76,7 +77,7 @@ namespace Furore.Fhir.Sprinkler.Xunit.TestSet
         private void TestDelete<T>(string location) where T : DomainResource, new()
         {
             client.Client.Delete(location);
-            FhirUtilities.Assert.Fails(client.Client, () => client.Client.Read<T>(location), HttpStatusCode.Gone);
+            FhirAssert.Fails(client.Client, () => client.Client.Read<T>(location), HttpStatusCode.Gone);
         }
 
         private void TestRead<T>(string location) where T : DomainResource, new()

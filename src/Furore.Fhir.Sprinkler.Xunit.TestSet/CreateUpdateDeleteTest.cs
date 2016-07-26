@@ -6,8 +6,8 @@ using Furore.Fhir.Sprinkler.XunitRunner.FhirExtensions;
 using Hl7.Fhir.Model;
 using Hl7.Fhir.Rest;
 using Xunit;
-using Assert = Furore.Fhir.Sprinkler.FhirUtilities.Assert;
 using System.Linq;
+using Furore.Fhir.Sprinkler.Xunit.ClientUtilities;
 
 namespace Furore.Fhir.Sprinkler.Xunit.TestSet
 {
@@ -29,13 +29,13 @@ namespace Furore.Fhir.Sprinkler.Xunit.TestSet
         public void CreatePersonUsingXml(Patient patient)
         {
             Client.PreferredFormat = ResourceFormat.Xml;
-            Assert.Success(Client, () => patient = Client.Create(patient));
-            Assert.LocationPresentAndValid(Client);
+            FhirAssert.Success(Client, () => patient = Client.Create(patient));
+            FhirAssert.LocationPresentAndValid(Client);
 
             // Create bevat geen response content meer. Terecht verwijderd?:
             // EK: Niet helemaal, er is weliswaar geen data meer gereturned, maar de headers (id, versie, modified) worden
             // nog wel geupdate
-            Assert.ContentLocationValidIfPresent(Client);
+            FhirAssert.ContentLocationValidIfPresent(Client);
             //TODO: delete this patient?
             context.Dependency = patient;
         }
@@ -46,9 +46,9 @@ namespace Furore.Fhir.Sprinkler.Xunit.TestSet
         public void CreatePersonUsingJson(Patient patient)
         {
             Client.PreferredFormat = ResourceFormat.Json;
-            Assert.Success(Client, () => patient = Client.Create(patient));
-            Assert.LocationPresentAndValid(Client);
-            Assert.ContentLocationValidIfPresent(Client);
+            FhirAssert.Success(Client, () => patient = Client.Create(patient));
+            FhirAssert.LocationPresentAndValid(Client);
+            FhirAssert.ContentLocationValidIfPresent(Client);
             context.Dependency = patient;
         }
 
@@ -67,10 +67,10 @@ namespace Furore.Fhir.Sprinkler.Xunit.TestSet
             patient = Client.Update(patient);
             ResourceIdentity identity = patient.ResourceIdentity();
 
-            Assert.AssertStatusCode(Client, HttpStatusCode.Created);
-            Assert.IsTrue(endpoint.IsEndpointFor(identity),
+            FhirAssert.AssertStatusCode(Client, HttpStatusCode.Created);
+            FhirAssert.IsTrue(endpoint.IsEndpointFor(identity),
                 "Location of created resource is not located within server endpoint");
-            Assert.IsTrue(identity.Id == assignedId, "Server refused to honor client-assigned id");
+            FhirAssert.IsTrue(identity.Id == assignedId, "Server refused to honor client-assigned id");
 
             context.Dependency = patient;
         }
@@ -87,7 +87,7 @@ namespace Furore.Fhir.Sprinkler.Xunit.TestSet
             patient.Telecom.Add(contactpoint);
 
             patient = Client.Create(patient);
-            Assert.IsTrue(patient.Telecom.Count == 1, "Telecom component has disappeared on resource");
+            FhirAssert.IsTrue(patient.Telecom.Count == 1, "Telecom component has disappeared on resource");
             context.Dependency = patient;
         }
 
@@ -123,7 +123,7 @@ namespace Furore.Fhir.Sprinkler.Xunit.TestSet
             {
                 if (!extensionValues.Contains(value))
                 {
-                    Assert.Fail(errorMessage);
+                    FhirAssert.Fail(errorMessage);
                 }
             }
         }
@@ -132,7 +132,7 @@ namespace Furore.Fhir.Sprinkler.Xunit.TestSet
         [Fact, TestPriority(4)]
         public void UpdatePersonWithoutExtensions()
         {
-            if (context.Dependency == null) Assert.Skip();
+            if (context.Dependency == null) FhirAssert.Skip();
 
             context.Dependency.Telecom.Add(new ContactPoint
             {
@@ -144,7 +144,7 @@ namespace Furore.Fhir.Sprinkler.Xunit.TestSet
 
             Patient patient = Client.Read<Patient>(context.Location);
 
-            Assert.IsTrue(patient.Telecom.Any(
+            FhirAssert.IsTrue(patient.Telecom.Any(
                 tel => tel.System == ContactPoint.ContactPointSystem.Other && tel.Value == "http://www.nu.nl"),
                 String.Format("Resource {0} unchanged after update", context.Location));
         }
@@ -192,14 +192,14 @@ namespace Furore.Fhir.Sprinkler.Xunit.TestSet
         [Fact, TestPriority(5)]
         public void DeletePerson()
         {
-            Assert.SkipWhen(context.Dependency == null);
+            FhirAssert.SkipWhen(context.Dependency == null);
 
             Client.Delete(context.Location);
-            Assert.AssertStatusCode(Client, HttpStatusCode.NoContent);
-            Assert.Fails(Client, () => Client.Read<Patient>(context.Location), HttpStatusCode.Gone);
+            FhirAssert.AssertStatusCode(Client, HttpStatusCode.NoContent);
+            FhirAssert.Fails(Client, () => Client.Read<Patient>(context.Location), HttpStatusCode.Gone);
 
             Client.Delete(context.Location);
-            Assert.AssertStatusCode(Client, HttpStatusCode.NoContent, HttpStatusCode.OK);
+            FhirAssert.AssertStatusCode(Client, HttpStatusCode.NoContent, HttpStatusCode.OK);
         }
 
         [TestMetadata("CR08", "deletion of a non-existing resource")]
@@ -209,7 +209,7 @@ namespace Furore.Fhir.Sprinkler.Xunit.TestSet
             var rnd = new Random();
             Client.Delete(string.Format("{0}/{1}", ResourceType.Patient, rnd.Next()));
 
-            Assert.AssertStatusCode(Client, HttpStatusCode.NoContent);
+            FhirAssert.AssertStatusCode(Client, HttpStatusCode.NoContent);
         }
     }
 }

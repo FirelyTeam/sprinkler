@@ -1,5 +1,7 @@
 ﻿using Furore.Fhir.Sprinkler.Runner.Contracts;
 using Furore.Fhir.Sprinkler.XunitRunner.FhirExtensions;
+using Xunit.Abstractions;
+using Xunit.Runners;
 
 namespace Furore.Fhir.Sprinkler.XunitRunner.Runner
 {
@@ -8,8 +10,6 @@ namespace Furore.Fhir.Sprinkler.XunitRunner.Runner
     using System.Linq;
     using System.Reflection;
     using System.Threading;
-    using Xunit.Abstractions;
-    using Xunit.Runners;
 
     namespace Furore.Fhir.Sprinkler.XunitRunner.Runner
     {

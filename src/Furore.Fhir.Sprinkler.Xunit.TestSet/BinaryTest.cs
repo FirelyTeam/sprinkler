@@ -4,9 +4,9 @@ using Furore.Fhir.Sprinkler.XunitRunner.FhirExtensions;
 using Hl7.Fhir.Model;
 using Hl7.Fhir.Rest;
 using Xunit;
-using Assert = Furore.Fhir.Sprinkler.FhirUtilities.Assert;
 using System.Linq;
 using System.Net;
+using Furore.Fhir.Sprinkler.Xunit.ClientUtilities;
 
 namespace Furore.Fhir.Sprinkler.Xunit.TestSet
 {
@@ -42,14 +42,14 @@ namespace Furore.Fhir.Sprinkler.Xunit.TestSet
         [TestMetadata("BI02", "Read binary as xml")]
         public void ReadBinaryAsXml()
         {
-            if (dependencyContext.Dependency == null) FhirUtilities.Assert.Skip();
+            if (dependencyContext.Dependency == null) FhirAssert.Skip();
 
             client.PreferredFormat = ResourceFormat.Xml;
             client.UseFormatParam = true;
             client.ReturnFullResource = true;
 
             Binary result = client.Read<Binary>(dependencyContext.Id);
-            Assert.ResourceResponseConformsTo(client, client.PreferredFormat);
+            FhirAssert.ResourceResponseConformsTo(client, client.PreferredFormat);
 
             CheckBinary(result);
             dependencyContext.Dependency = result;
@@ -59,14 +59,14 @@ namespace Furore.Fhir.Sprinkler.Xunit.TestSet
         [TestMetadata("BI03", "Read binary as json")]
         public void ReadBinaryAsJson()
         {
-            if (dependencyContext.Dependency == null) FhirUtilities.Assert.Skip();
+            if (dependencyContext.Dependency == null) FhirAssert.Skip();
 
             client.PreferredFormat = ResourceFormat.Json;
             client.UseFormatParam = false;
             client.ReturnFullResource = true;
 
             Binary result = client.Read<Binary>(dependencyContext.Id);
-            Assert.ResourceResponseConformsTo(client, client.PreferredFormat);
+            FhirAssert.ResourceResponseConformsTo(client, client.PreferredFormat);
 
             CheckBinary(result);
             dependencyContext.Dependency = result;
@@ -76,7 +76,7 @@ namespace Furore.Fhir.Sprinkler.Xunit.TestSet
         [TestMetadata("BI04", "Update binary - This might fail because FHIR.API doesn't send binary resources in a resource envelope and the documentation is not clear if FHIR servers should accept it like that.")]
         public void UpdateBinary()
         {
-            if (dependencyContext.Dependency == null) FhirUtilities.Assert.Skip();
+            if (dependencyContext.Dependency == null) FhirAssert.Skip();
 
             dependencyContext.Dependency.Content = dependencyContext.Dependency.Content.Reverse().ToArray();
             Binary result = client.Update(dependencyContext.Dependency);
@@ -89,11 +89,11 @@ namespace Furore.Fhir.Sprinkler.Xunit.TestSet
 
         public void DeleteBinary()
         {
-            if (dependencyContext.Dependency == null) FhirUtilities.Assert.Skip();
+            if (dependencyContext.Dependency == null) FhirAssert.Skip();
 
             client.Delete(dependencyContext.Id);
 
-            Assert.Fails(client, () => client.Read<Binary>(dependencyContext.Id), HttpStatusCode.Gone);
+            FhirAssert.Fails(client, () => client.Read<Binary>(dependencyContext.Id), HttpStatusCode.Gone);
         }
 
         private Binary GetPhotoBinary(Patient patient)
@@ -111,8 +111,8 @@ namespace Furore.Fhir.Sprinkler.Xunit.TestSet
 
         private void CheckBinary(Binary result)
         {
-            Assert.LocationPresentAndValid(client);
-            Assert.IsTrue(dependencyContext.Dependency.ContentType == result.ContentType, "ContentType of the received binary is not correct");
+            FhirAssert.LocationPresentAndValid(client);
+            FhirAssert.IsTrue(dependencyContext.Dependency.ContentType == result.ContentType, "ContentType of the received binary is not correct");
             CompareData(dependencyContext.Dependency.Content, result);
 
         }
@@ -120,10 +120,10 @@ namespace Furore.Fhir.Sprinkler.Xunit.TestSet
         private static void CompareData(byte[] data, Binary received)
         {
             if (data.Length != received.Content.Length)
-                Assert.Fail("Binary data returned has a different size");
+                FhirAssert.Fail("Binary data returned has a different size");
             for (int pos = 0; pos < data.Length; pos++)
                 if (data[pos] != received.Content[pos])
-                    Assert.Fail("Binary data returned differs from original");
+                    FhirAssert.Fail("Binary data returned differs from original");
         }
 
      

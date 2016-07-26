@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Furore.Fhir.Sprinkler.FhirUtilities.ResourceManagement;
+using Furore.Fhir.Sprinkler.Xunit.ClientUtilities;
 using Furore.Fhir.Sprinkler.XunitRunner.FhirExtensions;
 using Hl7.Fhir.Model;
 using Hl7.Fhir.Rest;
@@ -65,13 +66,13 @@ namespace Furore.Fhir.Sprinkler.Xunit.TestSet
             Practitioner resultPractitioner = resources[1] as Practitioner;
             AllergyIntolerance resultAllergyIntolerance = resources[2] as AllergyIntolerance;
 
-            FhirUtilities.Assert.IsTrue(
+            FhirAssert.IsTrue(
                 resultPatient != null && resultPractitioner != null && resultAllergyIntolerance != null,
                 "not all resources exist on the server");
-            FhirUtilities.Assert.IsTrue(
+            FhirAssert.IsTrue(
                 resultAllergyIntolerance.Patient.Reference.Contains(resultPatient.GetReferenceId()),
                 "AllergyIntolerance doesn't correctly reference the Patient in the bundle.");
-            FhirUtilities.Assert.IsTrue(
+            FhirAssert.IsTrue(
                 resultAllergyIntolerance.Recorder.Reference.Contains(resultPractitioner.GetReferenceId()),
                 "AllergyIntolerance doesn't correctly reference the Practitioner in the bundle.");
 
