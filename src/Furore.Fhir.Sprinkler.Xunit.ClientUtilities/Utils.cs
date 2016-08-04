@@ -1,6 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Hl7.Fhir.Model;
+using Hl7.Fhir.Rest;
 
 namespace Furore.Fhir.Sprinkler.Xunit.ClientUtilities
 {
@@ -94,6 +96,60 @@ namespace Furore.Fhir.Sprinkler.Xunit.ClientUtilities
             p.Name = new List<HumanName>();
             p.Name.Add(n);
             return p;
+        }
+
+        public static Resource AddSprinklerTag(Resource resource, Guid? tag = null)
+        {
+            tag = tag ?? Guid.NewGuid();
+            return AddSprinklerTag(resource, tag.ToString());
+         
+        }
+
+        public static Resource AddSprinklerTag(Resource resource, string tag)
+        {
+            if (resource.Meta == null)
+            {
+                resource.Meta = new Meta();
+            }
+
+            if (resource.Meta.Tag.All(c => c.System != @"http://example.org/sprinkler"))
+            {
+                resource.Meta.Tag.Add(new Coding(@"http://example.org/sprinkler", tag));
+            }
+
+            return resource;
+        }
+
+        public static UriParamList GetSprinklerTagCriteria(Resource resource)
+        {
+            string tag = GetSprinklerTag(resource);
+            if(string.IsNullOrEmpty(tag))
+                return null;
+            return
+                GetSprinklerTagCriteria(tag);
+        }
+
+        public static string GetSprinklerTag(Resource resource)
+        {
+            if (resource.Meta == null)
+                return null;
+            return resource.Meta.Tag.Single(c => c.System == (@"http://example.org/sprinkler")).Code;
+        }
+
+
+
+        public static UriParamList GetSprinklerTagCriteria(string tag)
+        {
+            if (tag == null)
+                return null;
+            UriParamList paramList = new UriParamList();
+            paramList.Add("_tag", string.Format(@"http://example.org/sprinkler|{0}", tag));
+            return paramList;
+        }
+
+        public static string GenerateRandomSprinklerTag()
+        {
+            return Guid.NewGuid().ToString();
         }
     }
 }

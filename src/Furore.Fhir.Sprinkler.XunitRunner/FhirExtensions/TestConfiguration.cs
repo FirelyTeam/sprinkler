@@ -13,7 +13,8 @@ namespace Furore.Fhir.Sprinkler.XunitRunner.FhirExtensions
     {
         public static FhirClient CreateFhirClient()
         {
-            return new FhirClient(TestConfiguration.Url);
+            //return new FhirClient(TestConfiguration.Url);
+            return new LoggerFhirClient(TestConfiguration.Url);
         }
     }
 }

@@ -236,5 +236,13 @@ namespace Furore.Fhir.Sprinkler.Xunit.ClientUtilities
         {
             throw new TestFailedException(message, inner);
         }
+
+        public static void ValidateIds(Resource resource, string id, string versionId)
+        {
+            if (resource.Id != id || resource.VersionId != versionId)
+            {
+                Fail("Unexpected id");
+            }
+        }
     }
 }

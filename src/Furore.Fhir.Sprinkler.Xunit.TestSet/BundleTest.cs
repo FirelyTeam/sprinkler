@@ -47,8 +47,8 @@ namespace Furore.Fhir.Sprinkler.Xunit.TestSet
             AllergyIntolerance allergyIntolerance)
         {
             Bundle bundle = GetBatchBundleForCreate(patient, practitioner);
-            allergyIntolerance.Patient = new ResourceReference() { Reference = bundle.Entry[0].FullUrl };
-            allergyIntolerance.Recorder = new ResourceReference() { Reference = bundle.Entry[1].FullUrl };
+            allergyIntolerance.Patient = new ResourceReference() { Reference = string.Format("{0}/{1}", bundle.Entry[0].Resource.ResourceType, bundle.Entry[0].FullUrl)  };
+            allergyIntolerance.Recorder = new ResourceReference() { Reference = string.Format("{0}/{1}", bundle.Entry[1].Resource.ResourceType, bundle.Entry[1].FullUrl) };
             bundle.Entry.Add(CreateEntryForCreate(allergyIntolerance));
             var xml = FhirSerializer.SerializeToXml(bundle);
 
@@ -97,9 +97,6 @@ namespace Furore.Fhir.Sprinkler.Xunit.TestSet
             return resources;
         }
 
-
-
-
         //[Theory]
         //[TestMetadata("BU03", "POST transation bundle")]
         //[Fixture(false)]
@@ -135,7 +132,7 @@ namespace Furore.Fhir.Sprinkler.Xunit.TestSet
             {
                 Resource = resource,
                 Request = new Bundle.RequestComponent() { Method = Bundle.HTTPVerb.POST },
-                FullUrl = string.Format("{0}/{1}", resource.ResourceType, id)
+                FullUrl = resource.Id
                 //FullUrl = GenerateUrl(resource)
             };
         }

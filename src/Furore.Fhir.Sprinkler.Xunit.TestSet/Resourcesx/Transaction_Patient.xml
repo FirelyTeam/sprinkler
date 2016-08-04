@@ -1,0 +1,52 @@
+<Bundle xmlns="http://hl7.org/fhir">
+	<id value="20160802144243" />
+	<type value="transaction" />
+	<entry>
+		<fullUrl value="urn:uuid:14cdaeb2-e46a-49eb-72b1-77033e9b1822" />
+		<resource>
+			<Patient>
+				<meta>
+					<tag>
+						<code value="CLOVERLEAF/RBK" />
+					</tag>
+				</meta>
+				<identifier>
+					<use value="usual" />
+					<type>
+						<coding>
+							<system value="http://hl7.org/fhir/v2/0203" />
+							<code value="MR" />
+						</coding>
+					</type>
+					<system value="http://www.rbk.de/SAP" />
+					<value value="345345412312345" />
+					<assigner>
+						<display value="RBK/SAP" />
+					</assigner>
+				</identifier>
+				<name>
+					<use value="official" />
+					<family value="Riley" />
+					<given value="Kevan" />
+				</name>
+				<telecom>
+					<system value="phone" />
+					<value value="277543" />
+					<use value="home" />
+				</telecom>
+				<gender value="female" />
+				<birthDate value="1928-05-24" />
+				<address>
+					<line value="22 Stable Road" />
+					<city value="Whitstable" />
+					<state value="Kent" />
+					<country value="CR5 1EL" />
+				</address>
+			</Patient>
+		</resource>
+		<request>
+			<method value="PUT" />
+			<url value="Patient?identifier=http://www.rbk.de/SAP|345345412312345" />
+		</request>
+	</entry>
+</Bundle>

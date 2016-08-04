@@ -7,6 +7,7 @@ using System.IO;
 using System.Net;
 using System.Net.Http;
 using System.Threading;
+using Furore.Fhir.Sprinkler.Xunit.ClientUtilities;
 using Hl7.Fhir.Serialization;
 
 namespace Furore.Fhir.Sprinkler.XunitRunner.FhirExtensions
@@ -150,15 +151,7 @@ namespace Furore.Fhir.Sprinkler.XunitRunner.FhirExtensions
 
         public static T CreateTagged<T>(this FhirClient client, T resource, Guid tag) where T : Resource
         {
-            if (resource.Meta == null)
-            {
-                resource.Meta = new Meta();
-            }
-
-            if (!resource.Meta.Tag.Any(c => c.System == @"http://example.org/sprinkler"))
-            {
-                resource.Meta.Tag.Add(new Coding(@"http://example.org/sprinkler", tag.ToString()));
-            }
+            Utils.AddSprinklerTag(resource, tag);
             return client.Create(resource);
         }
 

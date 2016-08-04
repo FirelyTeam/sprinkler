@@ -32,7 +32,7 @@ namespace Furore.Fhir.Sprinkler.XunitRunner.Runner
 
         public void Run(string[] tests)
         {
-             tests = new string[] { "SE16" };
+             tests = new string[] { "BC" };
             // CountResources();
             TestConfiguration.Url = url;
             foreach (string testAssembly in testAssemblies)
