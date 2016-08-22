@@ -1,67 +1,33 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using Furore.Fhir.Sprinkler.FhirUtilities.ResourceManagement;
 using Hl7.Fhir.Model;
-using Hl7.Fhir.Rest;
-using Xunit;
-using Xunit.Sdk;
 
-namespace Furore.Fhir.Sprinkler.XunitRunner.FhirExtensions
+namespace Furore.Fhir.Sprinkler.Xunit.ClientUtilities.XunitFhirExtensions.Attributes
 {
-    public class FixtureAttribute : DataAttribute
+    public class TestMethodResourceProvider
     {
-        private readonly bool autocreate;
         private readonly ResourceType[] resourceTypes;
         private string[] fileNames;
 
-        public FixtureAttribute(bool autocreate = true,  params string[] fileNames)
+        public TestMethodResourceProvider(params string[] fileNames)
         {
-            this.autocreate = autocreate;
             this.fileNames = fileNames;
         }
-
-        public FixtureAttribute(bool autocreate = true, params ResourceType[] resourceTypes)
+        public TestMethodResourceProvider(params ResourceType[] resourceTypes)
         {
-            this.autocreate = autocreate;
             this.resourceTypes = resourceTypes;
         }
 
-        public FixtureAttribute(bool autocreate = true)
+        public TestMethodResourceProvider()
         {
-            this.autocreate = autocreate;
+            
         }
-
-        public override IEnumerable<object[]> GetData(MethodInfo testMethod)
+        public Resource[] GetResources(MethodInfo testMethod)
         {
             FixtureConfiguration configuration = GetFixtureConfiguration(testMethod);
-            var parameterTypes = testMethod.GetParameters().Select(p => p.ParameterType).ToArray();
-            int paramsCount = parameterTypes.Count();
-            var resources = GetResources(configuration, testMethod);
-            if (autocreate)
-            {
-                FhirClient client = new FhirClient(TestConfiguration.Url);
-               
-                var paramaterValues = new object[parameterTypes.Length];
-                for (int i = 0; i < parameterTypes.Length; i++)
-                {
-                    paramaterValues[i] = client.AutoSetupFixture(resources[i],
-                        parameterTypes[i].GenericTypeArguments[0]);
-                }
-
-                return paramaterValues.BatchArray(paramsCount);
-            }
-            else
-            {
-                var x = resources.BatchArray(paramsCount).ToList();
-
-                return x;
-            }
-        }
-
-        private Resource[] GetResources(FixtureConfiguration configuration, MethodInfo testMethod)
-        {
             ResourceFixturesProvider fixturesProvider = new ResourceFixturesProvider();
             List<string> resourceKeys = new List<string>();
             if (fileNames == null)
@@ -80,7 +46,7 @@ namespace Furore.Fhir.Sprinkler.XunitRunner.FhirExtensions
                         {
                             //hack - this doesn't work for methods with multiple parameters(either all generic or combinations of some generic, some non-generic)
                             Type[] x = parameterInfo.ParameterType.GetGenericParameterConstraints();
-                            resourceKeys.AddRange(Assembly.GetAssembly(typeof (Resource))
+                            resourceKeys.AddRange(Assembly.GetAssembly(typeof(Resource))
                                 .GetTypes()
                                 .Where(t => x.All(z => z.IsAssignableFrom(t)))
                                 .Select(t => t.Name).ToArray());
@@ -96,22 +62,21 @@ namespace Furore.Fhir.Sprinkler.XunitRunner.FhirExtensions
             {
                 resourceKeys.AddRange(fileNames);
             }
-            var xc = 
-                
+            var xc =
+
 
                 fixturesProvider.GetResources(configuration, resourceKeys.ToArray())
                     .ToArray();
 
 
             return xc;
-
         }
 
         private FixtureConfiguration GetFixtureConfiguration(MethodInfo testMethod)
         {
             FixtureConfigurationAttribute configurationAttribute =
-                testMethod.GetCustomAttributes<FixtureConfigurationAttribute>().SingleOrDefault()??
-                    testMethod.ReflectedType.GetCustomAttributes<FixtureConfigurationAttribute>().SingleOrDefault();
+                testMethod.GetCustomAttributes<FixtureConfigurationAttribute>().SingleOrDefault() ??
+                testMethod.ReflectedType.GetCustomAttributes<FixtureConfigurationAttribute>().SingleOrDefault();
 
             if (configurationAttribute != null)
                 return configurationAttribute.GetFixtureConfiguration();

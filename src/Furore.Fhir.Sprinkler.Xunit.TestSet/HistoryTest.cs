@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using Furore.Fhir.Sprinkler.Xunit.ClientUtilities;
+using Furore.Fhir.Sprinkler.Xunit.ClientUtilities.XunitFhirExtensions.Attributes;
 using Furore.Fhir.Sprinkler.XunitRunner.FhirExtensions;
 using Hl7.Fhir.Model;
 using Hl7.Fhir.Rest;

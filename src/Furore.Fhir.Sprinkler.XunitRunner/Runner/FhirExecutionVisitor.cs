@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Furore.Fhir.Sprinkler.Runner.Contracts;
+using Furore.Fhir.Sprinkler.Xunit.ClientUtilities.XunitFhirExtensions.Attributes;
 using Furore.Fhir.Sprinkler.XunitRunner.FhirExtensions;
 using Xunit;
 using Xunit.Abstractions;
@@ -13,7 +14,6 @@ namespace Furore.Fhir.Sprinkler.XunitRunner.Runner
         public  FhirExecutionVisitor()
         {
             TestResults = new List<TestResult>();
-
         }
 
         public Action<TestResult> Log { get; set; }
@@ -37,11 +37,6 @@ namespace Furore.Fhir.Sprinkler.XunitRunner.Runner
             AddResult(result);
 
             return base.Visit(testFailed);
-        }
-
-        protected override bool Visit(ITestFinished testFinished)
-        {
-            return base.Visit(testFinished);
         }
 
         protected override bool Visit(ITestSkipped testSkipped)

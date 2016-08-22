@@ -1,10 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Furore.Fhir.Sprinkler.Xunit.ClientUtilities.XunitFhirExtensions.Attributes;
 using Xunit.Abstractions;
 using Xunit.Sdk;
 
-namespace Furore.Fhir.Sprinkler.XunitRunner.FhirExtensions
+namespace Furore.Fhir.Sprinkler.Xunit.ClientUtilities.XunitFhirExtensions.TestCaseOrderers
 {
     public class PriorityOrderer : ITestCaseOrderer
     {

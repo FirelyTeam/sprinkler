@@ -12,8 +12,6 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using Furore.Fhir.Sprinkler.CLI.Properties;
-using Furore.Fhir.Sprinkler.Framework.Framework;
-using Furore.Fhir.Sprinkler.Framework.Framework.Attributes;
 using Furore.Fhir.Sprinkler.Framework.Framework.TestExecution;
 using Furore.Fhir.Sprinkler.Framework.Framework.TestScripts;
 using Furore.Fhir.Sprinkler.Runner.Contracts;

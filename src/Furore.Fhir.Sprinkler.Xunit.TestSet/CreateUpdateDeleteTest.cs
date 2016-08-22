@@ -2,17 +2,18 @@
 using System.Collections.Generic;
 using System.Net;
 using Furore.Fhir.Sprinkler.FhirUtilities.ResourceManagement;
-using Furore.Fhir.Sprinkler.XunitRunner.FhirExtensions;
 using Hl7.Fhir.Model;
 using Hl7.Fhir.Rest;
 using Xunit;
 using System.Linq;
 using Furore.Fhir.Sprinkler.Xunit.ClientUtilities;
+using Furore.Fhir.Sprinkler.Xunit.ClientUtilities.XunitFhirExtensions.Attributes;
+using Furore.Fhir.Sprinkler.Xunit.ClientUtilities.XunitFhirExtensions.ClassFixtures;
 
 namespace Furore.Fhir.Sprinkler.Xunit.TestSet
 {
     [FixtureConfiguration(FixtureType.File)]
-    [TestCaseOrderer("Furore.Fhir.Sprinkler.XunitRunner.FhirExtensions.PriorityOrderer", "Furore.Fhir.Sprinkler.XunitRunner")]
+    [TestCaseOrderer("Furore.Fhir.Sprinkler.Xunit.ClientUtilities.XunitFhirExtensions.TestCaseOrderers.PriorityOrderer", "Furore.Fhir.Sprinkler.Xunit.ClientUtilities")]
     public class CreateUpdateDeleteTest : IClassFixture<TestDependencyContext<Patient>>
     {
         private readonly FhirClient Client;

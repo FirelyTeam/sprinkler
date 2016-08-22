@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using Xunit.Abstractions;
 using Xunit.Sdk;
 
-namespace Furore.Fhir.Sprinkler.XunitRunner.FhirExtensions
+namespace Furore.Fhir.Sprinkler.Xunit.ClientUtilities.XunitFhirExtensions.Attributes
 {
-    [TraitDiscoverer("Furore.Fhir.Sprinkler.XunitRunner.FhirExtensions.MetadataTraitDiscoverer",
-        "Furore.Fhir.Sprinkler.XunitRunner")]
+    [TraitDiscoverer("Furore.Fhir.Sprinkler.Xunit.ClientUtilities.XunitFhirExtensions.Attributes.MetadataTraitDiscoverer",
+       "Furore.Fhir.Sprinkler.Xunit.ClientUtilities")]
     [AttributeUsage(AttributeTargets.Method, AllowMultiple = true)]
     public class TestMetadataAttribute : Attribute, ITraitAttribute
     {

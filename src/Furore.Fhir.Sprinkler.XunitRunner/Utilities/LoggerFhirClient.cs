@@ -2,9 +2,9 @@
 using System.IO;
 using Hl7.Fhir.Rest;
 
-namespace Furore.Fhir.Sprinkler.XunitRunner.FhirExtensions
+namespace Furore.Fhir.Sprinkler.XunitRunner.Utilities
 {
-    public class LoggerFhirClient : FhirClient
+    internal class LoggerFhirClient : FhirClient
     {
         public LoggerFhirClient(Uri endpoint, bool verifyFhirVersion = false) : base(endpoint, verifyFhirVersion)
         {

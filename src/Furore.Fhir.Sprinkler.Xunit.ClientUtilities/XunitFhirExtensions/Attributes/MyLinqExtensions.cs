@@ -1,9 +1,9 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 
-namespace Furore.Fhir.Sprinkler.XunitRunner.FhirExtensions
+namespace Furore.Fhir.Sprinkler.Xunit.ClientUtilities.XunitFhirExtensions.Attributes
 {
-    internal static class MyLinqExtensions
+    public static class MyLinqExtensions
     {
         public static IEnumerable<T[]> BatchArray<T>(
             this IEnumerable<T> source, int batchSize)
@@ -25,7 +25,7 @@ namespace Furore.Fhir.Sprinkler.XunitRunner.FhirExtensions
             for (int i = 0; i < batchSize; i++)
             {
                 yield return source.Current;
-                if(i < (batchSize - 1) && (source.MoveNext() == false))
+                if (i < (batchSize - 1) && (source.MoveNext() == false))
                     break;
 
             }
@@ -43,7 +43,5 @@ namespace Furore.Fhir.Sprinkler.XunitRunner.FhirExtensions
                 yield return t;
             }
         }
-
-
     }
 }

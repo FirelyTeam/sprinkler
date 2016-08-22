@@ -16,7 +16,6 @@ namespace Furore.Fhir.Sprinkler.XunitRunner.Runner
 
         public Func<ITestCase, bool> TestCaseFilter { get; set; }
 
-
         protected override bool Visit(ITestCaseDiscoveryMessage testCaseDiscovered)
         {
             if (TestCaseFilter == null || TestCaseFilter(testCaseDiscovered.TestCase))

@@ -123,7 +123,7 @@ namespace Furore.Fhir.Sprinkler.Xunit.ClientUtilities
         public static UriParamList GetSprinklerTagCriteria(Resource resource)
         {
             string tag = GetSprinklerTag(resource);
-            if(string.IsNullOrEmpty(tag))
+            if(String.IsNullOrEmpty(tag))
                 return null;
             return
                 GetSprinklerTagCriteria(tag);
@@ -143,7 +143,7 @@ namespace Furore.Fhir.Sprinkler.Xunit.ClientUtilities
             if (tag == null)
                 return null;
             UriParamList paramList = new UriParamList();
-            paramList.Add("_tag", string.Format(@"http://example.org/sprinkler|{0}", tag));
+            paramList.Add("_tag", String.Format(@"http://example.org/sprinkler|{0}", tag));
             return paramList;
         }
 
@@ -151,5 +151,10 @@ namespace Furore.Fhir.Sprinkler.Xunit.ClientUtilities
         {
             return Guid.NewGuid().ToString();
         }
+
+        public static string GetReferenceId(this Resource resource)
+        {
+            return String.Format("{0}/{1}", resource.TypeName, resource.Id);
+        }   
     }
 }

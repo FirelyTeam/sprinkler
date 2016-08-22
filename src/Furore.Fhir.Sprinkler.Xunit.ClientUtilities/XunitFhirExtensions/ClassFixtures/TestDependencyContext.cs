@@ -1,9 +1,9 @@
 ﻿using System;
 using Hl7.Fhir.Model;
 
-namespace Furore.Fhir.Sprinkler.XunitRunner.FhirExtensions
+namespace Furore.Fhir.Sprinkler.Xunit.ClientUtilities.XunitFhirExtensions.ClassFixtures
 {
-    public class TestDependencyContext<T> : FhirClientFixture where T:Resource
+    public class TestDependencyContext<T> : FhirClientFixture where T : Resource
     {
         public T Dependency
         {
@@ -37,6 +37,6 @@ namespace Furore.Fhir.Sprinkler.XunitRunner.FhirExtensions
                 throw new ArgumentNullException();
             return Dependency.GetReferenceId();
         }
-      
+
     }
 }

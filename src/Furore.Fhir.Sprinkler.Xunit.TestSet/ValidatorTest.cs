@@ -4,6 +4,8 @@ using System.Net;
 using System.Text;
 using Furore.Fhir.Sprinkler.FhirUtilities.ResourceManagement;
 using Furore.Fhir.Sprinkler.Xunit.ClientUtilities;
+using Furore.Fhir.Sprinkler.Xunit.ClientUtilities.XunitFhirExtensions.Attributes;
+using Furore.Fhir.Sprinkler.Xunit.ClientUtilities.XunitFhirExtensions.ClassFixtures;
 using Furore.Fhir.Sprinkler.XunitRunner.FhirExtensions;
 using Hl7.Fhir.Model;
 using Hl7.Fhir.Rest;

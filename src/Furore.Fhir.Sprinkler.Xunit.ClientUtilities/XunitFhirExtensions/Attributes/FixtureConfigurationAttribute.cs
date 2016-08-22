@@ -1,9 +1,8 @@
 ﻿using System;
 using System.IO;
-using Furore.Fhir.Sprinkler.FhirUtilities;
 using Furore.Fhir.Sprinkler.FhirUtilities.ResourceManagement;
 
-namespace Furore.Fhir.Sprinkler.XunitRunner.FhirExtensions
+namespace Furore.Fhir.Sprinkler.Xunit.ClientUtilities.XunitFhirExtensions.Attributes
 {
     [AttributeUsage(AttributeTargets.Method | AttributeTargets.Class, AllowMultiple = false, Inherited = false)]
     public class FixtureConfigurationAttribute : Attribute
@@ -31,8 +30,8 @@ namespace Furore.Fhir.Sprinkler.XunitRunner.FhirExtensions
         {
             return new FixtureConfiguration()
             {
-                FixturesRootPath =((!string.IsNullOrEmpty(fixturesRootPath) ) && Path.IsPathRooted(fixturesRootPath) )
-                ? fixturesRootPath: Path.Combine(TestConfiguration.AssemblyRootDirectory, "Resourcesx", fixturesRootPath??string.Empty),
+                FixturesRootPath = ((!string.IsNullOrEmpty(fixturesRootPath)) && Path.IsPathRooted(fixturesRootPath))
+                ? fixturesRootPath : Path.Combine(TestConfiguration.AssemblyRootDirectory, "Resourcesx", fixturesRootPath ?? string.Empty),
                 FixtureType = fixtureType
             };
         }

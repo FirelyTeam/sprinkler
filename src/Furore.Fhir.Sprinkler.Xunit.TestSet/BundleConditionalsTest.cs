@@ -3,10 +3,9 @@ using System.Linq;
 using System.Net;
 using Furore.Fhir.Sprinkler.FhirUtilities.ResourceManagement;
 using Furore.Fhir.Sprinkler.Xunit.ClientUtilities;
-using Furore.Fhir.Sprinkler.XunitRunner.FhirExtensions;
+using Furore.Fhir.Sprinkler.Xunit.ClientUtilities.XunitFhirExtensions.Attributes;
 using Hl7.Fhir.Model;
 using Hl7.Fhir.Rest;
-using Hl7.Fhir.Serialization;
 using Xunit;
 
 namespace Furore.Fhir.Sprinkler.Xunit.TestSet

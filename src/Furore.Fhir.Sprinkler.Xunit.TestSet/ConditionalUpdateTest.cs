@@ -2,14 +2,14 @@
 using System.Linq;
 using System.Net;
 using Furore.Fhir.Sprinkler.Xunit.ClientUtilities;
-using Furore.Fhir.Sprinkler.XunitRunner.FhirExtensions;
+using Furore.Fhir.Sprinkler.Xunit.ClientUtilities.XunitFhirExtensions.Attributes;
 using Hl7.Fhir.Model;
 using Hl7.Fhir.Rest;
 using Xunit;
 
 namespace Furore.Fhir.Sprinkler.Xunit.TestSet
 {
-    [TestCaseOrderer("Furore.Fhir.Sprinkler.XunitRunner.FhirExtensions.PriorityOrderer", "Furore.Fhir.Sprinkler.XunitRunner")]
+    [TestCaseOrderer("Furore.Fhir.Sprinkler.Xunit.ClientUtilities.XunitFhirExtensions.TestCaseOrderers.PriorityOrderer", "Furore.Fhir.Sprinkler.Xunit.ClientUtilities")]
     public class ConditionalUpdateTest : IClassFixture<ConditionalUpdateTest.SetupAndTeardownContext>
     {
         private readonly FhirClient client;

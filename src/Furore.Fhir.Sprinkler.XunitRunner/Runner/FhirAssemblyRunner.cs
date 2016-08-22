@@ -18,8 +18,6 @@ namespace Furore.Fhir.Sprinkler.XunitRunner.Runner
         private readonly ManualResetEvent discoveryCompleteEvent = new ManualResetEvent(true);
         private readonly ManualResetEvent executionCompleteEvent = new ManualResetEvent(true);
         private readonly object statusLock = new object();
-        private int testCasesDiscovered;
-        private readonly List<ITestCase> testCasesToRun = new List<ITestCase>();
 
         public FhirAssemblyRunner(AppDomainSupport appDomainSupport,
             string assemblyFileName,
@@ -34,38 +32,6 @@ namespace Furore.Fhir.Sprinkler.XunitRunner.Runner
             Status = AssemblyRunnerStatus.Idle;
         }
 
-        private ITestFrameworkDiscoveryOptions GetDiscoveryOptions(bool? diagnosticMessages,
-            TestMethodDisplay? methodDisplay, bool? preEnumerateTheories)
-        {
-            var discoveryOptions = TestFrameworkOptions.ForDiscovery(configuration);
-            discoveryOptions.SetSynchronousMessageReporting(true);
-
-            if (diagnosticMessages.HasValue)
-                discoveryOptions.SetDiagnosticMessages(diagnosticMessages);
-            if (methodDisplay.HasValue)
-                discoveryOptions.SetMethodDisplay(methodDisplay);
-            if (preEnumerateTheories.HasValue)
-                discoveryOptions.SetPreEnumerateTheories(preEnumerateTheories);
-
-            return discoveryOptions;
-        }
-
-        private ITestFrameworkExecutionOptions GetExecutionOptions(bool? diagnosticMessages, bool? parallel,
-            int? maxParallelThreads)
-        {
-            var executionOptions = TestFrameworkOptions.ForExecution(configuration);
-            executionOptions.SetSynchronousMessageReporting(true);
-
-            if (diagnosticMessages.HasValue)
-                executionOptions.SetDiagnosticMessages(diagnosticMessages);
-            if (parallel.HasValue)
-                executionOptions.SetDisableParallelization(!parallel.GetValueOrDefault());
-            if (maxParallelThreads.HasValue)
-                executionOptions.SetMaxParallelThreads(maxParallelThreads);
-
-            return executionOptions;
-        }
-
         public AssemblyRunnerStatus Status { get; private set; }
 
         public IEnumerable<TestResult> Start(Action<TestResult> log = null, IEnumerable<ITestCase> testCases = null)
@@ -73,13 +39,6 @@ namespace Furore.Fhir.Sprinkler.XunitRunner.Runner
             testCases = testCases ?? Task.Run(() => DiscoverFromAssembly()).Result;
             return Task.Run(() => ExecuteAssembly(log, testCases)).Result;
         }
-
-
-        //public IEnumerable<TestResult> Start(Action<TestResult> log = null, IEnumerable<ITestCase> testCases = null)
-        //{
-        //    testCases = testCases ?? DiscoverFromAssembly();
-        //    return ExecuteAssembly(log, testCases);
-        //}
 
         public IEnumerable<ITestCase> DiscoverTests()
         {
@@ -179,6 +138,38 @@ namespace Furore.Fhir.Sprinkler.XunitRunner.Runner
             controller.Dispose();
             discoveryCompleteEvent.Dispose();
             executionCompleteEvent.Dispose();
+        }
+
+        private ITestFrameworkDiscoveryOptions GetDiscoveryOptions(bool? diagnosticMessages,
+          TestMethodDisplay? methodDisplay, bool? preEnumerateTheories)
+        {
+            var discoveryOptions = TestFrameworkOptions.ForDiscovery(configuration);
+            discoveryOptions.SetSynchronousMessageReporting(true);
+
+            if (diagnosticMessages.HasValue)
+                discoveryOptions.SetDiagnosticMessages(diagnosticMessages);
+            if (methodDisplay.HasValue)
+                discoveryOptions.SetMethodDisplay(methodDisplay);
+            if (preEnumerateTheories.HasValue)
+                discoveryOptions.SetPreEnumerateTheories(preEnumerateTheories);
+
+            return discoveryOptions;
+        }
+
+        private ITestFrameworkExecutionOptions GetExecutionOptions(bool? diagnosticMessages, bool? parallel,
+            int? maxParallelThreads)
+        {
+            var executionOptions = TestFrameworkOptions.ForExecution(configuration);
+            executionOptions.SetSynchronousMessageReporting(true);
+
+            if (diagnosticMessages.HasValue)
+                executionOptions.SetDiagnosticMessages(diagnosticMessages);
+            if (parallel.HasValue)
+                executionOptions.SetDisableParallelization(!parallel.GetValueOrDefault());
+            if (maxParallelThreads.HasValue)
+                executionOptions.SetMaxParallelThreads(maxParallelThreads);
+
+            return executionOptions;
         }
     }
 }
