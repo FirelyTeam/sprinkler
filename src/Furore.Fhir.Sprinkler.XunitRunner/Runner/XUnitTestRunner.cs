@@ -5,7 +5,6 @@ using System.Linq;
 using Furore.Fhir.Sprinkler.Runner.Contracts;
 using Furore.Fhir.Sprinkler.Xunit.ClientUtilities;
 using Furore.Fhir.Sprinkler.Xunit.ClientUtilities.XunitFhirExtensions.Attributes;
-using Furore.Fhir.Sprinkler.XunitRunner.FhirExtensions;
 using Xunit.Abstractions;
 
 namespace Furore.Fhir.Sprinkler.XunitRunner.Runner

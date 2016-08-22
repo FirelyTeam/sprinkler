@@ -435,7 +435,6 @@ namespace Furore.Fhir.Sprinkler.Xunit.TestSet
             }
         }
 
-
         [TestMetadata("SE17", "Using type query string parameter")]
         [Fact]
         public void SearchUsingTypeSearchParameter()
@@ -458,6 +457,93 @@ namespace Furore.Fhir.Sprinkler.Xunit.TestSet
             {
                 client.Delete(loc);
             }
+        }
+
+        [Theory]
+        [TestMetadata("SE18", "Search using the :not modifier")]
+        [Fixture(false, "patient-example-no_references.xml")]
+        public void SearchResourcesUsingNotModifier(Patient patient)
+        {
+            patient.Gender = AdministrativeGender.Female;
+            Patient importedPatient = client.CreateTagged(patient);
+            try
+            {
+
+                Bundle result = client.Search<Patient>(new[] { "gender:not=male" });
+                BundleAssert.CheckMinimumNumberOfElementsInBundle(result, 1);
+                BundleAssert.CheckTypeForResources<Patient>(result);
+                Assert.True(result.ResourcesOf<Patient>().All(p => p.Gender != AdministrativeGender.Male),
+                    "Returned resources do not satisfy the :not condition");
+
+                result = client.SearchTagged<Patient>(importedPatient.Meta, new[] { "gender:not=male" });
+                Assert.True(result.Entry.Count() == 1, "Only one result should be returned by the search");
+                Assert.True(result.Entry[0].Resource.Id == importedPatient.Id, "Unexpected result returned by search operation");
+
+            }
+            finally
+            {
+                client.Delete(importedPatient);
+            }
+        }
+
+        [Theory]
+        [TestMetadata("SE19", "Search using the :not modifier to match undefined values")]
+        [Fixture(false, "patient-example-no_references.xml")]
+        public void SearchResourcesUsingNotModifierForGettingUndefinedValues(Patient patient)
+        {
+            patient.Gender = AdministrativeGender.Unknown; //patient with unknown gender
+            Patient patientWithNoDefinedGender = CreateSimplePatient(); //patient without gender information
+            var importedPatients = client.CreateTagged(patient, patientWithNoDefinedGender).Cast<Patient>().ToArray();
+
+            try
+            {
+                Bundle result = client.Search<Patient>(new[] { "gender:not=male", "gender:not=female" });
+                BundleAssert.CheckMinimumNumberOfElementsInBundle(result, 2);
+                BundleAssert.CheckTypeForResources<Patient>(result);
+                Assert.True(result.ResourcesOf<Patient>().All(p => p.Gender != AdministrativeGender.Male & p.Gender != AdministrativeGender.Female),
+                    "Returned resources do not satisfy the :not condition");
+
+                importedPatients[0].Gender = AdministrativeGender.Other;
+                client.Update(importedPatients[0]);
+
+                result = client.Search<Patient>(new[] { "gender:not=male", "gender:not=female", "gender:not=unknown" });
+                BundleAssert.CheckMinimumNumberOfElementsInBundle(result, 2);
+                BundleAssert.CheckTypeForResources<Patient>(result);
+                Assert.True(result.ResourcesOf<Patient>().All(p => p.Gender != AdministrativeGender.Male & p.Gender != AdministrativeGender.Female
+                & p.Gender != AdministrativeGender.Unknown),
+                    "Returned resources do not satisfy the :not condition");
+
+                result = client.SearchTagged<Patient>(importedPatients[0].Meta, new[] { "gender:not=male", "gender:not=female", "gender:not=unknown" });
+                BundleAssert.CheckMinimumNumberOfElementsInBundle(result, 2);
+                BundleAssert.CheckTypeForResources<Patient>(result);
+                Assert.True(result.ResourcesOf<Patient>().All(p => p.Gender != AdministrativeGender.Male & p.Gender != AdministrativeGender.Female
+                & p.Gender != AdministrativeGender.Unknown),
+                    "Returned resources do not satisfy the :not condition");
+                Assert.True(result.Entry.Any(r=> r.Resource.Id == importedPatients[0].Id), "Expected result not found in result set");
+                Assert.True(result.Entry.Any(r=> r.Resource.Id == importedPatients[1].Id), "Expected result not found in result set");
+
+
+            }
+            finally
+            {
+                client.Delete(importedPatients[0]);
+                client.Delete(importedPatients[1]);
+            }
+        }
+
+        public Patient CreateSimplePatient(string family = "Adams", params string[] given)
+        {
+            var p = new Patient();
+            var n = new HumanName();
+            foreach (string g in given)
+            {
+                n.WithGiven(g);
+            }
+
+            n.AndFamily(family);
+            p.Name = new List<HumanName>();
+            p.Name.Add(n);
+            return p;
         }
 
     }
