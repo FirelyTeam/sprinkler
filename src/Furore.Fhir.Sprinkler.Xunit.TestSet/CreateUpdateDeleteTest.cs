@@ -9,6 +9,7 @@ using System.Linq;
 using Furore.Fhir.Sprinkler.Xunit.ClientUtilities;
 using Furore.Fhir.Sprinkler.Xunit.ClientUtilities.XunitFhirExtensions.Attributes;
 using Furore.Fhir.Sprinkler.Xunit.ClientUtilities.XunitFhirExtensions.ClassFixtures;
+using Hl7.Fhir.Serialization;
 
 namespace Furore.Fhir.Sprinkler.Xunit.TestSet
 {
@@ -24,7 +25,7 @@ namespace Furore.Fhir.Sprinkler.Xunit.TestSet
             this.context = context;
         }
 
-        [TestMetadata("CR01", "create a patient using xml")]
+        [TestMetadata("CRI01", "create a patient using xml")]
         [Theory, TestPriority(0)]
         [Fixture(false, "patient-example-no_references.xml")]
         public void CreatePersonUsingXml(Patient patient)
@@ -37,7 +38,6 @@ namespace Furore.Fhir.Sprinkler.Xunit.TestSet
             // EK: Niet helemaal, er is weliswaar geen data meer gereturned, maar de headers (id, versie, modified) worden
             // nog wel geupdate
             FhirAssert.ContentLocationValidIfPresent(Client);
-            //TODO: delete this patient?
             context.Dependency = patient;
         }
 
@@ -51,6 +51,18 @@ namespace Furore.Fhir.Sprinkler.Xunit.TestSet
             FhirAssert.LocationPresentAndValid(Client);
             FhirAssert.ContentLocationValidIfPresent(Client);
             context.Dependency = patient;
+        }
+
+        [TestMetadata("CR10", "create resource with contained")]
+        [Theory, TestPriority(1)]
+        [Fixture(false, "CompositionWithContainedResources.xml")]
+        public void CreateResourceWithContained(Composition composition)
+        {
+            composition.Id = null;
+            Client.PreferredFormat = ResourceFormat.Json;
+            FhirAssert.Success(Client, () => composition = Client.Create(composition));
+            FhirAssert.LocationPresentAndValid(Client);
+            FhirAssert.ContentLocationValidIfPresent(Client);
         }
 
         [TestMetadata("CR03", "create a patient using client-assigned id")]
@@ -143,12 +155,31 @@ namespace Furore.Fhir.Sprinkler.Xunit.TestSet
 
             Client.Update(context.Dependency);
 
+
             Patient patient = Client.Read<Patient>(context.Location);
 
             FhirAssert.IsTrue(patient.Telecom.Any(
                 tel => tel.System == ContactPoint.ContactPointSystem.Other && tel.Value == "http://www.nu.nl"),
                 String.Format("Resource {0} unchanged after update", context.Location));
+
         }
+
+        //[TestMetadata("CRI07", "version specific update the patient")]
+        //[Fact, TestPriority(4)]
+        //public void VersionSpecificUpdatePerson()
+        //{
+        //    if (context.Location == null) FhirAssert.Skip();
+
+        //    string comment = "test version update";
+
+        //    Patient patient = Client.Read<Patient>(context.Location);
+        //    patient.FhirCommentsElement.Add(new FhirString(comment));
+        //    Client.Update(patient, false);
+
+        //    FhirAssert.AssertStatusCode(Client, HttpStatusCode.OK);
+        //    FhirAssert.IsTrue(patient.FhirComments.Contains(comment), String.Format("Resource {0} unchanged after update", context.Location));
+        //    FhirAssert.Fails(Client, () => Client.Update(patient, true), HttpStatusCode.Conflict);
+        //}
 
         private  Patient CreatePatient(string extensionCode, string qualifier)
         {
@@ -189,7 +220,7 @@ namespace Furore.Fhir.Sprinkler.Xunit.TestSet
             patient.Contact[0].Name.AddExtension(qualifier, new Code(extensionCode));
         }
 
-        [TestMetadata("CR07", "delete that person")]
+        [TestMetadata("CRI07", "delete that person")]
         [Fact, TestPriority(5)]
         public void DeletePerson()
         {
@@ -211,6 +242,33 @@ namespace Furore.Fhir.Sprinkler.Xunit.TestSet
             Client.Delete(string.Format("{0}/{1}", ResourceType.Patient, rnd.Next()));
 
             FhirAssert.AssertStatusCode(Client, HttpStatusCode.NoContent);
+        }
+
+        [TestMetadata("CR09", "insert invalid patient")]
+        [Fact(Skip = "Test added to verify bug ewoutkramer/fhir-net-api#238")]
+        public void TryToInsertInvalidPatient()
+        {
+            string xml = @"<Patient xmlns = ""http://hl7.org/fhir"" >
+                                <name>
+                                <family value =""jonas delete3"" />
+                                <given value =""test"" />
+                                </name>
+                                <telecom>
+                                    <value value =""jonas3@test.no"" />
+                                </telecom>
+                                <telecom/>
+                        </Patient>";
+
+            Patient patient = (Patient)FhirParser.ParseFromXml(xml);
+            string json = FhirSerializer.SerializeToJson(patient);
+            patient = (Patient)FhirParser.ParseFromJson(json);
+            
+             
+            Client.PreferredFormat = ResourceFormat.Json;
+            Client.Create(patient);
+            FhirAssert.AssertStatusCode(Client, HttpStatusCode.Created);
+
+            Client.Delete(patient);
         }
     }
 }

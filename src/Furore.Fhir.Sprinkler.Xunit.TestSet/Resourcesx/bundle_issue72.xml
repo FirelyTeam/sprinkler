@@ -1,0 +1,165 @@
+﻿<Bundle  xmlns="http://hl7.org/fhir">
+  <type value="transaction"/>
+  <entry>
+    <fullUrl value="urn:uuid:61ebe359-bfdc-4613-8bf2-c5e300945f0a"/>
+    <resource>
+      <Patient>
+        <identifier>
+          <type>
+            <text value="Social Security Name"/>
+          </type>
+          <system value="urn:oid:2.16.840.1.113883.4.1"/>
+          <value value="987119876"/>
+        </identifier>
+        <name>
+          <use value="official"/>
+          <family value="Demoski"/>
+          <given value="Heather"/>
+        </name>
+        <gender value="female"/>
+        <deceasedBoolean value="false"/>
+        <address>
+          <use value="home"/>
+          <line value="101 Drury Lane"/>
+          <city value="Churchill"/>
+          <state value="MI"/>
+          <postalCode value="48887"/>
+          <country value="USA"/>
+        </address>
+      </Patient>
+    </resource>
+    <request>
+      <method value="POST"/>
+      <url value="Patient"/>
+    </request>
+  </entry>
+  <entry>
+    <fullUrl value="urn:uuid:61ebe359-bfdc-4613-8bf2-c5e300945f0b"/>
+    <resource>
+      <Practitioner>
+        <identifier>
+          <use value="official"/>
+          <type>
+            <text value="Caregivers"/>
+          </type>
+          <system value="http://careevolution.com/identifiers/CareEvolution/MRN/Caregivers"/>
+          <value value="234894"/>
+        </identifier>
+        <name>
+          <use value="official"/>
+          <family value="Abbett"/>
+          <given value="Alex"/>
+        </name>
+        <gender value="female"/>
+      </Practitioner>
+    </resource>
+    <request>
+      <method value="POST"/>
+      <url value="Practitioner"/>
+    </request>
+  </entry>
+  <entry>
+    <fullUrl value="urn:uuid:2709292c-63cb-e511-8126-0a1bfcb5150f"/>
+    <resource>
+      <Location>
+        <name value="AA Dermatology"/>
+        <description value="AA Dermatology"/>
+        <type>
+          <coding>
+            <system value="http://careevolution.com/codes/NextGen/LocationType"/>
+            <code value="Facility"/>
+            <display value="Facility"/>
+            <userSelected value="true"/>
+          </coding>
+          <text value="Facility"/>
+        </type>
+      </Location>
+    </resource>
+    <request>
+      <method value="POST"/>
+      <url value="Location"/>
+    </request>
+  </entry>
+  <entry>
+    <fullUrl value="urn:uuid:289226b0-70d3-e511-8126-0a1bfcb5150f"/>
+    <resource>
+      <Encounter>
+        <identifier>
+          <use value="official"/>
+          <value value="IjET8fVR118hUZ25hez/TA=="/>
+        </identifier>
+        <class value="outpatient"/>
+        <patient>
+          <reference value="Patient/urn:uuid:61ebe359-bfdc-4613-8bf2-c5e300945f0a"/>
+        </patient>
+        <participant>
+          <type>
+            <coding>
+              <system value="http://careevolution.com/codes/NextGen/CaregiverRelationshipType"/>
+              <code value="PrimaryCareProvider"/>
+              <display value="Primary Care Provider"/>
+              <userSelected value="true"/>
+            </coding>
+            <text value="Primary Care Provider"/>
+          </type>
+          <individual>
+            <reference value="Practitioner/urn:uuid:61ebe359-bfdc-4613-8bf2-c5e300945f0b"/>
+          </individual>
+        </participant>
+        <period>
+          <start value="2016-02-17T11:30:00-04:00"/>
+          <end value="2016-02-17T12:30:00-04:00"/>
+        </period>
+        <location>
+          <location>
+            <reference value="Location/urn:uuid:2709292c-63cb-e511-8126-0a1bfcb5150f"/>
+          </location>
+        </location>
+      </Encounter>
+    </resource>
+    <request>
+      <method value="POST"/>
+      <url value="Encounter"/>
+    </request>
+  </entry>
+  <entry>
+    <fullUrl value="urn:uuid:bbb1eb08-71d3-e511-8126-0a1bfcb5150f"/>
+    <resource>
+      <Procedure>
+        <subject>
+          <reference value="Patient/urn:uuid:61ebe359-bfdc-4613-8bf2-c5e300945f0a"/>
+        </subject>
+        <status value="completed"/>
+        <category>
+          <coding>
+            <system value="http://snomed.info/sct"/>
+            <code value="371883000"/>
+            <display value="Outpatient procedure"/>
+            <userSelected value="true"/>
+          </coding>
+          <text value="Outpatient procedure"/>
+        </category>
+        <code>
+          <coding>
+            <system value="http://snomed.info/sct"/>
+            <code value="303650005"/>
+            <display value="Removal of mole of skin by excision"/>
+            <userSelected value="true"/>
+          </coding>
+          <text value="Removal of mole of skin by excision"/>
+        </code>
+        <performedDateTime value="2016-02-17T11:30:00-04:00"/>
+        <encounter>
+          <reference value="Encounter/urn:uuid:289226b0-70d3-e511-8126-0a1bfcb5150f"/>
+        </encounter>
+        <notes>
+          <text value="No complications"/>
+        </notes>
+      </Procedure>
+    </resource>
+    <request>
+      <method value="POST"/>
+      <url value="Procedure"/>
+    </request>
+  </entry>
+</Bundle>

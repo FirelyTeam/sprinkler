@@ -23,10 +23,9 @@ namespace Furore.Fhir.Sprinkler.Xunit.TestSet
             this.client = FhirClientBuilder.CreateFhirClient();
         }
 
-        [Theory]
+        [Fact]
         [TestMetadata("SE01", "Search resource type without criteria")]
-        [Fixture(true, "patient-example-no_references.xml")]
-        public void SearchResourcesWithoutCriteria(IAutoSetupFixture<Patient> patient)
+        public void SearchResourcesWithoutCriteria()
         {
             int pageSize = 10;
             Bundle result = client.Search<Patient>(pageSize: pageSize);

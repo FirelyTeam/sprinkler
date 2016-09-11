@@ -1,5 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Data;
 using System.Net;
+using Furore.Fhir.Sprinkler.FhirUtilities.ResourceManagement;
 using Furore.Fhir.Sprinkler.Xunit.ClientUtilities;
 using Furore.Fhir.Sprinkler.Xunit.ClientUtilities.XunitFhirExtensions.Attributes;
 using Hl7.Fhir.Model;
@@ -65,12 +68,13 @@ namespace Furore.Fhir.Sprinkler.Xunit.TestSet
                 e.RawRequest.Headers.Add("If-None-Exist", Utils.GetSprinklerTagCriteria(context.Patient).ToQueryString());
             };
             context.Patient = client.Create(context.Patient);
+        
 
             Assert.True(client.LastResult.Status == ((int) HttpStatusCode.Created).ToString());
             Assert.NotNull(context.Patient);
         }
 
-        [TestMetadata("CC02", "Conditionally create a patient that doesn't yet exist")]
+        [TestMetadata("CC02", "Conditionally create a patient that already exist")]
         [Fact, TestPriority(2)]
         public void ConditionalCreateAlreadyExistentPatient()
         {
@@ -127,6 +131,37 @@ namespace Furore.Fhir.Sprinkler.Xunit.TestSet
             Assert.True(client.LastBodyAsResource is OperationOutcome);
         }
 
-      
+        [TestMetadata("CC05", "Conditionally create a substance that doesn't yet exist")]
+        [Theory, TestPriority(5)]
+        [FixtureConfiguration(FixtureType.File)]
+        [Fixture(false, "Substance.xml")]
+        public void ConditionalCreateNonExistentSubstance(Substance substance)
+        {
+            client.OnBeforeRequest += (object sender, BeforeRequestEventArgs e) =>
+            {
+                e.RawRequest.Headers.Add("If-None-Exist", "identifier=http://acme.org/indentifiers/substances|1463");
+            };
+            var createdSubstance = client.Create(substance);
+
+
+            Assert.True(client.LastResult.Status == ((int)HttpStatusCode.Created).ToString());
+            Assert.NotNull(createdSubstance);
+
+            createdSubstance = client.Create(substance);
+
+            Assert.True(client.LastResult.Status == ((int)HttpStatusCode.OK).ToString());
+            Assert.NotNull(createdSubstance);
+
+            var newClient = FhirClientBuilder.CreateFhirClient();
+            createdSubstance = newClient.Create(substance);
+            Assert.True(newClient.LastResult.Status == ((int)HttpStatusCode.Created).ToString());
+            Assert.NotNull(createdSubstance);
+
+            FhirAssert.Fails(client,()=> client.Create(substance));
+
+            UriParamList paramList = new UriParamList();
+            paramList.Add("identifier", "http://acme.org/indentifiers/substances|1463");
+            newClient.Delete("Substance", SearchParams.FromUriParamList(paramList));
+        }
     }
 }

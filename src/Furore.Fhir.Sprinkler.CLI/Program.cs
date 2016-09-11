@@ -40,7 +40,7 @@ namespace Furore.Fhir.Sprinkler.CLI
 
         public static void Main(string[] args)
         {
-
+           
             parameters = new Parameters(args);    
 
             Console.WriteLine(Resources.ProgramTitle);

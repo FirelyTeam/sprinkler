@@ -1,0 +1,10 @@
+﻿<Patient xmlns="http://hl7.org/fhir">
+  <name>
+    <family value="jonas delete3" />
+    <given value="test" />
+  </name>
+  <telecom>
+    <value value="jonas3@test.no" />
+  </telecom>
+  <telecom />
+</Patient>

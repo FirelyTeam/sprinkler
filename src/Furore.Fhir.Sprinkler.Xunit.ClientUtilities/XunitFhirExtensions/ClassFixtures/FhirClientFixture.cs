@@ -22,10 +22,10 @@ namespace Furore.Fhir.Sprinkler.Xunit.ClientUtilities.XunitFhirExtensions.ClassF
 
         public FhirClientFixture()
         {
-            Client = new FhirClient(TestConfiguration.Url);
+            Client = FhirClientBuilder.CreateFhirClient();
             locations = new List<string>();
-            Client.OnBeforeRequest += Client_OnBeforeRequest;
-            Client.OnAfterResponse += Client_OnAfterResponse;
+            //Client.OnBeforeRequest += Client_OnBeforeRequest;
+            //Client.OnAfterResponse += Client_OnAfterResponse;
         }
 
         private void Client_OnAfterResponse(object sender, AfterResponseEventArgs e)

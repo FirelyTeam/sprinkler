@@ -1,0 +1,122 @@
+<Bundle xmlns="http://hl7.org/fhir" >
+	<id value="4e56955d-572b-43a0-412d-20fea0fe7d42" />
+	<type value="transaction" />
+	<entry>
+		<fullUrl value="urn:uuid:de147c91-9350-48f6-4ddd-38cce6e58c5a" />
+		<resource>
+			<Patient>
+				<meta>
+					<tag>
+						<system value="http://RBKCLOVERLEAF02/Cloverleaf/SourceMid" />
+						<code value="0.0.3080803" />
+					</tag>
+				</meta>				
+				<identifier>
+					<system value="http://www.rbk.de/SAP/Patient" />
+					<value value="1000463898" />
+				</identifier>
+				<active value="true" />
+				<gender value="male" />
+				<birthDate value="2016-08-28" />
+			</Patient>
+		</resource>
+		<request>
+			<method value="PUT" />
+			<url value="Patient/?identifier=http%3a%2f%2fwww%2erbk%2ede%2fSAP%2fPatient%7c1000463898" />
+		</request>
+	</entry>
+
+	<entry>
+		<fullUrl value="urn:uuid:5555292c-63cb-e511-8126-0a1bfcb5150f"/>
+		<resource>
+			<Organization>
+				<meta>
+					<tag>
+						<system value="http://rbkcloverleaf02/Cloverleaf/SourceMid" />
+						<code value="0.0.1813193" />
+					</tag>
+				</meta>
+				<text>
+					<status value="generated" />
+					<div xmlns="http://www.w3.org/1999/xhtml">Kramer (2KRAMER)</div>
+				</text>
+				<identifier>
+					<system value="http://www.rbk.de/SAP/Organization" />
+					<value value="2KRAMER" />
+				</identifier>
+				<name value="Kramer" />
+			</Organization>
+		</resource>
+		<request>
+			<method value="POST" />
+			<url value="Organization" />
+		</request>
+	</entry>
+	<entry>
+		<fullUrl value="urn:uuid:57f7b483-f582-47d7-793e-6f5cabf92689" />
+		<resource>
+			<Encounter>
+				<meta>
+					<tag>
+						<system value="http://RBKCLOVERLEAF02/Cloverleaf/SourceMid" />
+						<code value="0.0.3080803" />
+					</tag>
+				</meta>
+				<text>
+					<status value="generated" />
+					<div xmlns="http://www.w3.org/1999/xhtml">
+						<table>
+							<tr>
+								<td>Fallnummer:</td>
+								<td>1000463898</td>
+							</tr>
+							<tr>
+								<td>Fachabteilung:</td>
+								<td>2KRAMER</td>
+							</tr>
+							<tr>
+								<td>Station:</td>
+								<td>2S1</td>
+							</tr>
+							<tr>
+								<td>Aufnahme:</td>
+								<td>28.08.2016 10:18</td>
+							</tr>
+							<tr>
+								<td>Entlassung:</td>
+								<td>01.09.2016 10:26</td>
+							</tr>
+						</table>
+					</div>
+				</text>
+				<identifier>
+					<system value="http://www.rbk.de/SAP/Encounter" />
+					<value value="0011453131" />
+				</identifier>
+				<status value="in-progress" />
+				<class value="inpatient" />
+				<patient>
+					<reference value="Patient/urn:uuid:de147c91-9350-48f6-4ddd-38cce6e58c5a" />
+				</patient>
+				<period>
+					<start value="2016-08-28T10:18:59" />
+					<end value="2016-09-01T10:26:59" />
+				</period>
+				<location>
+					<location>
+						<reference value="Location/spark113" />
+						<display value="Station CHH" />
+					</location>
+				</location>
+				<serviceProvider>
+					<reference value="Organization/urn:uuid:5555292c-63cb-e511-8126-0a1bfcb5150f" />
+					<display value="Kramer" />
+				</serviceProvider>
+			</Encounter>
+		</resource>
+		<request>
+			<method value="PUT" />
+			<url value="Encounter/?identifier=http%3a%2f%2fwww%2erbk%2ede%2fSAP%2fEncounter%7c0011453131" />
+		</request>
+	</entry>
+</Bundle>

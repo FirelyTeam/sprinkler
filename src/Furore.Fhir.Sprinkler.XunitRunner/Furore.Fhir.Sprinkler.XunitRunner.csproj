@@ -75,7 +75,6 @@
     <Compile Include="Runner\FhirDiscoveryVisitor.cs" />
     <Compile Include="Runner\FhirExecutionVisitor.cs" />
     <Compile Include="Runner\XUnitTestRunner.cs" />
-    <Compile Include="Utilities\LoggerFhirClient.cs" />
     <Compile Include="Utilities\TestRunnerUtility.cs" />
   </ItemGroup>
   <ItemGroup>

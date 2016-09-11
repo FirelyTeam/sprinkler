@@ -157,7 +157,7 @@ namespace Furore.Fhir.Sprinkler.Xunit.TestSet
 
             Assert.Equal(resources.Count, 1);
             Assert.True(resources[0] is Patient);
-            Assert.True(responses[0].Status == HttpStatusCode.Created.ToString());
+            Assert.True(responses[0].Status.Contains(HttpStatusCode.Created.ToString()));
 
             client.Delete(resources[0]);
         }
