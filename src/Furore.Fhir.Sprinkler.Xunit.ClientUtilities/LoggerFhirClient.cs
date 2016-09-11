@@ -31,13 +31,7 @@ namespace Furore.Fhir.Sprinkler.Xunit.ClientUtilities
                 string body = new StreamReader(new MemoryStream(e.Body)).ReadToEnd();
             }
 
-            if (true)
-            {
-                string version = "spark15";
-                string tag = "\"" + version + "\"";
-                var header = new EntityTagHeaderValue(tag, false);
-                e.RawRequest.Headers.Add(HttpRequestHeader.IfMatch, header.ToString());
-            }
+            
         }
 
         public LoggerFhirClient(string endpoint, bool verifyFhirVersion = false) : base(endpoint, verifyFhirVersion)

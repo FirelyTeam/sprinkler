@@ -6,6 +6,7 @@ using Hl7.Fhir.Model;
 using Hl7.Fhir.Rest;
 using Xunit;
 using System.Linq;
+using System.Net.Http.Headers;
 using Furore.Fhir.Sprinkler.Xunit.ClientUtilities;
 using Furore.Fhir.Sprinkler.Xunit.ClientUtilities.XunitFhirExtensions.Attributes;
 using Furore.Fhir.Sprinkler.Xunit.ClientUtilities.XunitFhirExtensions.ClassFixtures;
@@ -21,7 +22,7 @@ namespace Furore.Fhir.Sprinkler.Xunit.TestSet
         private TestDependencyContext<Patient> context;
         public CreateUpdateDeleteTest(TestDependencyContext<Patient> context)
         {
-            this.Client = context.Client;
+            this.Client = FhirClientBuilder.CreateFhirClient();
             this.context = context;
         }
 
@@ -164,22 +165,6 @@ namespace Furore.Fhir.Sprinkler.Xunit.TestSet
 
         }
 
-        //[TestMetadata("CRI07", "version specific update the patient")]
-        //[Fact, TestPriority(4)]
-        //public void VersionSpecificUpdatePerson()
-        //{
-        //    if (context.Location == null) FhirAssert.Skip();
-
-        //    string comment = "test version update";
-
-        //    Patient patient = Client.Read<Patient>(context.Location);
-        //    patient.FhirCommentsElement.Add(new FhirString(comment));
-        //    Client.Update(patient, false);
-
-        //    FhirAssert.AssertStatusCode(Client, HttpStatusCode.OK);
-        //    FhirAssert.IsTrue(patient.FhirComments.Contains(comment), String.Format("Resource {0} unchanged after update", context.Location));
-        //    FhirAssert.Fails(Client, () => Client.Update(patient, true), HttpStatusCode.Conflict);
-        //}
 
         private  Patient CreatePatient(string extensionCode, string qualifier)
         {
@@ -269,6 +254,32 @@ namespace Furore.Fhir.Sprinkler.Xunit.TestSet
             FhirAssert.AssertStatusCode(Client, HttpStatusCode.Created);
 
             Client.Delete(patient);
+        }
+
+
+        [TestMetadata("CRI11", "version specific update the patient using weak and strong e-tags")]
+        [Theory, TestPriority(4)]
+        [InlineData(true)]
+        [InlineData(false)]
+        public void VersionSpecificUpdatePerson(bool useWeakTag)
+        {
+            if (context.Location == null) FhirAssert.Skip();
+
+            string comment = "test version update";
+
+            Patient patient = Client.Read<Patient>(context.Location);
+            patient.FhirCommentsElement.Add(new FhirString(comment));
+
+            Client.OnBeforeRequest += (object sender, BeforeRequestEventArgs e) =>
+            {
+                    var header = new EntityTagHeaderValue(string.Format("\"{0}\"", patient.VersionId), useWeakTag);
+                    e.RawRequest.Headers.Add(HttpRequestHeader.IfMatch, header.ToString());
+            }; 
+            Client.Update(patient);
+
+            FhirAssert.AssertStatusCode(Client, HttpStatusCode.OK);
+            FhirAssert.IsTrue(patient.FhirComments.Contains(comment), String.Format("Resource {0} unchanged after update", context.Location));
+            FhirAssert.Fails(Client, () => Client.Update(patient), HttpStatusCode.Conflict);
         }
     }
 }
