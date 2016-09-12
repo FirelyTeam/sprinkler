@@ -1,174 +1,174 @@
 ﻿{
-  "resourceType": "Bundle",
-  "type": "transaction",
-  "entry": [
+    "resourceType": "Bundle",
+    "type": "transaction",
+    "entry": [
 
-    {
-      "fullUrl": "urn:uuid:61ebe359-bfdc-4613-8bf2-c5e300945f0a",
-      "resource": {
-        "resourceType": "Patient",
-        "identifier": [
-          {
-            "type": {
-              "text": "Social Security Name"
-            },
-            "system": "urn:oid:2.16.840.1.113883.4.1",
-            "value": "987119876"
-          }
-        ],
-        "name": [
-          {
-            "use": "official",
-            "family": [ "Demoski" ],
-            "given": [ "Heather" ]
-          }
-        ],
-        "gender": "female",
-        "deceasedBoolean": false,
-        "address": [
-          {
-            "use": "home",
-            "line": [ "101 Drury Lane" ],
-            "city": "Churchill",
-            "state": "MI",
-            "postalCode": "48887",
-            "country": "USA"
-          }
-        ]
-      },
-      "request": {
-        "method": "POST",
-        "url": "Patient"
-      }
-    },
-
-    {
-      "fullUrl": "urn:uuid:61ebe359-bfdc-4613-8bf2-c5e300945f0b",
-      "resource": {
-        "resourceType": "Practitioner",
-        "identifier": [
-          {
-            "use": "official",
-            "type": { "text": "Caregivers" },
-            "system": "http://careevolution.com/identifiers/CareEvolution/MRN/Caregivers",
-            "value": "234894"
-          }
-        ],
-        "name": {
-          "use": "official",
-          "family": [ "Abbett" ],
-          "given": [ "Alex" ]
-        },
-        "gender": "female"
-      },
-      "request": {
-        "method": "POST",
-        "url": "Practitioner"
-      }
-    },
-
-    {
-      "fullUrl": "urn:uuid:2709292c-63cb-e511-8126-0a1bfcb5150f",
-      "resource": {
-        "resourceType": "Location",
-        "name": "AA Dermatology",
-        "description": "AA Dermatology",
-        "type": {
-          "coding": [
-            {
-              "system": "http://careevolution.com/codes/NextGen/LocationType",
-              "code": "Facility",
-              "display": "Facility",
-              "userSelected": true
-            }
-          ],
-          "text": "Facility"
-        }
-      },
-      "request": {
-        "method": "POST",
-        "url": "Location"
-      }
-    },
-
-    {
-      "fullUrl": "urn:uuid:289226b0-70d3-e511-8126-0a1bfcb5150f",
-      "resource": {
-        "resourceType": "Encounter",
-        "identifier": [
-          {
-            "use": "official",
-            "value": "IjET8fVR118hUZ25hez/TA=="
-          }
-        ],
-        "class": "outpatient",
-        "patient": { "reference": "Patient/urn:uuid:61ebe359-bfdc-4613-8bf2-c5e300945f0a" },
-        "participant": [
-          {
-            "type": [
-              {
-                "coding": [
-                  {
-                    "system": "http://careevolution.com/codes/NextGen/CaregiverRelationshipType",
-                    "code": "PrimaryCareProvider",
-                    "display": "Primary Care Provider",
-                    "userSelected": true
-                  }
+        {
+            "fullUrl": "urn:uuid:61ebe359-bfdc-4613-8bf2-c5e300945f0a",
+            "resource": {
+                "resourceType": "Patient",
+                "identifier": [
+                    {
+                        "type": {
+                            "text": "Social Security Name"
+                        },
+                        "system": "urn:oid:2.16.840.1.113883.4.1",
+                        "value": "987119876"
+                    }
                 ],
-                "text": "Primary Care Provider"
+                "name": [
+                    {
+                        "use": "official",
+                        "family": [ "Demoski" ],
+                        "given": [ "Heather" ]
+                    }
+                ],
+                "gender": "female",
+                "deceasedBoolean": false,
+                "address": [
+                    {
+                        "use": "home",
+                        "line": [ "101 Drury Lane" ],
+                        "city": "Churchill",
+                        "state": "MI",
+                        "postalCode": "48887",
+                        "country": "USA"
+                    }
+                ]
+            },
+            "request": {
+                "method": "POST",
+                "url": "Patient"
+            }
+        },
+
+        {
+            "fullUrl": "urn:uuid:61ebe359-bfdc-4613-8bf2-c5e300945f0b",
+            "resource": {
+                "resourceType": "Practitioner",
+                "identifier": [
+                    {
+                        "use": "official",
+                        "type": { "text": "Caregivers" },
+                        "system": "http://careevolution.com/identifiers/CareEvolution/MRN/Caregivers",
+                        "value": "234894"
+                    },
+                ],
+                "name": {
+                    "use": "official",
+                    "family": [ "Abbett" ],
+                    "given": [ "Alex" ]
+                },
+                "gender": "female"
+            },
+            "request": {
+                "method": "POST",
+                "url": "Practitioner"
+            }
+        },
+
+        {
+            "fullUrl": "urn:uuid:2709292c-63cb-e511-8126-0a1bfcb5150f",
+            "resource": {
+                "resourceType": "Location",
+                "name": "AA Dermatology",
+                "description": "AA Dermatology",
+                "type": {
+                    "coding": [
+                        {
+                            "system": "http://careevolution.com/codes/NextGen/LocationType",
+                            "code": "Facility",
+                            "display": "Facility",
+                            "userSelected": true
+                        }
+                    ],
+                    "text": "Facility"
+                }
+            },
+            "request": {
+                "method": "POST",
+                "url": "Location"
+            }
+        },
+
+        {
+            "fullUrl": "urn:uuid:289226b0-70d3-e511-8126-0a1bfcb5150f",
+            "resource": {
+                "resourceType": "Encounter",
+                "identifier": [
+                    {
+                        "use": "official",
+                        "value": "IjET8fVR118hUZ25hez/TA=="
+                    }
+                ],
+                "class": "outpatient",
+                "patient": { "reference": "urn:uuid:61ebe359-bfdc-4613-8bf2-c5e300945f0a" },
+                "participant": [
+                    {
+                        "type": [
+                            {
+                                "coding": [
+                                    {
+                                        "system": "http://careevolution.com/codes/NextGen/CaregiverRelationshipType",
+                                        "code": "PrimaryCareProvider",
+                                        "display": "Primary Care Provider",
+                                        "userSelected": true
+                                    }
+                                ],
+                                "text": "Primary Care Provider"
+                            }
+                        ],
+                        "individual": { "reference": "urn:uuid:61ebe359-bfdc-4613-8bf2-c5e300945f0b" }
+                    }
+                ],
+                "period": {
+                    "start": "2016-02-17T11:30:00-04:00",
+                    "end": "2016-02-17T12:30:00-04:00"
+                },
+                "location": [ { "location": { "reference": "urn:uuid:2709292c-63cb-e511-8126-0a1bfcb5150f" } } ]
+            },
+            "request": {
+                "method": "POST",
+                "url": "Encounter"
+            }
+        },
+
+      {
+        "fullUrl": "urn:uuid:bbb1eb08-71d3-e511-8126-0a1bfcb5150f",
+        "resource": {
+          "resourceType": "Procedure",
+          "subject": { "reference": "urn:uuid:61ebe359-bfdc-4613-8bf2-c5e300945f0a" },
+          "status": "completed",
+          "category": {
+            "coding": [
+              {
+                "system": "http://snomed.info/sct",
+                "code": "371883000",
+                "display": "Outpatient procedure",
+                "userSelected": true
               }
             ],
-            "individual": { "reference": "Practitioner/urn:uuid:61ebe359-bfdc-4613-8bf2-c5e300945f0b" }
-          }
-        ],
-        "period": {
-          "start": "2016-02-17T11:30:00-04:00",
-          "end": "2016-02-17T12:30:00-04:00"
+            "text": "Outpatient procedure"
+          },
+          "code": {
+            "coding": [
+              {
+                "system": "http://snomed.info/sct",
+                "code": "303650005",
+                "display": "Removal of mole of skin by excision",
+                "userSelected": true
+              }
+            ],
+            "text": "Removal of mole of skin by excision"
+          },
+          "performedDateTime": "2016-02-17T11:30:00-04:00",
+          "encounter": { "reference": "urn:uuid:289226b0-70d3-e511-8126-0a1bfcb5150f" },
+          "notes": [ { "text": "No complications" } ]
         },
-        "location": [ { "location": { "reference": "Location/urn:uuid:2709292c-63cb-e511-8126-0a1bfcb5150f" } } ]
-      },
-      "request": {
-        "method": "POST",
-        "url": "Encounter"
+        "request": {
+          "method": "POST",
+          "url": "Procedure"
+        }
       }
-    },
-
-    {
-      "fullUrl": "urn:uuid:bbb1eb08-71d3-e511-8126-0a1bfcb5150f",
-      "resource": {
-        "resourceType": "Procedure",
-        "subject": { "reference": "Patient/urn:uuid:61ebe359-bfdc-4613-8bf2-c5e300945f0a" },
-        "status": "completed",
-        "category": {
-          "coding": [
-            {
-              "system": "http://snomed.info/sct",
-              "code": "371883000",
-              "display": "Outpatient procedure",
-              "userSelected": true
-            }
-          ],
-          "text": "Outpatient procedure"
-        },
-        "code": {
-          "coding": [
-            {
-              "system": "http://snomed.info/sct",
-              "code": "303650005",
-              "display": "Removal of mole of skin by excision",
-              "userSelected": true
-            }
-          ],
-          "text": "Removal of mole of skin by excision"
-        },
-        "performedDateTime": "2016-02-17T11:30:00-04:00",
-        "encounter": { "reference": "urn:uuid:289226b0-70d3-e511-8126-0a1bfcb5150f" },
-        "notes": [ { "text": "No complications" } ]
-      },
-      "request": {
-        "method": "POST",
-        "url": "Procedure"
-      }
-    }
-  ]
+    ]
 }

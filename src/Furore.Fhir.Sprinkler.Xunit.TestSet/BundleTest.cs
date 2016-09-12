@@ -49,8 +49,8 @@ namespace Furore.Fhir.Sprinkler.Xunit.TestSet
             AllergyIntolerance allergyIntolerance)
         {
             Bundle bundle = GetBatchBundleForCreate(patient, practitioner);
-            allergyIntolerance.Patient = new ResourceReference() { Reference = string.Format("{0}/{1}", bundle.Entry[0].Resource.ResourceType, bundle.Entry[0].FullUrl)  };
-            allergyIntolerance.Recorder = new ResourceReference() { Reference = string.Format("{0}/{1}", bundle.Entry[1].Resource.ResourceType, bundle.Entry[1].FullUrl) };
+            allergyIntolerance.Patient = new ResourceReference() { Reference =  bundle.Entry[0].FullUrl  };
+            allergyIntolerance.Recorder = new ResourceReference() { Reference = bundle.Entry[1].FullUrl };
             bundle.Entry.Add(CreateEntryForCreate(allergyIntolerance));
             var xml = FhirSerializer.SerializeToXml(bundle);
 
@@ -79,6 +79,31 @@ namespace Furore.Fhir.Sprinkler.Xunit.TestSet
                 "AllergyIntolerance doesn't correctly reference the Practitioner in the bundle.");
 
 
+        }
+
+        [Theory]
+        [TestMetadata("BU03", "POST batch with references")]
+        [Fixture(false, "bundle_issue72.json")]
+        public void Bundle_PostBatchWithReferences(Bundle issue72)
+        {
+           Bundle responseBundle = client.Transaction(issue72);
+            List<Bundle.ResponseComponent> responses =
+                responseBundle.Entry.Select(e => e.Response).Where(r => r != null).ToList();
+            List<Resource> resources = GetResources(responseBundle).ToList();
+
+            Patient patient = resources.OfType<Patient>().SingleOrDefault();
+            Practitioner practitioner = resources.OfType<Practitioner>().SingleOrDefault();
+            Location location = resources.OfType<Location>().SingleOrDefault();
+            Encounter encounter = resources.OfType<Encounter>().SingleOrDefault();
+            Procedure procedure = resources.OfType<Procedure>().SingleOrDefault();
+
+            FhirAssert.IsTrue(encounter != null && patient != null &&
+               encounter.Patient.Reference.Contains(patient.GetReferenceId()),
+               "Encounter doesn't correctly reference the Patient in the bundle.");
+
+            FhirAssert.IsTrue(procedure != null && patient != null &&
+               procedure.Subject.Reference.Contains(patient.GetReferenceId()),
+               "Procedure doesn't correctly reference the Patient in the bundle.");
         }
 
         private IEnumerable<Resource> GetResources(Bundle responseBundle)

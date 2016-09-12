@@ -88,8 +88,8 @@ namespace Furore.Fhir.Sprinkler.Xunit.TestSet
             patient.Id = null;
             patient = client.Create(patient);
 
-            allergyIntolerance.Patient = new ResourceReference() { Reference = string.Format("{0}/{1}", bundle.Entry[0].Resource.ResourceType, bundle.Entry[0].FullUrl)};
-            allergyIntolerance.Recorder = new ResourceReference() { Reference = string.Format("{0}/{1}", bundle.Entry[1].Resource.ResourceType, bundle.Entry[1].FullUrl) };
+            allergyIntolerance.Patient = new ResourceReference() { Reference = bundle.Entry[0].FullUrl};
+            allergyIntolerance.Recorder = new ResourceReference() { Reference =  bundle.Entry[1].FullUrl };
             bundle.Entry.Add(CreateEntryForCreate(allergyIntolerance));
 
             client.ReturnFullResource = true;
@@ -169,7 +169,7 @@ namespace Furore.Fhir.Sprinkler.Xunit.TestSet
         public void Bundle_PostBatchWithConditionalPutAndReferences(Bundle bundle, AllergyIntolerance allergyIntolerance)
         {
             Patient patient = bundle.GetResources().First() as Patient;
-            allergyIntolerance.Patient = new ResourceReference() { Reference = string.Format("{0}/{1}", bundle.Entry[0].Resource.ResourceType, bundle.Entry[0].FullUrl) };
+            allergyIntolerance.Patient = new ResourceReference() { Reference = bundle.Entry[0].FullUrl };
             bundle.Entry.Add(CreateEntryForCreate(allergyIntolerance));
             bundle = client.Transaction(bundle);
 
