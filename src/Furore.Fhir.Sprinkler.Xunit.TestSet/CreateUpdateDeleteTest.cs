@@ -26,7 +26,7 @@ namespace Furore.Fhir.Sprinkler.Xunit.TestSet
             this.context = context;
         }
 
-        [TestMetadata("CRI01", "create a patient using xml")]
+        [TestMetadata(new[] {"CR01", "SparkPluggable"}, "create a patient using xml")]
         [Theory, TestPriority(0)]
         [Fixture(false, "patient-example-no_references.xml")]
         public void CreatePersonUsingXml(Patient patient)
@@ -42,7 +42,7 @@ namespace Furore.Fhir.Sprinkler.Xunit.TestSet
             context.Dependency = patient;
         }
 
-        [TestMetadata("CR02", "create a patient using json")]
+        [TestMetadata(new []{"CR02", "SparkPluggable" }, "create a patient using json")]
         [Theory, TestPriority(1)]
         [Fixture(false, "patient-example-no_references.xml")]
         public void CreatePersonUsingJson(Patient patient)
@@ -52,18 +52,6 @@ namespace Furore.Fhir.Sprinkler.Xunit.TestSet
             FhirAssert.LocationPresentAndValid(Client);
             FhirAssert.ContentLocationValidIfPresent(Client);
             context.Dependency = patient;
-        }
-
-        [TestMetadata("CR10", "create resource with contained")]
-        [Theory, TestPriority(1)]
-        [Fixture(false, "CompositionWithContainedResources.xml")]
-        public void CreateResourceWithContained(Composition composition)
-        {
-            composition.Id = null;
-            Client.PreferredFormat = ResourceFormat.Json;
-            FhirAssert.Success(Client, () => composition = Client.Create(composition));
-            FhirAssert.LocationPresentAndValid(Client);
-            FhirAssert.ContentLocationValidIfPresent(Client);
         }
 
         [TestMetadata("CR03", "create a patient using client-assigned id")]
@@ -142,7 +130,7 @@ namespace Furore.Fhir.Sprinkler.Xunit.TestSet
             }
         }
 
-        [TestMetadata("CR06", "update the patient (no extensions altered)")]
+        [TestMetadata(new [] { "CR06", "SparkPluggable"}, "update the patient (no extensions altered)")]
         [Fact, TestPriority(4)]
         public void UpdatePersonWithoutExtensions()
         {
@@ -164,7 +152,6 @@ namespace Furore.Fhir.Sprinkler.Xunit.TestSet
                 String.Format("Resource {0} unchanged after update", context.Location));
 
         }
-
 
         private  Patient CreatePatient(string extensionCode, string qualifier)
         {
@@ -205,7 +192,7 @@ namespace Furore.Fhir.Sprinkler.Xunit.TestSet
             patient.Contact[0].Name.AddExtension(qualifier, new Code(extensionCode));
         }
 
-        [TestMetadata("CRI07", "delete that person")]
+        [TestMetadata(new [] { "CR07", "SparkPluggable"}, "delete that person")]
         [Fact, TestPriority(5)]
         public void DeletePerson()
         {
@@ -256,8 +243,19 @@ namespace Furore.Fhir.Sprinkler.Xunit.TestSet
             Client.Delete(patient);
         }
 
+        [TestMetadata(new[] { "CR10", "SparkPluggable" }, "create resource with contained")]
+        [Theory, TestPriority(1)]
+        [Fixture(false, "CompositionWithContainedResources.xml")]
+        public void CreateResourceWithContained(Composition composition)
+        {
+            composition.Id = null;
+            Client.PreferredFormat = ResourceFormat.Json;
+            FhirAssert.Success(Client, () => composition = Client.Create(composition));
+            FhirAssert.LocationPresentAndValid(Client);
+            FhirAssert.ContentLocationValidIfPresent(Client);
+        }
 
-        [TestMetadata("CRI11", "version specific update the patient using weak and strong e-tags")]
+        [TestMetadata("CR11", "version specific update the patient using weak and strong e-tags")]
         [Theory, TestPriority(4)]
         [InlineData(true)]
         [InlineData(false)]

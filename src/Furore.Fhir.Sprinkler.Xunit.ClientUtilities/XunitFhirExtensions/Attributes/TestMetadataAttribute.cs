@@ -10,6 +10,7 @@ namespace Furore.Fhir.Sprinkler.Xunit.ClientUtilities.XunitFhirExtensions.Attrib
     [AttributeUsage(AttributeTargets.Method, AllowMultiple = true)]
     public class TestMetadataAttribute : Attribute, ITraitAttribute
     {
+        public string[] Codes { get; private set; }
         public string Code { get; private set; }
         public string Description { get; private set; }
 
@@ -19,12 +20,20 @@ namespace Furore.Fhir.Sprinkler.Xunit.ClientUtilities.XunitFhirExtensions.Attrib
             this.Description = description;
 
         }
+
+        public TestMetadataAttribute(string[] codes, string description)
+        {
+            this.Codes = codes;
+            this.Description = description;
+
+        }
     }
 
     public class MetadataTraitDiscoverer : ITraitDiscoverer
     {
         public static string CodeKey = "Code";
         public static string DescriptionKey = "Description";
+        public static string CodesKey = "Codes";
 
         public MetadataTraitDiscoverer()
         {
@@ -33,8 +42,24 @@ namespace Furore.Fhir.Sprinkler.Xunit.ClientUtilities.XunitFhirExtensions.Attrib
 
         public IEnumerable<KeyValuePair<string, string>> GetTraits(IAttributeInfo traitAttribute)
         {
-            yield return new KeyValuePair<string, string>(CodeKey, traitAttribute.GetNamedArgument<string>(CodeKey));
-            yield return new KeyValuePair<string, string>(DescriptionKey, traitAttribute.GetNamedArgument<string>(DescriptionKey));
+            string code = traitAttribute.GetNamedArgument<string>(CodeKey);
+            string[] codes = traitAttribute.GetNamedArgument<string[]>(CodesKey);
+            string description = traitAttribute.GetNamedArgument<string>(DescriptionKey);
+            if (code != null)
+            {
+                yield return new KeyValuePair<string, string>(CodeKey, code);
+            }
+            if (codes != null)
+            {
+                foreach (string c in codes)
+                {
+                    yield return new KeyValuePair<string, string>(CodeKey, c);
+                }
+            }
+            if (description != null)
+            {
+            }
+            yield return new KeyValuePair<string, string>(DescriptionKey, description);
         }
     }
 }

@@ -43,7 +43,7 @@ namespace Furore.Fhir.Sprinkler.Xunit.TestSet
         }
 
         [Theory]
-        [TestMetadata("BC02", "Post batch bundle containing conditional creates with already inserted respurces")]
+        [TestMetadata(new []{"BC02"}, "Post batch bundle containing conditional creates with already inserted respurces")]
         [Fixture(false, "patient-example-no_references.xml", "practitioner-example-no_references.xml")]
         public void Bundle_BundleWithConditionalCreateOperationsAndAlreadyInsertedResources(Patient patient, Practitioner practitioner)
         {

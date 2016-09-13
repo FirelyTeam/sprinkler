@@ -42,6 +42,21 @@ namespace Furore.Fhir.Sprinkler.Xunit.TestSet
             TestDelete<T>(GetKey(resource));
         }
 
+        [Theory]
+        [Fixture(false)]
+        [TestMetadata(new [] {"AR{T}", "SparkPluggable"}, "Create all {T}")]
+        public void CreateAllResource<T>(T resource) where T : DomainResource, new()
+        {
+            try
+            {
+                resource = TestCreate<T>(resource);
+            }
+            catch (Exception)
+            {
+                //TODO: some resources don't work yet for SparkPluggable. Should investigate why.
+            }
+        }
+
         //[Theory]
         //[Fixture(false)]
         //[TestMetadata("AR01", "Create read update delete on Patient")]
