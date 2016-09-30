@@ -94,8 +94,8 @@ namespace Furore.Fhir.Sprinkler.CLI
                         Console.WriteLine(message);
                     }
                     Console.ResetColor();
-                    Console.WriteLine("Press any key...");
-                    Console.ReadKey();
+                    //Console.WriteLine("Press any key...");
+                    //Console.ReadKey();
                 }
                 Console.ResetColor();
             }

@@ -169,14 +169,14 @@ namespace Furore.Fhir.Sprinkler.Xunit.TestSet
         [Fact]
         public void PageThroughResourceHistory()
         {
+            FhirClient _client = FhirClientBuilder.CreateFhirClient();
             int pageSize = 1;
-            Bundle page = client.TypeHistory(ResourceType.Patient.ToString(), setupAndTeardownContext.CreationDate, pageSize: pageSize);
-            Bundle lastPage = client.Continue(page, PageDirection.Last);
+            Bundle page = _client.TypeHistory(ResourceType.Patient.ToString(), setupAndTeardownContext.CreationDate, pageSize: pageSize);
+            Bundle lastPage = _client.Continue(page, PageDirection.Last);
             int patientVersions = setupAndTeardownContext.PatientVersions.Count();
 
-            int forwardCount = TestAndIterateBundlePages(page, PageDirection.Next, pageSize);
-            int backwardsCount = TestAndIterateBundlePages(lastPage, PageDirection.Previous, pageSize);
-
+            int forwardCount = TestAndIterateBundlePages(_client, page, PageDirection.Next, pageSize);
+            int backwardsCount = TestAndIterateBundlePages(_client, lastPage, PageDirection.Previous, pageSize);
 
             Assert.True(forwardCount == backwardsCount,
                 string.Format("Paging forward returns {0} entries, backwards returned {1}",
@@ -185,7 +185,7 @@ namespace Furore.Fhir.Sprinkler.Xunit.TestSet
                 string.Format("Bundle should have at least {0} pages", patientVersions));
         }
 
-        private int TestAndIterateBundlePages(Bundle page, PageDirection direction, int pageSize)
+        private int TestAndIterateBundlePages(FhirClient _client, Bundle page, PageDirection direction, int pageSize)
         {
             int pageCount = 0;
             while (page != null)
@@ -193,9 +193,9 @@ namespace Furore.Fhir.Sprinkler.Xunit.TestSet
                 pageCount++;
                 BundleAssert.CheckConditionForResources(page, r => r.Id != null || r.VersionId != null,
                     "Resources must have id/versionId information");
-                BundleAssert.CheckMaximumNumberOfElementsInBundle(page, pageSize);
 
-                page = client.Continue(page, direction);
+                page = _client.Continue(page, direction);
+               
             }
             return pageCount;
         }

@@ -362,14 +362,15 @@ namespace Furore.Fhir.Sprinkler.Xunit.TestSet
         [Fixture(false, "patient-example-no_references.xml")]
         public void PageThroughResourceSearch(Patient patient)
         {
+            FhirClient _client = FhirClientBuilder.CreateFhirClient();
             int pageSize = 1;
-            Resource[] results = client.CreateTagged(patient, patient).ToArray();
+            Resource[] results = _client.CreateTagged(patient, patient).ToArray();
             try
             {
-                Bundle page = client.SearchTagged<Patient>(results[0].Meta, null, null, pageSize);
+                Bundle page = _client.SearchTagged<Patient>(results[0].Meta, null, null, pageSize);
 
-                int forwardCount = TestBundlePages(page, PageDirection.Next, pageSize);
-                int backwardsCount = TestBundlePages(client.Continue(page, PageDirection.Last), PageDirection.Previous,
+                int forwardCount = TestBundlePages(_client, page, PageDirection.Next, pageSize);
+                int backwardsCount = TestBundlePages(_client, _client.Continue(page, PageDirection.Last), PageDirection.Previous,
                     pageSize);
 
                 FhirAssert.IsTrue(forwardCount == backwardsCount,
@@ -383,7 +384,7 @@ namespace Furore.Fhir.Sprinkler.Xunit.TestSet
             }
         }
 
-        private int TestBundlePages(Bundle page, PageDirection direction, int pageSize)
+        private int TestBundlePages(FhirClient _client, Bundle page, PageDirection direction, int pageSize)
         {
             int pageCount = 0;
             while (page != null)
@@ -391,9 +392,10 @@ namespace Furore.Fhir.Sprinkler.Xunit.TestSet
                 pageCount++;
                 BundleAssert.CheckConditionForResources(page, r => r.Id != null || r.VersionId != null,
                     "Resources must have id/versionId information");
+
                 BundleAssert.CheckMaximumNumberOfElementsInBundle(page, pageSize);
 
-                page = client.Continue(page, direction);
+                page = _client.Continue(page, direction);
             }
             return pageCount;
         }
