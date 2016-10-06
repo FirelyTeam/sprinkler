@@ -318,6 +318,10 @@ namespace Furore.Fhir.Sprinkler.TestSet
 
             Assert.IsTrue(!bundle.ContainsResource(id0), "Search on code with system 'completelyBonkersNamespace' and code '2164-2' should return nothing");
 
+            bundle = Client.Search("Observation", new[] { "code=http://loinc.org/|2164-2,http://loinc.org/|xyzh" });
+
+            Assert.IsTrue(bundle.ContainsResource(id0), "Search on code with two values (http://loinc.org/|2164-2,http://loinc.org/|xyzh) should return observation");
+
             Client.Delete("Observation/" + id0);
         }
 
