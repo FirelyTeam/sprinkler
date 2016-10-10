@@ -217,7 +217,7 @@ namespace Furore.Fhir.Sprinkler.Xunit.TestSet
         }
 
         [TestMetadata("CR09", "insert invalid patient")]
-        [Fact(Skip = "Test added to verify bug ewoutkramer/fhir-net-api#238")]
+        [Fact(Skip = "Known issue: bug ewoutkramer/fhir-net-api#238.")]
         public void TryToInsertInvalidPatient()
         {
             string xml = @"<Patient xmlns = ""http://hl7.org/fhir"" >

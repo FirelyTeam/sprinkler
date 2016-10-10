@@ -43,6 +43,7 @@ namespace Furore.Fhir.Sprinkler.XunitRunner.Runner
         {
             TestResult result = CreateTestResult(testSkipped.Test);
             result.Outcome = TestOutcome.Skipped;
+            result.Messages = new List<string> { testSkipped.Reason};
             AddResult(result);
 
             return base.Visit(testSkipped);

@@ -11,6 +11,7 @@ using Xunit;
 
 namespace Furore.Fhir.Sprinkler.Xunit.TestSet
 {
+    [Collection("Pagination concurrency issue")]
     public class HistoryTest : IClassFixture<HistoryTest.SetupAndTeardownContext>
     {
         private readonly FhirClient client;

@@ -14,6 +14,7 @@ using Xunit;
 namespace Furore.Fhir.Sprinkler.Xunit.TestSet
 {
     [FixtureConfiguration(FixtureType.File)]
+    [Collection("Pagination concurrency issue")]
     public class SearchTest
     {
         private readonly FhirClient client;
@@ -487,7 +488,7 @@ namespace Furore.Fhir.Sprinkler.Xunit.TestSet
             }
         }
 
-        [Theory]
+        [Theory(Skip = "Known issue: :not modifier doesn't match undefined values.")]
         [TestMetadata("SE19", "Search using the :not modifier to match undefined values")]
         [Fixture(false, "patient-example-no_references.xml")]
         public void SearchResourcesUsingNotModifierForGettingUndefinedValues(Patient patient)

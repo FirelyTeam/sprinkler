@@ -74,8 +74,8 @@ namespace Furore.Fhir.Sprinkler.Xunit.TestSet
             dependencyContext.Dependency = result;
         }
 
-        [Fact, TestPriority(3)]
-        [TestMetadata("BI04", "Update binary - This might fail because FHIR.API doesn't send binary resources in a resource envelope and the documentation is not clear if FHIR servers should accept it like that.")]
+        [Fact(Skip = "Known issue: FHIR.API doesn't send binary resources in a resource envelope and the documentation is not clear if FHIR servers should accept it like that."), TestPriority(3)]
+        [TestMetadata("BI04", "Update binary")]
         public void UpdateBinary()
         {
             if (dependencyContext.Dependency == null) FhirAssert.Skip();

@@ -137,9 +137,15 @@ namespace Furore.Fhir.Sprinkler.Xunit.TestSet
         [Fixture(false, "Substance.xml")]
         public void ConditionalCreateNonExistentSubstance(Substance substance)
         {
+            int value = 1463;
+            string system = string.Format("http://acme.org/indentifiers/substances{0}", Guid.NewGuid());
+            string identifierFormat = string.Format("{0}|{1}", system, value);
+
+            substance.Identifier[0].System = system;
+
             client.OnBeforeRequest += (object sender, BeforeRequestEventArgs e) =>
             {
-                e.RawRequest.Headers.Add("If-None-Exist", "identifier=http://acme.org/indentifiers/substances|1463");
+                e.RawRequest.Headers.Add("If-None-Exist", string.Format("identifier={0}",identifierFormat));
             };
             var createdSubstance = client.Create(substance);
 
@@ -160,7 +166,7 @@ namespace Furore.Fhir.Sprinkler.Xunit.TestSet
             FhirAssert.Fails(client,()=> client.Create(substance));
 
             UriParamList paramList = new UriParamList();
-            paramList.Add("identifier", "http://acme.org/indentifiers/substances|1463");
+            paramList.Add("identifier", identifierFormat);
             newClient.Delete("Substance", SearchParams.FromUriParamList(paramList));
         }
     }

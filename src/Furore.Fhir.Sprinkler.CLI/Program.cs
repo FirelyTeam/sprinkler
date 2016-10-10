@@ -81,6 +81,18 @@ namespace Furore.Fhir.Sprinkler.CLI
                 Console.WriteLine(designator);
                 Console.ForegroundColor = result.Outcome == TestOutcome.Success ? ConsoleColor.Green : ConsoleColor.Red;
                 Console.WriteLine("{0}", result.Outcome);
+                if (result.Outcome == TestOutcome.Skipped)
+                {
+                    foreach (string message in result.Messages)
+                    {
+                        Console.WriteLine(message);
+                    }
+                    if (parameters.HasOption("-waitOnSkip"))
+                    {
+                        Console.WriteLine("Press any key...");
+                        Console.ReadKey();
+                    }
+                }
 
 
                 if (result.Outcome == TestOutcome.Fail)
@@ -94,8 +106,11 @@ namespace Furore.Fhir.Sprinkler.CLI
                         Console.WriteLine(message);
                     }
                     Console.ResetColor();
-                    //Console.WriteLine("Press any key...");
-                    //Console.ReadKey();
+                    if (parameters.HasOption("-waitOnFail"))
+                    {
+                        Console.WriteLine("Press any key...");
+                        Console.ReadKey();
+                    }
                 }
                 Console.ResetColor();
             }
