@@ -102,7 +102,9 @@
       <DependentUpon>Furore.Fhir.Sprinkler.Framework.ConfigurationSection.csd</DependentUpon>
       <SubType>Designer</SubType>
     </None>
-    <None Include="packages.config" />
+    <None Include="packages.config">
+      <SubType>Designer</SubType>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="TestsFromDstu1\" />

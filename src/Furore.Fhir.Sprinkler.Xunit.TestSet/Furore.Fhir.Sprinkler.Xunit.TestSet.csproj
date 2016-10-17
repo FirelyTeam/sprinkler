@@ -79,6 +79,7 @@
     <Compile Include="ReadTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RequestFormatTest.cs" />
+    <Compile Include="SearchOrderTests.cs" />
     <Compile Include="SearchTest.cs" />
     <Compile Include="ValidatorTest.cs" />
   </ItemGroup>
