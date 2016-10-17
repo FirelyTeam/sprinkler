@@ -164,7 +164,7 @@ namespace Furore.Fhir.Sprinkler.Xunit.ClientUtilities
                 Fail("Some id/versionId's in the bundle are null");
 
             // todo: DSTU2 this no longer works in DSTU2
-            //if (!b.Entry. All(e => (e.Resource != null && e.Resource.ResourceIdentity().IsAbsoluteUri ))
+            //if (!b.Entry. MatchFixtureTypeNameAll(e => (e.Resource != null && e.Resource.ResourceIdentity().IsAbsoluteUri ))
             //    FhirAssert.Fail("Some id/versionId's in the bundle are relative");
         }
 

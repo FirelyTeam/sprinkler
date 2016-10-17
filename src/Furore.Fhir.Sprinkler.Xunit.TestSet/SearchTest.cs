@@ -244,7 +244,7 @@ namespace Furore.Fhir.Sprinkler.Xunit.TestSet
                 BundleAssert.CheckMinimumNumberOfElementsInBundle(bundle, 2);
                 BundleAssert.CheckTypeForResources<Observation>(bundle);
                 BundleAssert.CheckConditionForResources<Observation>(bundle, o => o.Value is Quantity &&
-                        ((Quantity)o.Value).Value > 5, "All observation should have a quantity larger than 5 mg");
+                        ((Quantity)o.Value).Value > 5, "MatchFixtureTypeNameAll observation should have a quantity larger than 5 mg");
                 FhirAssert.IsTrue(!bundle.ContainsResource(idValues[0]), "Search greater than quantity should not return lesser value.");
             }
             finally

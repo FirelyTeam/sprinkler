@@ -62,7 +62,7 @@ namespace Furore.Fhir.Sprinkler.Xunit.TestSet
             List<Resource> resources = GetResources(bundle).ToList();
             //spark doesn' return responses
             //Assert.Equal(responses.Count, 3);
-            //Assert.All(responses, component => Assert.NotNull(component.Location));
+            //Assert.MatchFixtureTypeNameAll(responses, component => Assert.NotNull(component.Location));
             Assert.Equal(resources.Count, 3);
             Patient resultPatient = resources[0] as Patient;
             Practitioner resultPractitioner = resources[1] as Practitioner;

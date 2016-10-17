@@ -74,6 +74,7 @@
     <Compile Include="ConditionalUpdateTest.cs" />
     <Compile Include="ConformanceTest.cs" />
     <Compile Include="CreateUpdateDeleteTest.cs" />
+    <Compile Include="GenericCreateAllTest.cs" />
     <Compile Include="HistoryPatientContext.cs" />
     <Compile Include="HistoryTest.cs" />
     <Compile Include="ReadTest.cs" />
@@ -148,6 +149,9 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Resourcesx\Substance.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resourcesx\TestPatient.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Resourcesx\Transaction_Patient.xml">

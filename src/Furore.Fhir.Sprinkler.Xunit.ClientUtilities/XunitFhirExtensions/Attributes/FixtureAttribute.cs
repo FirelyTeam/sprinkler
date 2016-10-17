@@ -19,16 +19,18 @@ namespace Furore.Fhir.Sprinkler.Xunit.ClientUtilities.XunitFhirExtensions.Attrib
             resourceProvider = new TestMethodResourceProvider(fileNames);
         }
 
-        public FixtureAttribute(bool autocreate = true, params ResourceType[] resourceTypes)
+        public FixtureAttribute(bool autocreate = true, bool includeAll = false, params ResourceType[] resourceTypes)
         {
             this.autocreate = autocreate;
             resourceProvider = new TestMethodResourceProvider(resourceTypes);
+            resourceProvider.IncludeAll = includeAll;
         }
 
-        public FixtureAttribute(bool autocreate = true)
+        public FixtureAttribute(bool autocreate = true, bool includeAll = false)
         {
             this.autocreate = autocreate;
             resourceProvider = new TestMethodResourceProvider();
+            resourceProvider.IncludeAll = includeAll;
         }
 
         public override IEnumerable<object[]> GetData(MethodInfo testMethod)

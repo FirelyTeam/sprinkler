@@ -3,9 +3,10 @@ using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
+using Furore.Fhir.Sprinkler.FhirUtilities.ResourceManagement;
 using Hl7.Fhir.Model;
 
-namespace Furore.Fhir.Sprinkler.FhirUtilities.ResourceManagement
+namespace Furore.Fhir.Sprinkler.Xunit.ClientUtilities.ResourceManagement
 {
     public class ZipFileResourceFixtureProvider : IResourceFixturesProvider
     {
@@ -15,7 +16,8 @@ namespace Furore.Fhir.Sprinkler.FhirUtilities.ResourceManagement
         {
             algorithm = new Dictionary<KeyProvider, Func<IEnumerable<ZipArchiveEntry>, string[], IEnumerable<Resource>>>();
             algorithm.Add(KeyProvider.MatchFixtureName, MatchNameProvider);
-            algorithm.Add(KeyProvider.MatchFixtureType, MatchTypeProvider);
+            algorithm.Add(KeyProvider.MatchFixtureSingleTypeName, MatchTypeProvider);
+            algorithm.Add(KeyProvider.MatchFixtureTypeNameAll, MatchTypeProviderAll);
         } 
         public Resource GetResource(FixtureConfiguration configuration, string resourceKey)
         {
@@ -92,6 +94,20 @@ namespace Furore.Fhir.Sprinkler.FhirUtilities.ResourceManagement
                         foundInAdvancedResource.Add(r.ResourceType.ToString().ToLowerInvariant(), r);
                     }
                 }       
+            }
+
+        }
+
+        private IEnumerable<Resource> MatchTypeProviderAll(IEnumerable<ZipArchiveEntry> zipEntries,
+            string[] resourceKeys)
+        {
+            foreach (ZipArchiveEntry entry in zipEntries)
+            {
+                Resource r = ReadZipEntry(entry);
+                if (resourceKeys.Contains(r.ResourceType.ToString()))
+                {
+                    yield return r;
+                }
             }
 
         }

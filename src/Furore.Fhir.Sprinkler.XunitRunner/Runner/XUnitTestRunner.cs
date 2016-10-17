@@ -58,7 +58,11 @@ namespace Furore.Fhir.Sprinkler.XunitRunner.Runner
 
         private bool TestCaseFilter(string[] tests, ITestCase testCase)
         {
-            return tests.Any(t => testCase.Traits.SingleOrDefault(x => x.Key == MetadataTraitDiscoverer.CodeKey).Value.Contains(t));
+            //var traits =
+            //    tests.SelectMany(
+            //        t => testCase.Traits.Where(x => x.Key == MetadataTraitDiscoverer.CodeKey).Select(ta => ta.Value)).ToList();
+            bool value = tests.Any(t => testCase.Traits.SingleOrDefault(x => x.Key == MetadataTraitDiscoverer.CodeKey).Value.Contains(t));
+            return value;
         }
 
     }

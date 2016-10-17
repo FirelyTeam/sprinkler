@@ -36,24 +36,24 @@ namespace Furore.Fhir.Sprinkler.Xunit.TestSet
             try
             {
                 Bundle result = client.SearchTagged<Patient>(searchGuid, new[] { "_sort=family" });
-                Assert.True(result.Entry.Count() == 3, "All 3 resources should be returne by the search");
+                Assert.True(result.Entry.Count() == 3, "MatchFixtureTypeNameAll 3 resources should be returne by the search");
                 Assert.True(result.Entry[0].Resource.Id == patient3.Id, "Unexpected result returned by search operation");
 
                 result = client.SearchTagged<Patient>(searchGuid, new[] { "_sort=email" });
-                Assert.True(result.Entry.Count() == 3, "All 3 resources should be returne by the search");
+                Assert.True(result.Entry.Count() == 3, "MatchFixtureTypeNameAll 3 resources should be returne by the search");
                 Assert.True(result.Entry[0].Resource.Id == patient2.Id, "Unexpected result returned by search operation");
 
 
                 result = client.SearchTagged<Patient>(searchGuid, new[] { "_sort=birthdate" });
-                Assert.True(result.Entry.Count() == 3, "All 3 resources should be returne by the search");
+                Assert.True(result.Entry.Count() == 3, "MatchFixtureTypeNameAll 3 resources should be returne by the search");
                 Assert.True(result.Entry[2].Resource.Id == patient3.Id, "Unexpected result returned by search operation");
 
                 result = client.SearchTagged<Patient>(searchGuid, new[] { "_sort=birthdate", "_sort=email" });
-                Assert.True(result.Entry.Count() == 3, "All 3 resources should be returne by the search");
+                Assert.True(result.Entry.Count() == 3, "MatchFixtureTypeNameAll 3 resources should be returne by the search");
                 Assert.True(result.Entry[0].Resource.Id == patient2.Id, "Unexpected result returned by search operation");
 
                 result = client.SearchTagged<Patient>(searchGuid, new[] { "_sort=birthdate", "_sort=family" });
-                Assert.True(result.Entry.Count() == 3, "All 3 resources should be returne by the search");
+                Assert.True(result.Entry.Count() == 3, "MatchFixtureTypeNameAll 3 resources should be returne by the search");
                 Assert.True(result.Entry[0].Resource.Id == patient1.Id, "Unexpected result returned by search operation");
             }
             finally

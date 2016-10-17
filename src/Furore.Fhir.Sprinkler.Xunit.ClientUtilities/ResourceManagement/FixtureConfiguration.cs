@@ -18,7 +18,7 @@
     public enum KeyProvider
     {
         MatchFixtureName,
-        MatchFixtureType,
-        All
+        MatchFixtureSingleTypeName,
+        MatchFixtureTypeNameAll
     }
 }

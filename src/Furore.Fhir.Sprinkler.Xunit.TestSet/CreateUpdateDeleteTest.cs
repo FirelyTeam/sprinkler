@@ -28,8 +28,8 @@ namespace Furore.Fhir.Sprinkler.Xunit.TestSet
 
         [TestMetadata(new[] {"CR01", "SparkPluggable"}, "create a patient using xml")]
         [Theory, TestPriority(0)]
-        [Fixture(false, "patient-example-no_references.xml")]
-        public void CreatePersonUsingXml(Patient patient)
+        [Fixture(false, "patient-example-no_references.xml", "TestPatient.xml")]
+        public void CreatePersonUsingXml(Patient patient, Patient patient2)
         {
             Client.PreferredFormat = ResourceFormat.Xml;
             FhirAssert.Success(Client, () => patient = Client.Create(patient));
