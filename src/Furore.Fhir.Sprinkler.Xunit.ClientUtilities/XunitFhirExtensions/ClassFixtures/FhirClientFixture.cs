@@ -4,7 +4,6 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
-using System.Threading;
 using Hl7.Fhir.Model;
 using Hl7.Fhir.Rest;
 using Hl7.Fhir.Serialization;
@@ -68,15 +67,6 @@ namespace Furore.Fhir.Sprinkler.Xunit.ClientUtilities.XunitFhirExtensions.ClassF
 
         private void Client_OnBeforeRequest(object sender, BeforeRequestEventArgs e)
         {
-            if (!threadId.HasValue)
-            {
-                threadId = Thread.CurrentThread.ManagedThreadId;
-            }
-            else if (threadId != Thread.CurrentThread.ManagedThreadId)
-            {
-                throw new Exception("Tests in unit should not run concurrently.");
-            }
-
             if (e.RawRequest.Method == HttpMethod.Delete.ToString())
             {
                 Uri deleteAddress = e.RawRequest.Address;

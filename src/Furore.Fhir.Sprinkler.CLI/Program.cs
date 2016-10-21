@@ -122,7 +122,7 @@ namespace Furore.Fhir.Sprinkler.CLI
             ITestRunner runner = null;
             if (parameters.HasOption("-xunit"))
             {
-                runner = new XUnitTestRunner(url, log, GetAssemblies());
+                runner = new XUnitTestRunner(url, log, GetAssemblies(), parameters.HasOption("-outputLogging"));
             }
             else
             {

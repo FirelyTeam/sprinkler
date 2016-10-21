@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using Furore.Fhir.Sprinkler.XunitRunner.FhirExtensions;
 using Hl7.Fhir.Model;
 using Xunit;
 using Furore.Fhir.Sprinkler.FhirUtilities.ResourceManagement;

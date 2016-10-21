@@ -11,21 +11,25 @@ namespace Furore.Fhir.Sprinkler.XunitRunner.Runner
 {
     public class XUnitTestRunner : ITestRunner
     {
-        private readonly string url;
-        private readonly Action<TestResult> log;
-        private readonly string[] testAssemblies;
+        private readonly string _url;
+        private readonly Action<TestResult> _log;
+        private readonly string[] _testAssemblies;
+        private readonly bool _withLogging;
 
-        public XUnitTestRunner(string url, Action<TestResult> log, string[] testAssemblies)
+        public XUnitTestRunner(string url, Action<TestResult> log, string[] testAssemblies, bool withLogging = false)
         {
-            this.url = url;
-            this.log = log;
-            this.testAssemblies = testAssemblies;
+            _url = url;
+            _log = log;
+            _testAssemblies = testAssemblies;
+            _withLogging = withLogging;
         }
 
         public void Run(string[] tests)
         {
-            TestConfiguration.Url = url;
-            foreach (string testAssembly in testAssemblies)
+            TestConfiguration.Url = _url;
+            TestConfiguration.WithLogging = _withLogging;
+            TestConfiguration.ResourceCleanUpRegistry = new ResourceCleanUpRegistry();
+            foreach (string testAssembly in _testAssemblies)
             {
                 using (var runner = FhirAssemblyRunner.WithoutAppDomain(testAssembly))
                 {
@@ -35,7 +39,7 @@ namespace Furore.Fhir.Sprinkler.XunitRunner.Runner
                     {
                         runner.TestCaseFilter = @case => TestCaseFilter(tests, @case);
                     }
-                    runner.Start(log);
+                    runner.Start(_log);
                 }
             }
         }
@@ -43,7 +47,7 @@ namespace Furore.Fhir.Sprinkler.XunitRunner.Runner
         public IEnumerable<TestModule> GetTestModules()
         {
             IEnumerable<TestModule> modules = Enumerable.Empty<TestModule>();
-            foreach (string testAssembly in testAssemblies)
+            foreach (string testAssembly in _testAssemblies)
             {
                 using (var runner = FhirAssemblyRunner.WithoutAppDomain(testAssembly))
                 {

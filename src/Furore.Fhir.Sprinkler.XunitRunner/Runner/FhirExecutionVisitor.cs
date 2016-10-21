@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using Furore.Fhir.Sprinkler.Runner.Contracts;
+using Furore.Fhir.Sprinkler.Xunit.ClientUtilities;
 using Furore.Fhir.Sprinkler.Xunit.ClientUtilities.XunitFhirExtensions.Attributes;
-using Furore.Fhir.Sprinkler.XunitRunner.FhirExtensions;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -47,6 +47,14 @@ namespace Furore.Fhir.Sprinkler.XunitRunner.Runner
             AddResult(result);
 
             return base.Visit(testSkipped);
+        }
+
+        protected override bool Visit(ITestCollectionFinished testCollectionFinished)
+        {
+            TestConfiguration.ResourceCleanUpRegistry.CleanUpResources(
+                testCollectionFinished.TestCollection.UniqueID);
+
+            return base.Visit(testCollectionFinished);
         }
 
         private TestResult CreateTestResult(ITest test)

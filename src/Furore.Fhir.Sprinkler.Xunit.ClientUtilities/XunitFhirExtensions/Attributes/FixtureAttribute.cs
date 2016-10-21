@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using Furore.Fhir.Sprinkler.Xunit.ClientUtilities.FhirClientTestExtensions;
@@ -8,29 +9,26 @@ using Xunit.Sdk;
 
 namespace Furore.Fhir.Sprinkler.Xunit.ClientUtilities.XunitFhirExtensions.Attributes
 {
+    [AttributeUsage(AttributeTargets.Method, AllowMultiple = true)]
     public class FixtureAttribute : DataAttribute
     {
-        private readonly bool autocreate;
+        public bool AutomaticCreateDelete { get; set; }
+        public bool IncludeAllMatches { get; set; }
         private TestMethodResourceProvider resourceProvider;
 
-        public FixtureAttribute(bool autocreate = true, params string[] fileNames)
+        public FixtureAttribute(params string[] fileNames)
         {
-            this.autocreate = autocreate;
             resourceProvider = new TestMethodResourceProvider(fileNames);
         }
 
-        public FixtureAttribute(bool autocreate = true, bool includeAll = false, params ResourceType[] resourceTypes)
+        public FixtureAttribute(params ResourceType[] resourceTypes)
         {
-            this.autocreate = autocreate;
             resourceProvider = new TestMethodResourceProvider(resourceTypes);
-            resourceProvider.IncludeAll = includeAll;
         }
 
-        public FixtureAttribute(bool autocreate = true, bool includeAll = false)
+        public FixtureAttribute()
         {
-            this.autocreate = autocreate;
-            resourceProvider = new TestMethodResourceProvider();
-            resourceProvider.IncludeAll = includeAll;
+            resourceProvider = new TestMethodResourceProvider(includeAllMatches: IncludeAllMatches);
         }
 
         public override IEnumerable<object[]> GetData(MethodInfo testMethod)
@@ -38,7 +36,7 @@ namespace Furore.Fhir.Sprinkler.Xunit.ClientUtilities.XunitFhirExtensions.Attrib
             var resources = resourceProvider.GetResources(testMethod);
             var parameterTypes = testMethod.GetParameters().Select(p => p.ParameterType).ToArray();
             int paramsCount = parameterTypes.Count();
-            if (autocreate)
+            if (AutomaticCreateDelete)
             {
                 FhirClient client = FhirClientBuilder.CreateFhirClient();
 

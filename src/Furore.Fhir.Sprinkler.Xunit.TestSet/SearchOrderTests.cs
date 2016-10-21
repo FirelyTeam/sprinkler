@@ -18,7 +18,7 @@ namespace Furore.Fhir.Sprinkler.Xunit.TestSet
 
         [Theory]
         [TestMetadata("SE-Order01", "Search patients using sort order on family, email and birthdate search parameters")]
-        [Fixture(false, "patient-example-no_references.xml")]
+        [Fixture("patient-example-no_references.xml")]
         public void SearchPatientsUsingSortOrder(Patient patient)
         {
             FhirClient client = FhirClientBuilder.CreateFhirClient();
@@ -138,7 +138,7 @@ namespace Furore.Fhir.Sprinkler.Xunit.TestSet
 
         [TestMetadata("SE-Order04", "Search AllergyIntolerance using sort order on patient")]
         [Theory]
-        [Fixture(false, "patient-example-no_references.xml")]
+        [Fixture("patient-example-no_references.xml")]
         public void SearchSortOrderForReferenceParameter(Patient patient)
         {
             FhirClient client = FhirClientBuilder.CreateFhirClient();

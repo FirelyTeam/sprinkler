@@ -1,6 +1,5 @@
 ﻿using System;
 using Furore.Fhir.Sprinkler.FhirUtilities.ResourceManagement;
-using Furore.Fhir.Sprinkler.XunitRunner.FhirExtensions;
 using Hl7.Fhir.Model;
 using Hl7.Fhir.Rest;
 using Xunit;
@@ -27,7 +26,7 @@ namespace Furore.Fhir.Sprinkler.Xunit.TestSet
 
         [Theory, TestPriority(0)]
         [TestMetadata("BI01", "Create a binary")]
-        [Fixture(false, "patient-example.xml")]
+        [Fixture("patient-example.xml")]
         public void CreateBinary(Patient patient)
         {
             client.PreferredFormat = ResourceFormat.Xml;

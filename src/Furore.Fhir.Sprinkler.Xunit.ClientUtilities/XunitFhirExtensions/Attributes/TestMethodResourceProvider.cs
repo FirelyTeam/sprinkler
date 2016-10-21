@@ -11,7 +11,7 @@ namespace Furore.Fhir.Sprinkler.Xunit.ClientUtilities.XunitFhirExtensions.Attrib
     {
         private readonly ResourceType[] resourceTypes;
         private string[] fileNames;
-        public bool IncludeAll { get; set; }
+        private bool includeAllMatches;
 
         public TestMethodResourceProvider(params string[] fileNames)
         {
@@ -22,9 +22,9 @@ namespace Furore.Fhir.Sprinkler.Xunit.ClientUtilities.XunitFhirExtensions.Attrib
             this.resourceTypes = resourceTypes;
         }
 
-        public TestMethodResourceProvider()
+        public TestMethodResourceProvider(bool includeAllMatches)
         {
-            
+            this.includeAllMatches = includeAllMatches;
         }
         public Resource[] GetResources(MethodInfo testMethod)
         {
@@ -33,7 +33,7 @@ namespace Furore.Fhir.Sprinkler.Xunit.ClientUtilities.XunitFhirExtensions.Attrib
             List<string> resourceKeys = new List<string>();
             if (fileNames == null)
             {
-                if (IncludeAll)
+                if (includeAllMatches)
                 {
                     configuration.KeyProvider = KeyProvider.MatchFixtureTypeNameAll;
                 }

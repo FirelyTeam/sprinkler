@@ -28,7 +28,7 @@ namespace Furore.Fhir.Sprinkler.Xunit.TestSet
 
         [TestMetadata(new[] {"CR01", "SparkPluggable"}, "create a patient using xml")]
         [Theory, TestPriority(0)]
-        [Fixture(false, "patient-example-no_references.xml", "TestPatient.xml")]
+        [Fixture("patient-example-no_references.xml", "TestPatient.xml")]
         public void CreatePersonUsingXml(Patient patient, Patient patient2)
         {
             Client.PreferredFormat = ResourceFormat.Xml;
@@ -44,7 +44,7 @@ namespace Furore.Fhir.Sprinkler.Xunit.TestSet
 
         [TestMetadata(new []{"CR02", "SparkPluggable" }, "create a patient using json")]
         [Theory, TestPriority(1)]
-        [Fixture(false, "patient-example-no_references.xml")]
+        [Fixture("patient-example-no_references.xml")]
         public void CreatePersonUsingJson(Patient patient)
         {
             Client.PreferredFormat = ResourceFormat.Json;
@@ -56,7 +56,7 @@ namespace Furore.Fhir.Sprinkler.Xunit.TestSet
 
         [TestMetadata("CR03", "create a patient using client-assigned id")]
         [Theory, TestPriority(2)]
-        [Fixture(false, "patient-example-no_references.xml")]
+        [Fixture("patient-example-no_references.xml")]
         public void CreatePersonUsingClientAssignedId(Patient patient)
         {
             var rnd = new Random();
@@ -79,7 +79,7 @@ namespace Furore.Fhir.Sprinkler.Xunit.TestSet
 
         [TestMetadata("CR04", "Create a patient with manually assigned attributes")]
         [Theory, TestPriority(3)]
-        [Fixture(false, "patient-example-no_references.xml")]
+        [Fixture("patient-example-no_references.xml")]
         public void CreatePatientWithAttributes(Patient patient)
         {
             var contactpoint = new ContactPoint();
@@ -245,7 +245,7 @@ namespace Furore.Fhir.Sprinkler.Xunit.TestSet
 
         [TestMetadata(new[] { "CR10", "SparkPluggable" }, "create resource with contained")]
         [Theory, TestPriority(1)]
-        [Fixture(false, "CompositionWithContainedResources.xml")]
+        [Fixture("CompositionWithContainedResources.xml")]
         public void CreateResourceWithContained(Composition composition)
         {
             composition.Id = null;

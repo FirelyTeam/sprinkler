@@ -6,7 +6,6 @@ using Furore.Fhir.Sprinkler.FhirUtilities.ResourceManagement;
 using Furore.Fhir.Sprinkler.Xunit.ClientUtilities;
 using Furore.Fhir.Sprinkler.Xunit.ClientUtilities.FhirClientTestExtensions;
 using Furore.Fhir.Sprinkler.Xunit.ClientUtilities.XunitFhirExtensions.Attributes;
-using Furore.Fhir.Sprinkler.XunitRunner.FhirExtensions;
 using Hl7.Fhir.Model;
 using Hl7.Fhir.Rest;
 using Xunit;
@@ -50,7 +49,7 @@ namespace Furore.Fhir.Sprinkler.Xunit.TestSet
 
         [TestMetadata("SE03", "Search patient resource on partial familyname")]
         [Theory]
-        [Fixture(true, "patient-example-no_references.xml")]
+        [Fixture("patient-example-no_references.xml", AutomaticCreateDelete = true)]
         public void SearchResourcesWithNameCriterium(IAutoSetupFixture<Patient> patient)
         {
             string name = patient.Fixture.Name.SelectMany(n => n.Family).First().Substring(0, 3).ToLower();
@@ -70,7 +69,7 @@ namespace Furore.Fhir.Sprinkler.Xunit.TestSet
 
         [TestMetadata("SE04", "Search patient resource on given name")]
         [Theory]
-        [Fixture(true, "patient-example-no_references.xml")]
+        [Fixture("patient-example-no_references.xml", AutomaticCreateDelete = true)]
         public void SearchPatientOnGiven(IAutoSetupFixture<Patient> patient)
         {
             var given = patient.Fixture.Name.SelectMany(n => n.Given).First().ToLower();
@@ -90,7 +89,7 @@ namespace Furore.Fhir.Sprinkler.Xunit.TestSet
 
         [TestMetadata("SE05", "Search condition by subject (patient) reference - given as url")]
         [Theory]
-        [Fixture(true, "patient-example-no_references.xml")]
+        [Fixture("patient-example-no_references.xml", AutomaticCreateDelete = true)]
         public void SearchConditionByPatientReference(IAutoSetupFixture<Patient> patient)
         {
             Condition condition = new Condition()
@@ -122,7 +121,7 @@ namespace Furore.Fhir.Sprinkler.Xunit.TestSet
 
         [TestMetadata("SE06", "Search condition by subject (patient) reference - given just as id")]
         [Theory]
-        [Fixture(true, "patient-example-no_references.xml")]
+        [Fixture("patient-example-no_references.xml", AutomaticCreateDelete = true)]
         public void SearchEncounterByPatientReference(IAutoSetupFixture<Patient> patient)
         {
             Condition condition = new Condition()
@@ -151,7 +150,7 @@ namespace Furore.Fhir.Sprinkler.Xunit.TestSet
 
         [TestMetadata("SE07", "Search with includes")]
         [Theory]
-        [Fixture(true, "patient-example-no_references.xml")]
+        [Fixture("patient-example-no_references.xml", AutomaticCreateDelete = true)]
         public void SearchWithIncludes(IAutoSetupFixture<Patient> patient)
         {
             Condition condition = new Condition()
@@ -294,7 +293,7 @@ namespace Furore.Fhir.Sprinkler.Xunit.TestSet
 
         [TestMetadata("SE11", "Search with quantifier :missing, on Patient.gender")]
         [Theory]
-        [Fixture(false, "patient-example-no_references.xml")]
+        [Fixture("patient-example-no_references.xml")]
         public void SearchPatientByGenderMissing(Patient patient)
         {
             patient.Gender = null;
@@ -318,7 +317,7 @@ namespace Furore.Fhir.Sprinkler.Xunit.TestSet
 
         [TestMetadata("SE12", "Search with non-existing parameter.")]
         [Theory]
-        [Fixture(false, "patient-example-no_references.xml")]
+        [Fixture("patient-example-no_references.xml")]
         public void SearchPatientByNonExistingParameter(Patient patient)
         {
             patient = client.CreateTagged(patient);
@@ -348,7 +347,7 @@ namespace Furore.Fhir.Sprinkler.Xunit.TestSet
 
         [TestMetadata("SE14", "Search for deleted resources.")]
         [Theory]
-        [Fixture(false, "patient-example-no_references.xml")]
+        [Fixture("patient-example-no_references.xml")]
         public void SearchShouldNotReturnDeletedResource(Patient patient)
         {
             patient = client.Create(patient);
@@ -360,7 +359,7 @@ namespace Furore.Fhir.Sprinkler.Xunit.TestSet
 
         [TestMetadata("SE15", "Paging forward and backward through a search result")]
         [Theory]
-        [Fixture(false, "patient-example-no_references.xml")]
+        [Fixture("patient-example-no_references.xml")]
         public void PageThroughResourceSearch(Patient patient)
         {
             FhirClient _client = FhirClientBuilder.CreateFhirClient();
@@ -463,7 +462,7 @@ namespace Furore.Fhir.Sprinkler.Xunit.TestSet
 
         [Theory]
         [TestMetadata("SE18", "Search using the :not modifier")]
-        [Fixture(false, "patient-example-no_references.xml")]
+        [Fixture("patient-example-no_references.xml")]
         public void SearchResourcesUsingNotModifier(Patient patient)
         {
             patient.Gender = AdministrativeGender.Female;
@@ -490,7 +489,7 @@ namespace Furore.Fhir.Sprinkler.Xunit.TestSet
 
         [Theory(Skip = "Known issue: :not modifier doesn't match undefined values.")]
         [TestMetadata("SE19", "Search using the :not modifier to match undefined values")]
-        [Fixture(false, "patient-example-no_references.xml")]
+        [Fixture("patient-example-no_references.xml")]
         public void SearchResourcesUsingNotModifierForGettingUndefinedValues(Patient patient)
         {
             patient.Gender = AdministrativeGender.Unknown; //patient with unknown gender

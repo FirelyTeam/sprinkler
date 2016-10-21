@@ -74,6 +74,7 @@
     <Compile Include="ISetupAndTeardown.cs" />
     <Compile Include="LoggerFhirClient.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ResourceCleanUpRegistry.cs" />
     <Compile Include="ResourceManagement\FhirStreamReader.cs" />
     <Compile Include="ResourceManagement\FileResourceFixtureProvider.cs" />
     <Compile Include="ResourceManagement\FixtureConfiguration.cs" />

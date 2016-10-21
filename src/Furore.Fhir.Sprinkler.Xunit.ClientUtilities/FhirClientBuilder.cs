@@ -4,16 +4,24 @@ namespace Furore.Fhir.Sprinkler.Xunit.ClientUtilities
 {
     public static class FhirClientBuilder
     {
-        public static FhirClient CreateFhirClient()
+        public static FhirClient CreateFhirClient(bool? overrideLogging= null)
         {
-            //return new FhirClient(TestConfiguration.Url);
-            return new LoggerFhirClient(TestConfiguration.Url);
+            if (overrideLogging??TestConfiguration.WithLogging)
+            {
+                return new LoggerFhirClient(TestConfiguration.Url);
+            }
+            else
+            {
+                return new FhirClient(TestConfiguration.Url);
+            }
         }
     }
     public static class TestConfiguration
     {
         public static string Url { get; set; }
         public static string AssemblyRootDirectory { get; set; }
+        public static bool WithLogging { get; set; }
+        public static ResourceCleanUpRegistry ResourceCleanUpRegistry { get; set; }
 
     }
 }

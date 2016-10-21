@@ -1,7 +1,6 @@
 ﻿using System;
+using System.Diagnostics;
 using System.IO;
-using System.Net;
-using System.Net.Http.Headers;
 using Hl7.Fhir.Rest;
 
 namespace Furore.Fhir.Sprinkler.Xunit.ClientUtilities
@@ -19,6 +18,8 @@ namespace Furore.Fhir.Sprinkler.Xunit.ClientUtilities
             if (e.Body != null && e.Body.Length > 0)
             {
                 string body = new StreamReader(new MemoryStream(e.Body)).ReadToEnd();
+                Debug.WriteLine("Response: ");
+                Debug.WriteLine(body);
             }
         }
 
@@ -29,6 +30,8 @@ namespace Furore.Fhir.Sprinkler.Xunit.ClientUtilities
             if (e.Body != null && e.Body.Length > 0)
             {
                 string body = new StreamReader(new MemoryStream(e.Body)).ReadToEnd();
+                Debug.WriteLine("Request: ");
+                Debug.WriteLine(body);
             }
 
             

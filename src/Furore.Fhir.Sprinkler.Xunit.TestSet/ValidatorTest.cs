@@ -6,7 +6,6 @@ using Furore.Fhir.Sprinkler.FhirUtilities.ResourceManagement;
 using Furore.Fhir.Sprinkler.Xunit.ClientUtilities;
 using Furore.Fhir.Sprinkler.Xunit.ClientUtilities.XunitFhirExtensions.Attributes;
 using Furore.Fhir.Sprinkler.Xunit.ClientUtilities.XunitFhirExtensions.ClassFixtures;
-using Furore.Fhir.Sprinkler.XunitRunner.FhirExtensions;
 using Hl7.Fhir.Model;
 using Hl7.Fhir.Rest;
 using Hl7.Fhir.Serialization;
@@ -25,7 +24,7 @@ namespace Furore.Fhir.Sprinkler.Xunit.TestSet
         }
 
         [TestMetadata("VA01", "Validate creation of a valid resource")]
-        [Fixture(false, "Patient.Valid.xml")]
+        [Fixture("Patient.Valid.xml")]
         [Theory]
         public void CreateValidResource(Patient patient)
         {

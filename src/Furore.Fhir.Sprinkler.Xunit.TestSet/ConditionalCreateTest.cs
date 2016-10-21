@@ -134,7 +134,7 @@ namespace Furore.Fhir.Sprinkler.Xunit.TestSet
         [TestMetadata("CC05", "Conditionally create a substance that doesn't yet exist")]
         [Theory, TestPriority(5)]
         [FixtureConfiguration(FixtureType.File)]
-        [Fixture(false, "Substance.xml")]
+        [Fixture("Substance.xml")]
         public void ConditionalCreateNonExistentSubstance(Substance substance)
         {
             int value = 1463;

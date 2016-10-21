@@ -5,7 +5,6 @@ using Furore.Fhir.Sprinkler.FhirUtilities.ResourceManagement;
 using Furore.Fhir.Sprinkler.Xunit.ClientUtilities;
 using Furore.Fhir.Sprinkler.Xunit.ClientUtilities.XunitFhirExtensions.Attributes;
 using Furore.Fhir.Sprinkler.Xunit.ClientUtilities.XunitFhirExtensions.ClassFixtures;
-using Furore.Fhir.Sprinkler.XunitRunner.FhirExtensions;
 using Hl7.Fhir.Model;
 using Hl7.Fhir.Rest;
 using Hl7.Fhir.Serialization;
@@ -28,7 +27,7 @@ namespace Furore.Fhir.Sprinkler.Xunit.TestSet
 
         [Theory]
         [TestMetadata("BU01", "Post simple batch bundle")]
-        [Fixture(false, "patient-example-no_references.xml", "practitioner-example-no_references.xml")]
+        [Fixture("patient-example-no_references.xml", "practitioner-example-no_references.xml")]
         public void Bundle_PostPutSimpleBatchBundle(Patient patient, Practitioner practitioner)
         {
             Bundle bundle = GetBatchBundleForCreate(patient, practitioner);
@@ -43,7 +42,7 @@ namespace Furore.Fhir.Sprinkler.Xunit.TestSet
 
         [Theory]
         [TestMetadata("BU02", "POST batch with references")]
-        [Fixture(false, "patient-example-no_references.xml", "practitioner-example-no_references.xml",
+        [Fixture("patient-example-no_references.xml", "practitioner-example-no_references.xml",
             "allergyintolerance-example.xml")]
         public void Bundle_PostBatchWithReferences(Patient patient, Practitioner practitioner,
             AllergyIntolerance allergyIntolerance)
@@ -83,7 +82,7 @@ namespace Furore.Fhir.Sprinkler.Xunit.TestSet
 
         [Theory]
         [TestMetadata("BU03", "POST batch with references")]
-        [Fixture(false, "bundle_issue72.json")]
+        [Fixture("bundle_issue72.json")]
         public void Bundle_PostBatchWithReferences(Bundle issue72)
         {
            Bundle responseBundle = client.Transaction(issue72);

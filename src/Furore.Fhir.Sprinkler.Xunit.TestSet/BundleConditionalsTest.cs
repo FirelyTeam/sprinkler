@@ -21,7 +21,7 @@ namespace Furore.Fhir.Sprinkler.Xunit.TestSet
         }
         [Theory]
         [TestMetadata("BC01", "Post batch bundle containing conditional creates")]
-        [Fixture(false, "patient-example-no_references.xml", "practitioner-example-no_references.xml")]
+        [Fixture("patient-example-no_references.xml", "practitioner-example-no_references.xml")]
         public void Bundle_PostBatchBundleWithConditionalCreateOperations(Patient patient, Practitioner practitioner)
         {
             Utils.AddSprinklerTag(patient);
@@ -44,7 +44,7 @@ namespace Furore.Fhir.Sprinkler.Xunit.TestSet
 
         [Theory]
         [TestMetadata(new []{"BC02"}, "Post batch bundle containing conditional creates with already inserted respurces")]
-        [Fixture(false, "patient-example-no_references.xml", "practitioner-example-no_references.xml")]
+        [Fixture("patient-example-no_references.xml", "practitioner-example-no_references.xml")]
         public void Bundle_BundleWithConditionalCreateOperationsAndAlreadyInsertedResources(Patient patient, Practitioner practitioner)
         {
             Utils.AddSprinklerTag(patient);
@@ -76,7 +76,7 @@ namespace Furore.Fhir.Sprinkler.Xunit.TestSet
 
         [Theory]
         [TestMetadata("BC03", "POST batch with conditional creates & references")]
-        [Fixture(false, "patient-example-no_references.xml", "practitioner-example-no_references.xml",
+        [Fixture("patient-example-no_references.xml", "practitioner-example-no_references.xml",
             "allergyintolerance-example.xml")]
         public void Bundle_PostBatchWithConditionalPostsAndReferences(Patient patient, Practitioner practitioner,
             AllergyIntolerance allergyIntolerance)
@@ -120,7 +120,7 @@ namespace Furore.Fhir.Sprinkler.Xunit.TestSet
 
         [Theory]
         [TestMetadata("BC04", "POST batch with conditional put & delete")]
-        [Fixture(false, "patient-example-no_references.xml", "practitioner-example-no_references.xml")]
+        [Fixture("patient-example-no_references.xml", "practitioner-example-no_references.xml")]
         public void Bundle_PostBatchWithConditionalPutAndDeleteForExistingResources(Patient patient, Practitioner practitioner)
         {
             Utils.AddSprinklerTag(patient);
@@ -146,7 +146,7 @@ namespace Furore.Fhir.Sprinkler.Xunit.TestSet
 
         [Theory]
         [TestMetadata("BC05", "POST batch with conditional put")]
-        [Fixture(false, "Transaction_Patient.xml")]
+        [Fixture("Transaction_Patient.xml")]
         public void Bundle_PostBatchWithConditionalPut(Bundle bundle)
         {
             bundle = client.Transaction(bundle);
@@ -165,7 +165,7 @@ namespace Furore.Fhir.Sprinkler.Xunit.TestSet
 
         [Theory]
         [TestMetadata("BC06", "POST batch with conditional put and references")]
-        [Fixture(false, "Transaction_Patient.xml", "allergyintolerance-example.xml")]
+        [Fixture("Transaction_Patient.xml", "allergyintolerance-example.xml")]
         public void Bundle_PostBatchWithConditionalPutAndReferences(Bundle bundle, AllergyIntolerance allergyIntolerance)
         {
             Patient patient = bundle.GetResources().First() as Patient;
