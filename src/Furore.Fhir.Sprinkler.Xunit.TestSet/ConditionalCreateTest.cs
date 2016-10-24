@@ -32,7 +32,7 @@ namespace Furore.Fhir.Sprinkler.Xunit.TestSet
                 set { patient = value; }
             }
 
-            public override void Setup()
+            public SetupAndTeardownContext()
             {
                 patient = CreatePatient();
             }

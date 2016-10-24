@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Hl7.Fhir.Model;
 using Hl7.Fhir.Rest;
 
@@ -32,12 +33,16 @@ namespace Furore.Fhir.Sprinkler.Xunit.ClientUtilities
 
         public IEnumerable<string> CleanUpResources(Guid testCollectionId)
         {
-            IEnumerable<string> resources = resourcesToClean[testCollectionId];
-            resourcesToClean.Remove(testCollectionId);
-            FhirClient client = FhirClientBuilder.CreateFhirClient(false);
-            foreach (string resource in resources)
+            IEnumerable<string> resources = Enumerable.Empty<string>();
+            if (resourcesToClean.ContainsKey(testCollectionId))
             {
-                client.Delete(resource);
+                resources = resourcesToClean[testCollectionId];
+                resourcesToClean.Remove(testCollectionId);
+                FhirClient client = FhirClientBuilder.CreateFhirClient(false);
+                foreach (string resource in resources)
+                {
+                    client.Delete(resource);
+                }
             }
             return resources;
         } 

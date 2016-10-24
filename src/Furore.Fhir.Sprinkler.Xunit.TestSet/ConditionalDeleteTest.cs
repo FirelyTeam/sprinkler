@@ -38,11 +38,12 @@ namespace Furore.Fhir.Sprinkler.Xunit.TestSet
                 set { patient = value; }
             }
 
-            public override void Setup()
+            public SetupAndTeardownContext()
             {
                 CreationDate = DateTimeOffset.Now;
                 patient = FhirClientBuilder.CreateFhirClient().CreateTagged(CreatePatient());
             }
+
             private Patient CreatePatient(string family = "Adams", params string[] given)
             {
                 var p = new Patient();

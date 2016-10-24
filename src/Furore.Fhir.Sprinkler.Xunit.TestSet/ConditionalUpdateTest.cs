@@ -40,7 +40,7 @@ namespace Furore.Fhir.Sprinkler.Xunit.TestSet
                 get { return SearchParams.FromUriParamList(Utils.GetSprinklerTagCriteria(Patient)); }
             }
 
-            public override void Setup()
+            public SetupAndTeardownContext()
             {
                 patient = CreatePatient();
             }

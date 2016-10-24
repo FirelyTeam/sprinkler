@@ -75,7 +75,6 @@
     <Compile Include="ConformanceTest.cs" />
     <Compile Include="CreateUpdateDeleteTest.cs" />
     <Compile Include="GenericCreateAllTest.cs" />
-    <Compile Include="HistoryPatientContext.cs" />
     <Compile Include="HistoryTest.cs" />
     <Compile Include="ReadTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

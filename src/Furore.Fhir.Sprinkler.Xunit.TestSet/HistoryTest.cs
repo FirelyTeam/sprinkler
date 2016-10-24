@@ -30,7 +30,7 @@ namespace Furore.Fhir.Sprinkler.Xunit.TestSet
                 get { return patient.GetReferenceId(); }
             }
 
-            public override void Setup()
+            public SetupAndTeardownContext()
             {
                 FhirClient client = FhirClientBuilder.CreateFhirClient();
                 CreationDate = DateTimeOffset.Now;
@@ -55,6 +55,7 @@ namespace Furore.Fhir.Sprinkler.Xunit.TestSet
                 patient = client.Update(patient, true);
                 versions.Add(patient.VersionId);
             }
+           
             private Patient CreatePatient(string family = "Adams", params string[] given)
             {
                 var p = new Patient();
