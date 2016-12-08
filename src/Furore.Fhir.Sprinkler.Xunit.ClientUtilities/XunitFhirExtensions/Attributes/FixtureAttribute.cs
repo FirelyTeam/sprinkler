@@ -13,7 +13,6 @@ namespace Furore.Fhir.Sprinkler.Xunit.ClientUtilities.XunitFhirExtensions.Attrib
     public class FixtureAttribute : DataAttribute
     {
         public bool AutomaticCreateDelete { get; set; }
-        public bool IncludeAllMatches { get; set; }
         private TestMethodResourceProvider resourceProvider;
 
         public FixtureAttribute(params string[] fileNames)
@@ -26,10 +25,12 @@ namespace Furore.Fhir.Sprinkler.Xunit.ClientUtilities.XunitFhirExtensions.Attrib
             resourceProvider = new TestMethodResourceProvider(resourceTypes);
         }
 
-        public FixtureAttribute()
+        public FixtureAttribute(bool includeAllMatches=false)
         {
-            resourceProvider = new TestMethodResourceProvider(includeAllMatches: IncludeAllMatches);
+            resourceProvider = new TestMethodResourceProvider(includeAllMatches);
         }
+
+       
 
         public override IEnumerable<object[]> GetData(MethodInfo testMethod)
         {

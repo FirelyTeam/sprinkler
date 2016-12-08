@@ -36,7 +36,6 @@ namespace Furore.Fhir.Sprinkler.CLI
     public class Program
     {
         static Parameters parameters;
-        static object lockingObj= new object(); 
 
         public static void Main(string[] args)
         {
@@ -73,60 +72,20 @@ namespace Furore.Fhir.Sprinkler.CLI
             }
         }
 
-        private static void log(TestResult result)
-        {
-            lock (lockingObj)
-            {
-                string designator = string.Format("{0}/{1} {2}", result.Category, result.Code, result.Title);
-                Console.WriteLine(designator);
-                Console.ForegroundColor = result.Outcome == TestOutcome.Success ? ConsoleColor.Green : ConsoleColor.Red;
-                Console.WriteLine("{0}", result.Outcome);
-                if (result.Outcome == TestOutcome.Skipped)
-                {
-                    foreach (string message in result.Messages)
-                    {
-                        Console.WriteLine(message);
-                    }
-                    if (parameters.HasOption("-waitOnSkip"))
-                    {
-                        Console.WriteLine("Press any key...");
-                        Console.ReadKey();
-                    }
-                }
+     
 
-
-                if (result.Outcome == TestOutcome.Fail)
-                {
-                    if (result.OperationOutcome() != null)
-                    {
-                        Console.WriteLine("  - {0}\n", result.OperationOutcome());
-                    }
-                    foreach (string message in result.Messages)
-                    {
-                        Console.WriteLine(message);
-                    }
-                    Console.ResetColor();
-                    if (parameters.HasOption("-waitOnFail"))
-                    {
-                        Console.WriteLine("Press any key...");
-                        Console.ReadKey();
-                    }
-                }
-                Console.ResetColor();
-            }
-        }
-
-        private static ITestRunner CreateRunner()
+        private static ITestRunner CreateRunner(ConsoleLogger logger)
         {
             var url = parameters.Values.First();
             ITestRunner runner = null;
+         
             if (parameters.HasOption("-xunit"))
             {
-                runner = new XUnitTestRunner(url, log, GetAssemblies(), parameters.HasOption("-outputLogging"));
+                runner = new XUnitTestRunner(url, logger.log, GetAssemblies(), parameters.HasOption("-outputLogging"));
             }
             else
             {
-                runner = Test.CreateRunner(url, log, new[] { "Furore.Fhir.Sprinkler.TestSet.dll" });
+                runner = Test.CreateRunner(url, logger.log, new[] { "Furore.Fhir.Sprinkler.TestSet.dll" });
             }
 
             return runner;
@@ -135,7 +94,8 @@ namespace Furore.Fhir.Sprinkler.CLI
         private static void ShowModulesList()
         {
             Console.WriteLine(Resources.availableModules);
-            foreach (TestModule module in CreateRunner().GetTestModules())
+            ConsoleLogger logger = new ConsoleLogger(parameters.HasOption("-waitOnSkip"), parameters.HasOption("-waitOnFail"));
+            foreach (TestModule module in CreateRunner(logger).GetTestModules())
             {
                 Console.WriteLine("{0}:", module.Name);
 
@@ -151,8 +111,9 @@ namespace Furore.Fhir.Sprinkler.CLI
             try
             {
                 var tests = parameters.Values.Skip(1).ToArray();
-
-                CreateRunner().Run(tests);
+                ConsoleLogger logger = new ConsoleLogger(parameters.HasOption("-waitOnSkip"), parameters.HasOption("-waitOnFail"));
+                CreateRunner(logger).Run(tests);
+                logger.PrintCounters();
             }
             catch (Exception x)
             {
