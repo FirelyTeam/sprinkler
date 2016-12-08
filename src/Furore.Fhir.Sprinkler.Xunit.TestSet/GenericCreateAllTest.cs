@@ -12,7 +12,7 @@ namespace Furore.Fhir.Sprinkler.Xunit.TestSet
     {
         [Theory]
         [Fixture(true)]
-        [TestMetadata(new[] { "AR{T}", "SparkPluggable01" }, "Create all {T}")]
+        [TestMetadata(new[] { "AR{T}", "SparkPluggable", "CreateAllExamples" }, "Create all {T}")]
         public void CreateAllResource<T>(T resource) where T : DomainResource, new()
         {
             TestCreate<T>(resource);
