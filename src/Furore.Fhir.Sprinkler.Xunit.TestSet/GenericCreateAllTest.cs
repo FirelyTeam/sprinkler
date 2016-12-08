@@ -13,12 +13,12 @@ namespace Furore.Fhir.Sprinkler.Xunit.TestSet
         [Theory]
         [Fixture(true)]
         [TestMetadata(new[] { "AR{T}", "SparkPluggable", "CreateAllExamples" }, "Create all {T}")]
-        public void CreateAllResource<T>(T resource) where T : DomainResource, new()
+        public void CreateAllResource<T>(T resource) where T : Resource, new()
         {
             TestCreate<T>(resource);
         }
 
-        private T TestCreate<T>(T resource) where T : DomainResource, new()
+        private T TestCreate<T>(T resource) where T : Resource, new()
         {
             FhirClient client = FhirClientBuilder.CreateFhirClient();
             resource.Id = string.Empty;
