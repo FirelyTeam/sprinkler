@@ -8,7 +8,7 @@ namespace Furore.Fhir.Sprinkler.CLI
         private readonly bool _waitOnSkip;
         private readonly bool _waitOnFail;
         object _lockingObj = new object();
-        private int failledTests = 0;
+        private int failedTests = 0;
         private int succededTests = 0;
         private int skippedTests = 0;
 
@@ -41,7 +41,7 @@ namespace Furore.Fhir.Sprinkler.CLI
         {
             if (result.Outcome != TestOutcome.Fail)
                 return;
-            failledTests += 1;
+            failedTests += 1;
             Console.ForegroundColor = ConsoleColor.Red;
             Console.WriteLine("{0}", result.Outcome);
             if (result.OperationOutcome() != null)
@@ -87,7 +87,7 @@ namespace Furore.Fhir.Sprinkler.CLI
         public void PrintCounters()
         {
             System.Console.WriteLine(
-                $"{succededTests} tests succedded; {failledTests} tests failled; {skippedTests} tests skipped");
+                $"{succededTests} tests succedded; {failedTests} tests failed; {skippedTests} tests skipped");
             Console.WriteLine("Press any key...");
             Console.ReadKey();
         }

@@ -69,7 +69,6 @@
     <Compile Include="Asserts\BundleAssert.cs" />
     <Compile Include="Asserts\FhirAssert.cs" />
     <Compile Include="FhirClientBuilder.cs" />
-    <Compile Include="FhirClientTestExtensions\FhirClientAutoSetupExtensions.cs" />
     <Compile Include="FhirClientTestExtensions\FhirClientTaggedExtensions.cs" />
     <Compile Include="ISetupAndTeardown.cs" />
     <Compile Include="LoggerFhirClient.cs" />
