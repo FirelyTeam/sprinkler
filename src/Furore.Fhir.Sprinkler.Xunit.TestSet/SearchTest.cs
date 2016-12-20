@@ -50,9 +50,9 @@ namespace Furore.Fhir.Sprinkler.Xunit.TestSet
         [TestMetadata("SE03", "Search patient resource on partial familyname")]
         [Theory]
         [Fixture("patient-example-no_references.xml", AutomaticCreateDelete = true)]
-        public void SearchResourcesWithNameCriterium(IAutoSetupFixture<Patient> patient)
+        public void SearchResourcesWithNameCriterium(Patient patient)
         {
-            string name = patient.Fixture.Name.SelectMany(n => n.Family).First().Substring(0, 3).ToLower();
+            string name = patient.Name.SelectMany(n => n.Family).First().Substring(0, 3).ToLower();
             Bundle result = client.Search<Patient>(new[] {"family=" + name});
 
             FhirAssert.EntryIdsArePresentAndAbsoluteUrls(result);
@@ -70,9 +70,9 @@ namespace Furore.Fhir.Sprinkler.Xunit.TestSet
         [TestMetadata("SE04", "Search patient resource on given name")]
         [Theory]
         [Fixture("patient-example-no_references.xml", AutomaticCreateDelete = true)]
-        public void SearchPatientOnGiven(IAutoSetupFixture<Patient> patient)
+        public void SearchPatientOnGiven(Patient patient)
         {
-            var given = patient.Fixture.Name.SelectMany(n => n.Given).First().ToLower();
+            var given = patient.Name.SelectMany(n => n.Given).First().ToLower();
             Bundle result = client.Search<Patient>(new[] {"given=" + given});
 
 
@@ -90,11 +90,11 @@ namespace Furore.Fhir.Sprinkler.Xunit.TestSet
         [TestMetadata("SE05", "Search condition by subject (patient) reference - given as url")]
         [Theory]
         [Fixture("patient-example-no_references.xml", AutomaticCreateDelete = true)]
-        public void SearchConditionByPatientReference(IAutoSetupFixture<Patient> patient)
+        public void SearchConditionByPatientReference(Patient patient)
         {
             Condition condition = new Condition()
             {
-                Patient = new ResourceReference() {Reference = patient.Fixture.GetReferenceId()},
+                Patient = new ResourceReference() {Reference = patient.GetReferenceId()},
                 Code = new CodeableConcept(@"http://example.org/sprinkler", Guid.NewGuid().ToString()),
                 VerificationStatus = Condition.ConditionVerificationStatus.Provisional
             };
@@ -122,18 +122,18 @@ namespace Furore.Fhir.Sprinkler.Xunit.TestSet
         [TestMetadata("SE06", "Search condition by subject (patient) reference - given just as id")]
         [Theory]
         [Fixture("patient-example-no_references.xml", AutomaticCreateDelete = true)]
-        public void SearchEncounterByPatientReference(IAutoSetupFixture<Patient> patient)
+        public void SearchEncounterByPatientReference(Patient patient)
         {
             Condition condition = new Condition()
             {
-                Patient = new ResourceReference() {Reference = patient.Fixture.GetReferenceId()},
+                Patient = new ResourceReference() {Reference = patient.GetReferenceId()},
                 Code = new CodeableConcept(@"http://example.org/sprinkler", Guid.NewGuid().ToString()),
                 VerificationStatus = Condition.ConditionVerificationStatus.Provisional
             };
             try
             {
                 condition = client.CreateTagged(condition);
-                Bundle result = client.SearchTagged<Condition>(condition.Meta, new[] {"patient=" + patient.Fixture.Id});
+                Bundle result = client.SearchTagged<Condition>(condition.Meta, new[] {"patient=" + patient.Id});
 
                 FhirAssert.EntryIdsArePresentAndAbsoluteUrls(result);
                 FhirAssert.CorrectNumberOfResults(1, result.Entry.Count(),
@@ -151,11 +151,11 @@ namespace Furore.Fhir.Sprinkler.Xunit.TestSet
         [TestMetadata("SE07", "Search with includes")]
         [Theory]
         [Fixture("patient-example-no_references.xml", AutomaticCreateDelete = true)]
-        public void SearchWithIncludes(IAutoSetupFixture<Patient> patient)
+        public void SearchWithIncludes(Patient patient)
         {
             Condition condition = new Condition()
             {
-                Patient = new ResourceReference() {Reference = patient.Fixture.GetReferenceId()},
+                Patient = new ResourceReference() {Reference = patient.GetReferenceId()},
                 Code = new CodeableConcept(@"http://example.org/sprinkler", Guid.NewGuid().ToString()),
                 VerificationStatus = Condition.ConditionVerificationStatus.Provisional
             };

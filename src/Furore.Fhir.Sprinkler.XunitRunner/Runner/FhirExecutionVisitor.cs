@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using Furore.Fhir.Sprinkler.Runner.Contracts;
 using Furore.Fhir.Sprinkler.Xunit.ClientUtilities;
 using Furore.Fhir.Sprinkler.Xunit.ClientUtilities.XunitFhirExtensions.Attributes;
@@ -11,13 +12,13 @@ namespace Furore.Fhir.Sprinkler.XunitRunner.Runner
 {
     public class FhirExecutionVisitor : TestMessageVisitor<ITestAssemblyFinished>
     {
-        public  FhirExecutionVisitor()
+        public FhirExecutionVisitor()
         {
             TestResults = new List<TestResult>();
         }
 
         public Action<TestResult> Log { get; set; }
-       
+
         public List<TestResult> TestResults { get; private set; }
 
         protected override bool Visit(ITestPassed testPassed)
@@ -43,26 +44,30 @@ namespace Furore.Fhir.Sprinkler.XunitRunner.Runner
         {
             TestResult result = CreateTestResult(testSkipped.Test);
             result.Outcome = TestOutcome.Skipped;
-            result.Messages = new List<string> { testSkipped.Reason};
+            result.Messages = new List<string> {testSkipped.Reason};
             AddResult(result);
 
             return base.Visit(testSkipped);
         }
 
-        protected override bool Visit(ITestCollectionFinished testCollectionFinished)
+        protected override bool Visit(ITestAssemblyExecutionFinished executionFinished)
         {
-            TestConfiguration.ResourceCleanUpRegistry.CleanUpResources(
-                testCollectionFinished.TestCollection.UniqueID);
+            string identifier = Assembly.LoadFile(executionFinished.Assembly.AssemblyFilename).FullName;
+            TestConfiguration.ResourceCleanUpRegistry.CleanUpResources(identifier);
 
-            return base.Visit(testCollectionFinished);
+            return base.Visit(executionFinished);
         }
 
         private TestResult CreateTestResult(ITest test)
         {
             TestResult result = new TestResult()
             {
-                Code = ReplaceGenericParameters (test, string.Join(",", test.TestCase.Traits[MetadataTraitDiscoverer.CodeKey].ToArray())),
-                Title = ReplaceGenericParameters(test, test.TestCase.Traits[MetadataTraitDiscoverer.DescriptionKey].FirstOrDefault()),
+                Code =
+                    ReplaceGenericParameters(test,
+                        string.Join(",", test.TestCase.Traits[MetadataTraitDiscoverer.CodeKey].ToArray())),
+                Title =
+                    ReplaceGenericParameters(test,
+                        test.TestCase.Traits[MetadataTraitDiscoverer.DescriptionKey].FirstOrDefault()),
                 Category = test.TestCase.TestMethod.TestClass.Class.ToRuntimeType().Name
             };
 
@@ -74,9 +79,12 @@ namespace Furore.Fhir.Sprinkler.XunitRunner.Runner
             if (test.TestCase.TestMethod.Method.IsGenericMethodDefinition)
             {
                 string[] genericParamaters =
-                    test.TestCase.TestMethod.Method.GetGenericArguments().OrderBy(t=>t.ToRuntimeType().GenericParameterPosition).Select(t => t.Name).ToArray();
+                    test.TestCase.TestMethod.Method.GetGenericArguments()
+                        .OrderBy(t => t.ToRuntimeType().GenericParameterPosition)
+                        .Select(t => t.Name)
+                        .ToArray();
 
-                int start = test.DisplayName.IndexOf("<") + 1 ;
+                int start = test.DisplayName.IndexOf("<") + 1;
                 int length = test.DisplayName.IndexOf(">") - start;
                 string[] parameters = test.DisplayName.Substring(start, length).Split(',');
 

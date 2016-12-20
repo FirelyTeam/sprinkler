@@ -1,50 +1,57 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Hl7.Fhir.Model;
 using Hl7.Fhir.Rest;
+using Xunit.Abstractions;
 
 namespace Furore.Fhir.Sprinkler.Xunit.ClientUtilities
 {
     public class ResourceCleanUpRegistry
     {
-        public Dictionary<Guid, List<string>> resourcesToClean;
+        public Dictionary<string, List<string>> resourcesToClean;
 
         public ResourceCleanUpRegistry()
         {
-            resourcesToClean = new Dictionary<Guid, List<string>>();
+            resourcesToClean = new Dictionary<string, List<string>>();
         }
 
-        public void AddToRegistry(Guid testCollectionId, string resource)
+        public void AddToRegistry(string identifier, string resource)
         {
             List<string> resources;
-            if (resourcesToClean.ContainsKey(testCollectionId) == false)
+            if (!resourcesToClean.ContainsKey(identifier))
             {
                 resources = new List<string>();
-                resourcesToClean.Add(testCollectionId, resources);
+                resourcesToClean.Add(identifier, resources);
             }
             else
             {
-                resources = resourcesToClean[testCollectionId];
+                resources = resourcesToClean[identifier];
             }
 
             resources.Add(resource);
         }
 
-        public IEnumerable<string> CleanUpResources(Guid testCollectionId)
+        public IEnumerable<string> CleanUpResources(string identifier)
         {
             IEnumerable<string> resources = Enumerable.Empty<string>();
-            if (resourcesToClean.ContainsKey(testCollectionId))
+            if (resourcesToClean.ContainsKey(identifier))
             {
-                resources = resourcesToClean[testCollectionId];
-                resourcesToClean.Remove(testCollectionId);
+                resources = resourcesToClean[identifier];
+                resourcesToClean.Remove(identifier);
                 FhirClient client = FhirClientBuilder.CreateFhirClient(false);
                 foreach (string resource in resources)
                 {
-                    client.Delete(resource);
+                    try
+                    {
+                        client.Delete(resource);
+                    }
+                    catch (Exception)
+                    {
+                        // TODO: add logging
+                    }
                 }
             }
             return resources;
-        } 
+        }
     }
 }
