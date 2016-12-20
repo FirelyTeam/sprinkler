@@ -17,6 +17,7 @@ namespace Furore.Fhir.Sprinkler.XunitRunner.Runner
         private readonly IFrontController controller;
         private readonly ManualResetEvent discoveryCompleteEvent = new ManualResetEvent(true);
         private readonly ManualResetEvent executionCompleteEvent = new ManualResetEvent(true);
+        private readonly XunitProjectAssembly projectAssembly;
         private readonly object statusLock = new object();
 
         public FhirAssemblyRunner(AppDomainSupport appDomainSupport,
@@ -30,6 +31,11 @@ namespace Furore.Fhir.Sprinkler.XunitRunner.Runner
                 shadowCopyFolder, diagnosticMessageSink: this);
             configuration = ConfigReader.Load(assemblyFileName, configFileName);
             Status = AssemblyRunnerStatus.Idle;
+            projectAssembly = new XunitProjectAssembly()
+            {
+                AssemblyFilename = assemblyFileName,
+                ConfigFilename = configFileName
+            };
         }
 
         public AssemblyRunnerStatus Status { get; private set; }
@@ -82,7 +88,7 @@ namespace Furore.Fhir.Sprinkler.XunitRunner.Runner
             Status = AssemblyRunnerStatus.Executing;
 
             fhirExecutionVisitor.Finished.WaitOne();
-
+            fhirExecutionVisitor.OnMessage(new TestAssemblyExecutionFinished(projectAssembly, null, null));
             Status = AssemblyRunnerStatus.Idle;
             return fhirExecutionVisitor.TestResults;
 

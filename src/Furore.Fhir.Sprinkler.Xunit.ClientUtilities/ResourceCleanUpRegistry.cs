@@ -41,7 +41,14 @@ namespace Furore.Fhir.Sprinkler.Xunit.ClientUtilities
                 FhirClient client = FhirClientBuilder.CreateFhirClient(false);
                 foreach (string resource in resources)
                 {
-                    client.Delete(resource);
+                    try
+                    {
+                        client.Delete(resource);
+                    }
+                    catch (Exception)
+                    {
+                        // TODO: add logging
+                    }
                 }
             }
             return resources;

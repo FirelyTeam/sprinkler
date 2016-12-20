@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using Furore.Fhir.Sprinkler.Runner.Contracts;
 using Furore.Fhir.Sprinkler.Xunit.ClientUtilities;
 using Furore.Fhir.Sprinkler.Xunit.ClientUtilities.XunitFhirExtensions.Attributes;
@@ -49,12 +50,12 @@ namespace Furore.Fhir.Sprinkler.XunitRunner.Runner
             return base.Visit(testSkipped);
         }
 
-        protected override bool Visit(ITestCollectionFinished testCollectionFinished)
+        protected override bool Visit(ITestAssemblyExecutionFinished executionFinished)
         {
-            string identifier = testCollectionFinished.TestAssembly.Assembly.Name;
+            string identifier = Assembly.LoadFile(executionFinished.Assembly.AssemblyFilename).FullName;
             TestConfiguration.ResourceCleanUpRegistry.CleanUpResources(identifier);
 
-            return base.Visit(testCollectionFinished);
+            return base.Visit(executionFinished);
         }
 
         private TestResult CreateTestResult(ITest test)
