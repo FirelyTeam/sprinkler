@@ -31,7 +31,7 @@ namespace Furore.Fhir.Sprinkler.Xunit.ClientUtilities.XunitFhirExtensions.Attrib
             return new FixtureConfiguration()
             {
                 FixturesRootPath = ((!string.IsNullOrEmpty(fixturesRootPath)) && Path.IsPathRooted(fixturesRootPath))
-                ? fixturesRootPath : Path.Combine(TestConfiguration.AssemblyRootDirectory, "Resourcesx", fixturesRootPath ?? string.Empty),
+                ? fixturesRootPath : new Uri(Path.Combine(TestConfiguration.AssemblyRootDirectory, "Resourcesx", fixturesRootPath ?? string.Empty)).LocalPath,
                 FixtureType = fixtureType
             };
         }

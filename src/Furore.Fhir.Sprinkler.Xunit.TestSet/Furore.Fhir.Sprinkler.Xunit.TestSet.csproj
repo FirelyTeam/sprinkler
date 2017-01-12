@@ -88,6 +88,7 @@
     <None Include="Resourcesx\bundle_issue72.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Include="Resourcesx\examples-json.zip" />
     <None Include="Resourcesx\examples.zip">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
